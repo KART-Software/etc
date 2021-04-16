@@ -1,15 +1,16 @@
 #ifndef _TPS_H_
 #define _TPS_H_
 #include <Arduino.h>
+#include "globals.hpp"
 
 class Tps
 {
 public:
-    Tps(uint8_t inputPin1, uint8_t inputPin2, float ratio, float offset);
+    Tps(uint8_t inputPin1, uint8_t inputPin2, double ratio, double offset);
     const uint8_t inputPin1;
     const uint8_t inputPin2;
-    const float ratio;
-    const float offset;
+    const double ratio;
+    const double offset;
     uint8_t getValue();
     TpsData getTpsData();
     void readTps();
