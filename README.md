@@ -15,3 +15,9 @@ This project is created with [PlatformIO](https://platformio.org/)
 ここはプログラミングに直結するから応相談かと思ってる
 
 - スロットル開度確認センサー [CP-20H](https://www.midori.co.jp/products/potentiometer/angle_sensor/orange_pot/cp-20h)
+
+
+## TODOS
+- PID制御
+- テストコード
+- 

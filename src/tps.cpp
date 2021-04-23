@@ -1,26 +1,23 @@
-#include <Arduino.h>
-#include <math.h>
 #include "tps.hpp"
 
-Tps::Tps(uint8_t inputPin1, uint8_t inputPin2, double ratio, double offset) : inputPin1(inputPin1),
-                                                                              inputPin2(inputPin2),
-                                                                              ratio(ratio),
-                                                                              offset(offset)
+double readTps1()
 {
-}
-
-void Tps::readTps()
-{
-    tpsData.rawValue1 = analogRead(inputPin1);
-    tpsData.rawValue2 = analogRead(inputPin2);
-    tpsData.value = (tpsData.rawValue1 + tpsData.rawValue2) * ratio + offset;
-    checkPlausibility();
-}
-
-void Tps ::checkPlausibility()
-{
-    if (tpsData.rawValue1 * 0.05 < abs(tpsData.rawValue1 - tpsData.rawValue2))
-    { // TODO check
-        gErrorHandler.raise(ERR_TPS_IMPLAUSIBLE);
+    double value = analogRead(TPS_PIN_1);
+    double convertedValue = value * TPS_SLOPE_1 + TPS_INTERCEPT_1;
+    if (convertedValue < TPS_MIN_1 || convertedValue > TPS_MAX_1)
+    {
+        gErrorHandler.raise(ERR_TPS_OUT_OF_RANGE);
     }
+    return convertedValue;
+}
+
+double readTps2()
+{
+    double value = analogRead(TPS_PIN_2);
+    double convertedValue = value * TPS_SLOPE_2 + TPS_INTERCEPT_2;
+    if (convertedValue < TPS_MIN_2 || convertedValue > TPS_MAX_2)
+    {
+        gErrorHandler.raise(ERR_TPS_OUT_OF_RANGE);
+    }
+    return convertedValue;
 }

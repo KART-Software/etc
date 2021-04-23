@@ -4,7 +4,8 @@ ErrorHandler::
     ErrorHandler()
     : errors(
           {{ERR_TPS_IMPLAUSIBLE, false},
-           {ERR_APPS_IMPLAUSIBLE, false}})
+           {ERR_APPS_IMPLAUSIBLE, false},
+           {ERR_TPS_OUT_OF_RANGE, false}})
 {
 }
 
