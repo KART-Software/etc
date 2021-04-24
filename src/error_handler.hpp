@@ -5,7 +5,10 @@
 #define MAX_ERR_LEN 16
 #define ERR_TPS_IMPLAUSIBLE 1
 #define ERR_APPS_IMPLAUSIBLE 2
-#define ERR_TPS_OUT_OF_RANGE 3
+#define ERR_TPS_1_OUT_OF_RANGE 3
+#define ERR_TPS_2_OUT_OF_RANGE 3
+#define ERR_APPS_1_OUT_OF_RANGE 3
+#define ERR_APPS_2_OUT_OF_RANGE 3
 
 class ErrorHandler
 {

@@ -1,4 +1,0 @@
-typedef struct sensorValue
-{
-    /* data */
-};
