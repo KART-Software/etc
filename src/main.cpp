@@ -8,8 +8,6 @@
 
 //Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
-ErrorHandler gErrorHandler;
-
 void setup()
 {
   initPins();
@@ -17,5 +15,4 @@ void setup()
 
 void loop()
 {
-  int motionSensorValue = analogRead(TPS_PIN);
 }

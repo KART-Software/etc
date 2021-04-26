@@ -28,7 +28,7 @@ double readTps1()
         TPS_1_INTERCEPT,
         TPS_1_MIN,
         TPS_1_MAX,
-        ERR_TPS_1_OUT_OF_RANGE);
+        ERR_TPS_1_CIRCUIT_FAILURE);
 }
 
 double readTps2()
@@ -38,7 +38,7 @@ double readTps2()
         TPS_2_INTERCEPT,
         TPS_2_MIN,
         TPS_2_MAX,
-        ERR_TPS_2_OUT_OF_RANGE);
+        ERR_TPS_2_CIRCUIT_FAILURE);
 }
 
 double readApps1()
@@ -48,7 +48,7 @@ double readApps1()
         APPS_1_INTERCEPT,
         APPS_1_MIN,
         APPS_1_MAX,
-        ERR_APPS_1_OUT_OF_RANGE);
+        ERR_APPS_1_CIRCUIT_FAILURE);
 }
 
 double readApps2()
@@ -58,5 +58,5 @@ double readApps2()
         APPS_2_INTERCEPT,
         APPS_2_MIN,
         APPS_2_MAX,
-        ERR_APPS_2_OUT_OF_RANGE);
+        ERR_APPS_2_CIRCUIT_FAILURE);
 }

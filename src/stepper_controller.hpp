@@ -23,7 +23,6 @@ public:
 
 private:
     Stepper stepper;
-    PID pid;
     double *input;
     double *target;
     double *output;
