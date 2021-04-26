@@ -1,62 +1,72 @@
 #include "sensors.hpp"
 
-double readAnalogSensor(uint8_t pin, double slope, double intercept, double min, double max, uint8_t errID)
+Sensor::Sensor(double minValue, double maxValue, double intercept, double slope)
 {
-    double value = analogRead(pin);
-    double convertedValue = value * slope + intercept;
-    if (convertedValue < min || convertedValue > max)
+    setRange(minValue, maxValue);
+    setConversion(intercept, slope);
+}
+
+void Sensor::setRange(double minValue, double maxValue)
+{
+    this->minValue = minValue;
+    this->maxValue = maxValue;
+}
+
+void Sensor::setConversion(double intercept, double slope)
+{
+    this->intercept = intercept;
+    this->slope = slope;
+}
+
+double Sensor::convertedValue()
+{
+    return rawValue * slope + intercept;
+}
+
+double Sensor::validatedConvertedValue()
+{
+    return constrain(convertedValue(), minValue, maxValue);
+}
+
+bool Sensor::isInRange()
+{
+    double value = convertedValue();
+    if (value < minValue || value > maxValue)
     {
-        gErrorHandler.raise(errID);
+        return false;
     }
-    if (convertedValue < min)
-    {
-        convertedValue = min;
-        gErrorHandler.raise(errID);
-    }
-    else if (convertedValue > max)
-    {
-        convertedValue = max;
-        gErrorHandler.raise(errID);
-    }
-    return convertedValue;
+    return true;
 }
 
-double readTps1()
+Apps::
+    Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin)
+    : Sensor(minValue, maxValue, intercept, slope),
+      pin(pin)
 {
-    return readAnalogSensor(
-        TPS_1_PIN, TPS_1_SLOPE,
-        TPS_1_INTERCEPT,
-        TPS_1_MIN,
-        TPS_1_MAX,
-        ERR_TPS_1_CIRCUIT_FAILURE);
 }
 
-double readTps2()
+Apps::
+    Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin)
+    : Sensor(minValue, maxValue, intercept, slope),
+      pin(pin)
 {
-    return readAnalogSensor(
-        TPS_2_PIN, TPS_2_SLOPE,
-        TPS_2_INTERCEPT,
-        TPS_2_MIN,
-        TPS_2_MAX,
-        ERR_TPS_2_CIRCUIT_FAILURE);
 }
 
-double readApps1()
+double Apps::read()
 {
-    return readAnalogSensor(
-        APPS_1_PIN, APPS_1_SLOPE,
-        APPS_1_INTERCEPT,
-        APPS_1_MIN,
-        APPS_1_MAX,
-        ERR_APPS_1_CIRCUIT_FAILURE);
+    rawValue = analogRead(pin);
+    return validatedConvertedValue();
 }
 
-double readApps2()
+Tps::
+    Tps(double minValue, double maxValue, double intercept, double slope, uint8_t pin)
+    : Sensor(minValue, maxValue, intercept, slope),
+      pin(pin)
 {
-    return readAnalogSensor(
-        APPS_2_PIN, APPS_2_SLOPE,
-        APPS_2_INTERCEPT,
-        APPS_2_MIN,
-        APPS_2_MAX,
-        ERR_APPS_2_CIRCUIT_FAILURE);
+}
+
+double Tps::read()
+{
+    rawValue = analogRead(pin);
+    return validatedConvertedValue();
 }

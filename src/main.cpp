@@ -5,6 +5,7 @@
 
 #include "error_handler.hpp"
 #include "init_pins.hpp"
+#include "sensors.hpp"
 
 //Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 

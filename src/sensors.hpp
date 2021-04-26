@@ -30,10 +30,47 @@
 #define APPS_1_MIN 150
 #define APPS_2_MIN 150
 
-double readTps1();
-double readTps2();
+class Sensor
+{
+public:
+    Sensor();
+    Sensor(double minValue, double maxValue, double intercept, double slope);
+    virtual double read() = 0;
+    void setRange(double minValue, double maxValue);
+    void setConversion(double intercept, double slope);
+    double convertedValue();
+    double validatedConvertedValue();
+    bool isInRange();
 
-double readApps1();
-double readApps2();
+protected:
+    uint8_t rawValue;
+    double maxValue, minValue;
+    double intercept, slope;
+};
+
+class Apps : public Sensor
+{
+public:
+    Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin);
+    double read();
+
+protected:
+    uint8_t pin;
+};
+class Tps : public Sensor
+{
+public:
+    Tps(double minValue, double maxValue, double intercept, double slope, uint8_t pin);
+    double read();
+
+protected:
+    uint8_t pin;
+};
+
+class Bse : Sensor
+{
+public:
+    double read();
+};
 
 #endif
