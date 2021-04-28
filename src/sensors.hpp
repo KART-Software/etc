@@ -12,11 +12,11 @@
 #define TPS_1_INTERCEPT 10.0
 #define TPS_2_INTERCEPT 10.0
 
-#define TPS_1_MAX 150
-#define TPS_2_MAX 150
+#define TPS_1_MAX 100
+#define TPS_2_MAX 100
 
-#define TPS_1_MIN 150
-#define TPS_2_MIN 150
+#define TPS_1_MIN 0
+#define TPS_2_MIN 0
 
 #define APPS_1_SLOPE 1.3
 #define APPS_2_SLOPE 1.3
@@ -24,11 +24,11 @@
 #define APPS_1_INTERCEPT 10.0
 #define APPS_2_INTERCEPT 10.0
 
-#define APPS_1_MAX 150
-#define APPS_2_MAX 150
+#define APPS_1_MAX 100
+#define APPS_2_MAX 100
 
-#define APPS_1_MIN 150
-#define APPS_2_MIN 150
+#define APPS_1_MIN 0
+#define APPS_2_MIN 0
 
 class Sensor
 {

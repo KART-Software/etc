@@ -21,6 +21,8 @@ class StepperController
 public:
     StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
     void control();
+    void setStepperOn();
+    void setStepperOff();
 
 private:
     Stepper stepper;

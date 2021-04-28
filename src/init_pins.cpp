@@ -3,8 +3,9 @@
 
 void initPins()
 {
-    pinMode(TPS_1_PIN, INPUT);
-    pinMode(TPS_2_PIN, INPUT);
-    pinMode(APPS_1_PIN, INPUT);
-    pinMode(APPS_2_PIN, INPUT);
+    pinMode(STEPPER_POWER_PIN, OUTPUT);
+    pinMode(STEPPER_OUTPUT_PIN_1, OUTPUT);
+    pinMode(STEPPER_OUTPUT_PIN_2, OUTPUT);
+    pinMode(STEPPER_OUTPUT_PIN_3, OUTPUT);
+    pinMode(STEPPER_OUTPUT_PIN_4, OUTPUT);
 }

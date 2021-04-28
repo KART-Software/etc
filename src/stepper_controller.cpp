@@ -17,7 +17,12 @@ StepperController::
 
 void StepperController::control()
 {
-    //stepper.step();
+    int diff = (apps1->validatedConvertedValue() +
+                apps2->validatedConvertedValue() -
+                tps1->validatedConvertedValue() -
+                tps2->validatedConvertedValue()) /
+               2;
+    stepper.step(diff); //TODO map
 }
 
 void StepperController::setOutputLimit()
@@ -26,4 +31,13 @@ void StepperController::setOutputLimit()
 
 int StepperController::validateOutput()
 {
+}
+
+void StepperController::setStepperOn()
+{
+    digitalWrite(STEPPER_POWER_PIN, HIGH);
+}
+void StepperController::setStepperOff()
+{
+    digitalWrite(STEPPER_POWER_PIN, LOW);
 }
