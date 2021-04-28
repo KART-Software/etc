@@ -11,26 +11,29 @@
 class PlausibilityValidator
 {
 public:
-    PlausibilityValidator(double *apps1, double *apps2, double *tps1, double *tps2);
+    PlausibilityValidator(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
+    bool isCurrentlyValid();
     bool isValid();
 
 private:
-    double *apps1, *apps2, *tps1, *tps2;
+    Apps *apps1, *apps2;
+    Tps *tps1, *tps2;
+    bool isValidAllTime;
     unsigned long
         lastTpsPlausibleTime,
         lastAppsPlausibleTime,
         lastTps1CircuitValidTime,
         lastTps2CircuitValidTime,
         lastApps1CircuitValidTime,
-        lastApps2CircuitValidTime;
+        lastApps2CircuitValidTime,
+        lastAppsTpsTargetValidTime;
     bool isAppsPlausible();
     bool isTpsPlausible();
     bool isApps1CircuitValid();
     bool isApps2CircuitValid();
-    void checkTpsAppsPlausibility();
-    void checkAppsPlausibility();
-    void checkTpsPlausibility();
-    void checkTpsCircuit();
+    bool isTps1CircuitValid();
+    bool isTps2CircuitValid();
+    bool isAppsTpsTargetValid();
 };
 
 #endif

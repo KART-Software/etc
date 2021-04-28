@@ -6,6 +6,7 @@
 #include <Arduino.h>
 
 #include "init_pins.hpp"
+#include "sensors.hpp"
 
 #define STEPPER_STEPS 100 //TODO change
 #define PID_KP 2.0
@@ -18,14 +19,13 @@
 class StepperController
 {
 public:
-    StepperController(double *input, double *target);
+    StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
     void control();
 
 private:
     Stepper stepper;
-    double *input;
-    double *target;
-    double *output;
+    Apps *apps1, *apps2;
+    Tps *tps1, *tps2;
     void setOutputLimit();
     int validateOutput();
 };

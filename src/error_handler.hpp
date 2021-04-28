@@ -9,7 +9,7 @@
 #define ERR_TPS_2_CIRCUIT_FAILURE 4
 #define ERR_APPS_1_CIRCUIT_FAILURE 5
 #define ERR_APPS_2_CIRCUIT_FAILURE 6
-
+#define ERR_APPS_TPS_TARGET_FAILURE 7
 class ErrorHandler
 {
 public:
