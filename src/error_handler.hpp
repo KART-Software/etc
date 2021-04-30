@@ -19,6 +19,9 @@ public:
     void clear(int8_t errID);
     void clearAll();
     uint8_t errorsLength();
+
+private:
+    void initError(int8_t errID);
 };
 
 typedef Error Errors[MAX_ERR_LEN];
