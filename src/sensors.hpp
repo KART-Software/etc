@@ -6,11 +6,11 @@
 #include "init_pins.hpp"
 #include "globals.hpp"
 
-#define TPS_1_SLOPE 1.3
-#define TPS_2_SLOPE 1.3
+#define TPS_1_SLOPE 1.0
+#define TPS_2_SLOPE 1.0
 
-#define TPS_1_INTERCEPT 10.0
-#define TPS_2_INTERCEPT 10.0
+#define TPS_1_INTERCEPT 0.0
+#define TPS_2_INTERCEPT 0.0
 
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
@@ -18,11 +18,11 @@
 #define TPS_1_MIN 0
 #define TPS_2_MIN 0
 
-#define APPS_1_SLOPE 1.3
-#define APPS_2_SLOPE 1.3
+#define APPS_1_SLOPE 1.0
+#define APPS_2_SLOPE 1.0
 
-#define APPS_1_INTERCEPT 10.0
-#define APPS_2_INTERCEPT 10.0
+#define APPS_1_INTERCEPT 0.0
+#define APPS_2_INTERCEPT 0.0
 
 #define APPS_1_MAX 100
 #define APPS_2_MAX 100

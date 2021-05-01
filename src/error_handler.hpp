@@ -3,13 +3,13 @@
 #include <Arduino.h>
 
 #define MAX_ERR_LEN 16
-#define ERR_TPS_IMPLAUSIBLE 1
-#define ERR_APPS_IMPLAUSIBLE 2
-#define ERR_TPS_1_CIRCUIT_FAILURE 3
-#define ERR_TPS_2_CIRCUIT_FAILURE 4
-#define ERR_APPS_1_CIRCUIT_FAILURE 5
-#define ERR_APPS_2_CIRCUIT_FAILURE 6
-#define ERR_APPS_TPS_TARGET_FAILURE 7
+#define ERR_TPS_IMPLAUSIBLE 0
+#define ERR_APPS_IMPLAUSIBLE 1
+#define ERR_TPS_1_CIRCUIT_FAILURE 2
+#define ERR_TPS_2_CIRCUIT_FAILURE 3
+#define ERR_APPS_1_CIRCUIT_FAILURE 4
+#define ERR_APPS_2_CIRCUIT_FAILURE 5
+#define ERR_APPS_TPS_TARGET_FAILURE 6
 class ErrorHandler
 {
 public:
@@ -19,6 +19,7 @@ public:
     void clear(int8_t errID);
     void clearAll();
     uint8_t errorsLength();
+    String errorsToStr();
 
 private:
     void initError(int8_t errID);
