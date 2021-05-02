@@ -17,6 +17,8 @@ Tps tps2(TPS_2_MIN, TPS_2_MAX, TPS_2_INTERCEPT, TPS_2_SLOPE, TPS_2_PIN);
 PlausibilityValidator plausibilityValidator(&apps1, &apps2, &tps1, &tps2);
 StepperController stepperController(&apps1, &apps2, &tps1, &tps2);
 SerialLogger serialLogger;
+unsigned long currentTime = 0;
+unsigned long lastTime = 0;
 
 void setup()
 {
@@ -26,6 +28,7 @@ void setup()
 
 void loop()
 {
+  currentTime = millis();
   apps1.read();
   apps2.read();
   tps1.read();
@@ -40,10 +43,12 @@ void loop()
     stepperController.control();
   }
   serialLogger.log(
+      currentTime - lastTime,
       apps1.convertedValue(),
       apps2.convertedValue(),
       tps1.convertedValue(),
       tps2.convertedValue(),
       plausibilityValidator.isValid(),
       gErrorHandler.errorsToStr());
+  lastTime = currentTime;
 }
