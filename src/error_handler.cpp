@@ -2,20 +2,16 @@
 
 ErrorHandler::
     ErrorHandler()
-{
-    initError(ERR_TPS_IMPLAUSIBLE);
-    initError(ERR_APPS_IMPLAUSIBLE);
-    initError(ERR_TPS_1_CIRCUIT_FAILURE);
-    initError(ERR_TPS_2_CIRCUIT_FAILURE);
-    initError(ERR_APPS_1_CIRCUIT_FAILURE);
-    initError(ERR_APPS_2_CIRCUIT_FAILURE);
-    initError(ERR_APPS_TPS_TARGET_FAILURE);
-}
-
-void ErrorHandler::initError(int8_t errID)
-{
-    errors[errID] = {errID, false};
-}
+    : errors(
+          {
+              {ERR_TPS_IMPLAUSIBLE, false},
+              {ERR_APPS_IMPLAUSIBLE, false},
+              {ERR_TPS_1_CIRCUIT_FAILURE, false},
+              {ERR_TPS_2_CIRCUIT_FAILURE, false},
+              {ERR_APPS_1_CIRCUIT_FAILURE, false},
+              {ERR_APPS_2_CIRCUIT_FAILURE, false},
+              {ERR_APPS_TPS_TARGET_FAILURE, false},
+          }){};
 
 void ErrorHandler::raise(int8_t errID)
 {
