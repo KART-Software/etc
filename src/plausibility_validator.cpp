@@ -36,7 +36,7 @@ bool PlausibilityValidator::isCurrentlyValid()
 bool PlausibilityValidator::isValid()
 {
     isValidAllTime *= isCurrentlyValid();
-    return isCurrentlyValid;
+    return isCurrentlyValid();
 }
 
 bool PlausibilityValidator::isAppsPlausible()

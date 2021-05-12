@@ -10,6 +10,18 @@
 #define ERR_APPS_1_CIRCUIT_FAILURE 4
 #define ERR_APPS_2_CIRCUIT_FAILURE 5
 #define ERR_APPS_TPS_TARGET_FAILURE 6
+
+typedef struct
+{
+    int8_t ID;
+    bool raised;
+} Error;
+
+typedef struct
+{
+    Error error[MAX_ERR_LEN];
+} Errors;
+
 class ErrorHandler
 {
 public:
@@ -23,14 +35,6 @@ public:
 
 private:
     void initError(int8_t errID);
-};
-
-typedef Error Errors[MAX_ERR_LEN];
-
-typedef struct Error
-{
-    const uint8_t ID;
-    bool raised;
 };
 
 #endif

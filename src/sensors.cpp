@@ -45,12 +45,12 @@ Apps::
 {
 }
 
-Apps::
-    Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin)
-    : Sensor(minValue, maxValue, intercept, slope),
-      pin(pin)
-{
-}
+// Apps::
+//     Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin)
+//     : Sensor(minValue, maxValue, intercept, slope),
+//       pin(pin)
+// {
+// }
 
 double Apps::read()
 {

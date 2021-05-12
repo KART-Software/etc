@@ -14,16 +14,16 @@ ErrorHandler::
 
 void ErrorHandler::initError(int8_t errID)
 {
-    errors[errID] = {errID, false};
+    errors.error[errID] = {errID, false};
 }
 
 void ErrorHandler::raise(int8_t errID)
 {
     for (int i; i < errorsLength(); i++)
     {
-        if (errors[i].ID == errID)
+        if (errors.error[i].ID == errID)
         {
-            errors[i].raised = true;
+            errors.error[i].raised = true;
         }
     }
 }
@@ -32,9 +32,9 @@ void ErrorHandler::clear(int8_t errID)
 {
     for (int i; i < errorsLength(); i++)
     {
-        if (errors[i].ID == errID)
+        if (errors.error[i].ID == errID)
         {
-            errors[i].raised = false;
+            errors.error[i].raised = false;
         }
     }
 }
@@ -43,7 +43,7 @@ void ErrorHandler::clearAll()
 {
     for (int i; i < errorsLength(); i++)
     {
-        errors[i].raised = false;
+        errors.error[i].raised = false;
     }
 }
 
@@ -57,7 +57,7 @@ String ErrorHandler::errorsToStr()
     String errStr = "";
     for (int i = 0; i < MAX_ERR_LEN; i++)
     {
-        if (errors[i]->raised)
+        if (errors.error[i].raised)
         {
             errStr += String(i);
             if (i != MAX_ERR_LEN - 1)
