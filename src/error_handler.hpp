@@ -17,10 +17,7 @@ typedef struct
     bool raised;
 } Error;
 
-typedef struct
-{
-    Error error[MAX_ERR_LEN];
-} Errors;
+typedef Error Errors[MAX_ERR_LEN];
 
 class ErrorHandler
 {
