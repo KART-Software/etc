@@ -53,7 +53,7 @@ String ErrorHandler::errorsToStr()
     String errStr = "";
     for (int i = 0; i < MAX_ERR_LEN; i++)
     {
-        if (errors[i]->raised)
+        if (errors[i].raised)
         {
             errStr += String(i);
             if (i != MAX_ERR_LEN - 1)
