@@ -2,6 +2,10 @@
 
 SerialLogger::SerialLogger()
 {
+    // Serial.begin(SERIAL_SPEED);
+}
+void SerialLogger::initialize()
+{
     Serial.begin(SERIAL_SPEED);
 }
 
@@ -14,5 +18,5 @@ void SerialLogger::log(unsigned int cycleTime, double apps1Value, double apps2Va
                     ", TPS2: " + String(tps2Value) +
                     ", Plausible: " + String(isPlausible) +
                     ", Error: " + errStr;
-    Serial.print(logStr);
+    Serial.println(logStr);
 }

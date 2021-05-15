@@ -22,6 +22,7 @@ unsigned long lastTime = 0;
 
 void setup()
 {
+  serialLogger.initialize();
   initPins();
   stepperController.setStepperOn();
 }

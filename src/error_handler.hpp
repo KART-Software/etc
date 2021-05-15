@@ -11,7 +11,7 @@
 #define ERR_APPS_2_CIRCUIT_FAILURE 5
 #define ERR_APPS_TPS_TARGET_FAILURE 6
 
-typedef struct Error
+struct Error
 {
     const uint8_t ID;
     bool raised;
