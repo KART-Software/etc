@@ -6,9 +6,7 @@ StepperController::
           Stepper(
               STEPPER_STEPS,
               STEPPER_OUTPUT_PIN_1,
-              STEPPER_OUTPUT_PIN_2,
-              STEPPER_OUTPUT_PIN_3,
-              STEPPER_OUTPUT_PIN_4)),
+              STEPPER_OUTPUT_PIN_2)),
       apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2)
 
 {

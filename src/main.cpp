@@ -38,14 +38,15 @@ void loop()
   tps1.read();
   tps2.read();
 
-  if (plausibilityValidator.isCurrentlyValid())
-  {
-    stepperController.setStepperOff();
-  }
-  if (plausibilityValidator.isValid())
-  {
-    stepperController.control();
-  }
+  // if (plausibilityValidator.isCurrentlyValid())
+  // {
+  //   stepperController.setStepperOff();
+  // }
+  // if (plausibilityValidator.isValid())
+  // {
+  //   stepperController.control();
+  // }
+  stepperController.control();
   serialLogger.log(
       currentTime - lastTime,
       apps1.convertedValue(),
