@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include "M5Stack.h"
 #include "init_pins.hpp"
 
 void initPins()

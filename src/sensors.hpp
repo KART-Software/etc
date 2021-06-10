@@ -1,7 +1,7 @@
 #ifndef _SENSORS_H_
 #define _SENSORS_H_
 
-#include <Arduino.h>
+#include <M5Stack.h>
 
 #include "init_pins.hpp"
 #include "globals.hpp"

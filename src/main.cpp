@@ -1,7 +1,8 @@
-#include <Arduino.h>
-#include <mcp_can.h>
+#include <M5Stack.h>
+// #include <mcp_can.h>
 #include <SPI.h>
 #include <Stepper.h>
+#include <M5Stack.h>
 
 #include "error_handler.hpp"
 #include "init_pins.hpp"
@@ -22,6 +23,8 @@ unsigned long lastTime = 0;
 
 void setup()
 {
+  M5.begin();
+  M5.Power.begin();
   serialLogger.initialize();
   initPins();
   stepperController.setStepperOn();

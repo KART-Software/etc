@@ -1,10 +1,10 @@
 #ifndef _INIT_PINS_H_
 #define _INIT_PINS_H_
 
-#define APPS_1_PIN A0
-#define APPS_2_PIN A1
-#define TPS_1_PIN A2
-#define TPS_2_PIN A3
+#define APPS_1_PIN 7
+#define APPS_2_PIN 8
+#define TPS_1_PIN 9
+#define TPS_2_PIN 10
 
 #define STEPPER_POWER_PIN 2
 

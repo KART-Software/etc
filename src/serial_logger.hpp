@@ -1,9 +1,9 @@
 #ifndef _SERIAL_LOGGER_H_
 #define _SERIAL_LOGGER_H_
 
-#define SERIAL_SPEED 28800
+#define SERIAL_SPEED 115200
 
-#include <Arduino.h>
+#include <M5Stack.h>
 
 class SerialLogger
 {

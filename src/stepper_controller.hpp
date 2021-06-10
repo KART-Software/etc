@@ -3,7 +3,7 @@
 
 #include <Stepper.h>
 #include <PID_v1.h>
-#include <Arduino.h>
+#include <M5Stack.h>
 
 #include "init_pins.hpp"
 #include "sensors.hpp"
