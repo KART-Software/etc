@@ -2,19 +2,21 @@
 #define _STEPPER_CONTROLLER_H_
 
 #include <Stepper.h>
-#include <PID_v1.h>
 #include <M5Stack.h>
+#include <PID_v1.h>
 
 #include "init_pins.hpp"
 #include "sensors.hpp"
 
-#define STEPPER_STEPS 100 //TODO change
+#define STEPPER_STEPS 200 //TODO change
 #define PID_KP 2.0
 #define PID_KI 5.0
 #define PID_KD 1.0
 
 #define STEPPER_OUTPUT_MAX 100 //TODO change
 #define STEPPER_OUTPUT_MIN -100
+
+#define STEPPER_CYCLE_TIME 0.1
 
 class StepperController
 {
@@ -28,6 +30,8 @@ private:
     Stepper stepper;
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
+    PID pid;
+    double tp, output, app;
     void setOutputLimit();
     int validateOutput();
 };
