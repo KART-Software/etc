@@ -12,10 +12,13 @@ StepperController::
 
 {
     pid.SetOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
+    pid.SetMode(AUTOMATIC);
 }
 
 void StepperController::control()
 {
+    tps1->read();
+    apps1->read();
     tp = tps1->convertedValue();
     app = apps1->convertedValue();
     pid.Compute();
@@ -31,6 +34,15 @@ int StepperController::validateOutput()
 {
 }
 
+void StepperController::start()
+{
+    while (1)
+    {
+        this->control();
+        delay(1);
+    }
+}
+
 void StepperController::setStepperOn()
 {
     digitalWrite(STEPPER_POWER_PIN, HIGH);
@@ -38,4 +50,11 @@ void StepperController::setStepperOn()
 void StepperController::setStepperOff()
 {
     digitalWrite(STEPPER_POWER_PIN, LOW);
+}
+
+void startStepper(void *stepperController)
+{
+    StepperController *controller;
+    controller = (StepperController *)stepperController;
+    controller->start();
 }

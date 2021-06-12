@@ -9,9 +9,9 @@
 #include "sensors.hpp"
 
 #define STEPPER_STEPS 200 //TODO change
-#define PID_KP 2.0
-#define PID_KI 5.0
-#define PID_KD 1.0
+#define PID_KP 0.5
+#define PID_KI 0.0
+#define PID_KD 0.0
 
 #define STEPPER_OUTPUT_MAX 100 //TODO change
 #define STEPPER_OUTPUT_MIN -100
@@ -25,6 +25,7 @@ public:
     void control();
     void setStepperOn();
     void setStepperOff();
+    void start();
 
 private:
     Stepper stepper;
@@ -35,5 +36,7 @@ private:
     void setOutputLimit();
     int validateOutput();
 };
+
+void startStepper(void *stepperController);
 
 #endif
