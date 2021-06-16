@@ -2,15 +2,18 @@
 
 StepperController::
     StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
-    : stepper(
-          Stepper(
-              STEPPER_STEPS,
-              STEPPER_OUTPUT_PIN_1,
-              STEPPER_OUTPUT_PIN_2)),
-      apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2),
+    : // stepper(
+      //       Stepper(
+      //           STEPPER_STEPS,
+      //           STEPPER_OUTPUT_PIN_1,
+      //           STEPPER_OUTPUT_PIN_2)),
+      drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN)),
+      apps1(apps1),
+      apps2(apps2), tps1(tps1), tps2(tps2),
       pid(&tp, &output, &app, PID_KP, PID_KI, PID_KD, DIRECT)
-
 {
+    drv8834.setSpeedProfile(BasicStepperDriver::CONSTANT_SPEED);
+    drv8834.setMicrostep(MICROSTEP);
     pid.SetOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
     pid.SetMode(AUTOMATIC);
 }
@@ -22,8 +25,10 @@ void StepperController::control()
     tp = tps1->convertedValue();
     app = apps1->convertedValue();
     pid.Compute();
-    stepper.setSpeed(abs(output));
-    stepper.step(output * STEPPER_CYCLE_TIME); //TODO map
+    drv8834.setRPM(abs(output));
+    drv8834.move(output * STEPPER_CYCLE_TIME);
+    // stepper.setSpeed(abs(output));
+    // stepper.step(output * STEPPER_CYCLE_TIME); //TODO map
 }
 
 void StepperController::setOutputLimit()

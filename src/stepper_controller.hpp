@@ -2,6 +2,7 @@
 #define _STEPPER_CONTROLLER_H_
 
 #include <Stepper.h>
+#include <DRV8834.h>
 #include <M5Stack.h>
 #include <PID_v1.h>
 
@@ -9,14 +10,16 @@
 #include "sensors.hpp"
 
 #define STEPPER_STEPS 200 //TODO change
-#define PID_KP 0.5
-#define PID_KI 0.0
-#define PID_KD 0.0
+#define MICROSTEP 1
 
 #define STEPPER_OUTPUT_MAX 100 //TODO change
 #define STEPPER_OUTPUT_MIN -100
 
 #define STEPPER_CYCLE_TIME 0.1
+
+#define PID_KP 0.5
+#define PID_KI 0.0
+#define PID_KD 0.0
 
 class StepperController
 {
@@ -28,7 +31,8 @@ public:
     void start();
 
 private:
-    Stepper stepper;
+    DRV8834 drv8834;
+    // Stepper stepper;
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
     PID pid;
