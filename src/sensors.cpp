@@ -47,7 +47,8 @@ Apps::
 
 double Apps::read()
 {
-    rawValue = analogRead(pin);
+    // rawValue = analogRead(pin);
+    rawValue = gAdc.value[pin];
     return validatedConvertedValue();
 }
 
@@ -60,6 +61,7 @@ Tps::
 
 double Tps::read()
 {
-    rawValue = analogRead(pin);
+    // rawValue = analogRead(pin);
+    rawValue = gAdc.value[pin];
     return validatedConvertedValue();
 }

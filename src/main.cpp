@@ -36,6 +36,7 @@ void setup()
 void loop()
 {
   currentTime = millis();
+  gAdc.read();
   apps1.read();
   apps2.read();
   tps1.read();

@@ -11,7 +11,7 @@ bool Adc::begin()
 
 void Adc::read()
 {
-    wire->requestFrom(8, 8);
+    wire->requestFrom(ADC_ARDUINO_ADDRESS, READ_BYTE_LENGTH);
     int count = 0;
     while (wire->available())
     {
