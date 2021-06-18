@@ -1,3 +1,4 @@
+#include <M5Stack.h>
 #ifndef _INIT_PINS_H_
 #define _INIT_PINS_H_
 
@@ -8,8 +9,8 @@
 
 #define STEPPER_POWER_PIN 1
 
-#define STEPPER_OUTPUT_PIN_1 16
-#define STEPPER_OUTPUT_PIN_2 17
+// #define STEPPER_OUTPUT_PIN_1 16
+// #define STEPPER_OUTPUT_PIN_2 17
 #define STEPPER_DIR_PIN 16
 #define STEPPER_STEP_PIN 17
 

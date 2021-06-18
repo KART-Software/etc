@@ -29,6 +29,7 @@ void setup()
   serialLogger.initialize();
   initPins();
   stepperController.setStepperOn();
+  gAdc.begin();
   xTaskCreatePinnedToCore(startStepper, "StepperConstrollTask", 8192, (void *)&stepperController, 1, &stepperControllTask, 1);
 }
 
