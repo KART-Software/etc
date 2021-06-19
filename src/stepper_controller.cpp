@@ -20,6 +20,7 @@ StepperController::
 
 void StepperController::control()
 {
+    gAdc.read();
     tps1->read();
     apps1->read();
     tp = tps1->convertedValue();
