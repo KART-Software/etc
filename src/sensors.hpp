@@ -57,7 +57,6 @@ public:
 protected:
     uint16_t rawValue;
     double maxValue, minValue;
-    uint16_t rawMaxValue, rawMinValue;
     double intercept, slope;
 };
 
