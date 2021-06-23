@@ -17,7 +17,7 @@ void Adc::read()
     {
         uint8_t highByte = wire->read();
         uint8_t lowByte = wire->read();
-        value[count] = (uint16_t)256 * highByte + lowByte;
+        value[count] = 256 * highByte + lowByte;
         count++;
     }
 }

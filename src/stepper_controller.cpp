@@ -20,16 +20,14 @@ StepperController::
 
 void StepperController::control()
 {
-    gAdc.read();
+    // gAdc.read();
     tps1->read();
     apps1->read();
     tp = tps1->convertedValue();
     app = apps1->convertedValue();
     pid.Compute();
     drv8834.setRPM(abs(output));
-    drv8834.move(output * STEPPER_CYCLE_TIME);
-    // stepper.setSpeed(abs(output));
-    // stepper.step(output * STEPPER_CYCLE_TIME); //TODO map
+    drv8834.move(output * STEPPER_CYCLE_TIME); //TODO map
 }
 
 void StepperController::setOutputLimit()
