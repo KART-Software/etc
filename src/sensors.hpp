@@ -12,6 +12,12 @@
 #define TPS_1_INTERCEPT 0.0
 #define TPS_2_INTERCEPT 0.0
 
+#define TPS_1_RAW_MAX 1024
+#define TPS_2_RAW_MAX 1024
+
+#define TPS_1_RAW_MIN 0
+#define TPS_2_RAW_MIN 0
+
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
 
@@ -24,6 +30,12 @@
 #define APPS_1_INTERCEPT 0.0
 #define APPS_2_INTERCEPT 0.0
 
+#define APPS_1_RAW_MAX 1024
+#define APPS_2_RAW_MAX 1024
+
+#define APPS_1_RAW_MIN 0
+#define APPS_2_RAW_MIN 0
+
 #define APPS_1_MAX 100
 #define APPS_2_MAX 100
 
@@ -34,24 +46,25 @@ class Sensor
 {
 public:
     Sensor();
-    Sensor(double minValue, double maxValue, double intercept, double slope);
+    Sensor(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue);
     virtual double read() = 0;
     void setRange(double minValue, double maxValue);
-    void setConversion(double intercept, double slope);
+    void setConversion(uint16_t rawMinValue, uint16_t rawMaxValue);
     double convertedValue();
     double validatedConvertedValue();
     bool isInRange();
 
 protected:
-    uint8_t rawValue;
+    uint16_t rawValue;
     double maxValue, minValue;
+    uint16_t rawMaxValue, rawMinValue;
     double intercept, slope;
 };
 
 class Apps : public Sensor
 {
 public:
-    Apps(double minValue, double maxValue, double intercept, double slope, uint8_t pin);
+    Apps(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t pin);
     double read();
 
 protected:
@@ -60,7 +73,7 @@ protected:
 class Tps : public Sensor
 {
 public:
-    Tps(double minValue, double maxValue, double intercept, double slope, uint8_t pin);
+    Tps(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t pin);
     double read();
 
 protected:

@@ -16,8 +16,8 @@
 
 // #define STEPPER_OUTPUT_PIN_1 16
 // #define STEPPER_OUTPUT_PIN_2 17
-#define STEPPER_DIR_PIN 16
-#define STEPPER_STEP_PIN 17
+#define STEPPER_DIR_PIN 25
+#define STEPPER_STEP_PIN 26
 
 void initPins();
 
