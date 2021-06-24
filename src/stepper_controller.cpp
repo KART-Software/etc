@@ -18,6 +18,40 @@ StepperController::
     pid.SetMode(AUTOMATIC);
 }
 
+void StepperController::initializeOrigin()
+{
+    drv8834.setRPM(INITIALIZE_RPM);
+    uint16_t tps1RawMinValue, tps1RawMaxValue, tps2RawMinValue, tps2RawMaxValue;
+
+    tps1RawMinValue = gAdc.value[TPS_1_PIN];
+    while (true)
+    {
+        drv8834.move(-INITIALIZE_STEPS);
+        gAdc.read();
+        if (abs((int)gAdc.value[TPS_1_PIN] - (int)tps1RawMinValue) < SAME_POSISTION_THRESHOLD)
+        {
+            tps1RawMinValue = gAdc.value[TPS_1_PIN];
+            tps2RawMinValue = gAdc.value[TPS_2_PIN];
+            break;
+        }
+        tps1RawMinValue = gAdc.value[TPS_1_PIN];
+    }
+
+    tps1RawMaxValue = gAdc.value[TPS_1_PIN];
+    while (true)
+    {
+        drv8834.move(INITIALIZE_STEPS);
+        gAdc.read();
+        if (abs((int)gAdc.value[TPS_1_PIN] - (int)tps1RawMaxValue))
+        {
+            tps1RawMaxValue = gAdc.value[TPS_1_PIN];
+            tps2RawMaxValue = gAdc.value[TPS_2_PIN];
+            break;
+        }
+        tps1RawMaxValue = gAdc.value[TPS_1_PIN];
+    }
+}
+
 void StepperController::control()
 {
     // gAdc.read();

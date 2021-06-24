@@ -21,10 +21,15 @@
 #define PID_KI 0.0
 #define PID_KD 0.0
 
+#define INITIALIZE_RPM 30
+#define INITIALIZE_STEPS 30
+#define SAME_POSISTION_THRESHOLD 10
+
 class StepperController
 {
 public:
     StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
+    void initializeOrigin();
     void control();
     void setStepperOn();
     void setStepperOff();
