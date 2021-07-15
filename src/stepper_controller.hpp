@@ -25,6 +25,9 @@
 #define INITIALIZE_STEPS 30
 #define SAME_POSISTION_THRESHOLD 10
 
+#define ENABLE disable
+#define DISABLE enable
+
 class StepperController
 {
 public:

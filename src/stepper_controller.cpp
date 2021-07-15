@@ -7,7 +7,7 @@ StepperController::
       //           STEPPER_STEPS,
       //           STEPPER_OUTPUT_PIN_1,
       //           STEPPER_OUTPUT_PIN_2)),
-      drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN)),
+      drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN, STEPPER_ENABLE_PIN)),
       apps1(apps1),
       apps2(apps2), tps1(tps1), tps2(tps2),
       pid(&tp, &output, &app, PID_KP, PID_KI, PID_KD, DIRECT)
@@ -83,11 +83,11 @@ void StepperController::start()
 
 void StepperController::setStepperOn()
 {
-    digitalWrite(STEPPER_POWER_PIN, HIGH);
+    drv8834.ENABLE();
 }
 void StepperController::setStepperOff()
 {
-    digitalWrite(STEPPER_POWER_PIN, LOW);
+    drv8834.DISABLE();
 }
 
 void startStepper(void *stepperController)
