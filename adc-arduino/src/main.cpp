@@ -27,12 +27,12 @@ void reply()
   value[0] = analogRead(A0);
   value[1] = analogRead(A1);
   value[2] = analogRead(A2);
-  value[3] = analogRead(A4);
+  value[3] = analogRead(A3);
 
   for (int i = 0; i < 4; i++)
   {
     sendData[2 * i] = highByte(value[i]);
-    sendData[2 * i + 1] = lowByte(value[0]);
+    sendData[2 * i + 1] = lowByte(value[i]);
   }
   Wire.write(sendData, 8);
 }
