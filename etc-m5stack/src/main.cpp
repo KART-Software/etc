@@ -42,7 +42,7 @@ void loop()
   tps1.read();
   tps2.read();
 
-  if (plausibilityValidator.isCurrentlyValid())
+  if (!plausibilityValidator.isCurrentlyValid())
   {
     stepperController.setStepperOff();
     vTaskSuspend(stepperControllTask);
