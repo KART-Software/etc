@@ -12,11 +12,11 @@
 #define TPS_1_INTERCEPT 0.0
 #define TPS_2_INTERCEPT 0.0
 
-#define TPS_1_RAW_MAX 1023
-#define TPS_2_RAW_MAX 1023
+#define TPS_1_RAW_MAX 768
+#define TPS_2_RAW_MAX 768
 
-#define TPS_1_RAW_MIN 0
-#define TPS_2_RAW_MIN 0
+#define TPS_1_RAW_MIN 256
+#define TPS_2_RAW_MIN 256
 
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
