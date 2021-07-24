@@ -4,8 +4,8 @@
 #include <Stepper.h>
 #include <DRV8834.h>
 #include <M5Stack.h>
-#include <PID_v1.h>
 
+#include "pid.hpp"
 #include "init_pins.hpp"
 #include "sensors.hpp"
 
@@ -17,7 +17,7 @@
 
 #define STEPPER_CYCLE_TIME 0.1
 
-#define PID_KP 2.0
+#define PID_KP 4.0
 #define PID_KI 0.0
 #define PID_KD 0.0
 
@@ -43,7 +43,6 @@ public:
 
 private:
     DRV8834 drv8834;
-    // Stepper stepper;
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
     PID pid;

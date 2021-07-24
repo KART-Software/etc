@@ -2,22 +2,16 @@
 
 StepperController::
     StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
-    : // stepper(
-      //       Stepper(
-      //           STEPPER_STEPS,
-      //           STEPPER_OUTPUT_PIN_1,
-      //           STEPPER_OUTPUT_PIN_2)),
-      drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN, STEPPER_ENABLE_PIN)),
+    : drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN, STEPPER_ENABLE_PIN)),
       apps1(apps1),
       apps2(apps2), tps1(tps1), tps2(tps2),
-      pid(&tp, &output, &app, PID_KP, PID_KI, PID_KD, DIRECT)
+      pid(PID_KP, PID_KI, PID_KD)
 {
     drv8834.setEnableActiveState(LOW);
     drv8834.setSpeedProfile(BasicStepperDriver::CONSTANT_SPEED);
     drv8834.setMicrostep(MICROSTEP);
     drv8834.begin();
-    pid.SetOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
-    pid.SetMode(AUTOMATIC);
+    pid.setOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
 }
 
 // void StepperController::initializeOrigin()
@@ -61,9 +55,9 @@ void StepperController::control()
     // apps1->read();
     tp = tps1->convertedValue();
     app = apps1->convertedValue();
-    pid.Compute();
+    output = pid.calculate(app, tp);
     drv8834.setRPM(abs(output));
-    drv8834.move(output * STEPPER_CYCLE_TIME); //TODO map
+    drv8834.move(output * STEPPER_CYCLE_TIME);
 }
 
 void StepperController::setOutputLimit()
