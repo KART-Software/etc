@@ -12,6 +12,7 @@ StepperController::
     drv8834.setMicrostep(MICROSTEP);
     drv8834.begin();
     pid.setOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
+    pid.initialize(tps1->convertedValue(), apps1->convertedValue());
 }
 
 // void StepperController::initializeOrigin()
