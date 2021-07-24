@@ -25,6 +25,7 @@ unsigned long lastTime = 0;
 
 void setup()
 {
+  delay(500);
   M5.begin();
   serialLogger.initialize();
   initPins();
