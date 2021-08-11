@@ -1,7 +1,6 @@
 #include <M5Stack.h>
 // #include <mcp_can.h>
 #include <SPI.h>
-#include <Stepper.h>
 #include <M5Stack.h>
 
 #include "error_handler.hpp"

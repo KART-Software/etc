@@ -1,7 +1,6 @@
 #ifndef _STEPPER_CONTROLLER_H_
 #define _STEPPER_CONTROLLER_H_
 
-#include <Stepper.h>
 #include <DRV8834.h>
 #include <M5Stack.h>
 
