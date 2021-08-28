@@ -79,7 +79,7 @@ bool PlausibilityValidator::isApps1CircuitValid()
         lastApps1CircuitValidTime = now;
         return true;
     }
-    if (now - lastAppsPlausibleTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    if (now - lastApps1CircuitValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
     {
         gErrorHandler.raise(ERR_APPS_1_CIRCUIT_FAILURE);
         return false;
@@ -95,7 +95,7 @@ bool PlausibilityValidator::isApps2CircuitValid()
         lastApps2CircuitValidTime = now;
         return true;
     }
-    if (now - lastAppsPlausibleTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    if (now - lastApps2CircuitValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
     {
         gErrorHandler.raise(ERR_APPS_2_CIRCUIT_FAILURE);
         return false;
@@ -111,7 +111,7 @@ bool PlausibilityValidator::isTps1CircuitValid()
         lastTps1CircuitValidTime = now;
         return true;
     }
-    if (now - lastTpsPlausibleTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    if (now - lastTps1CircuitValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
     {
         gErrorHandler.raise(ERR_TPS_1_CIRCUIT_FAILURE);
         return false;
@@ -127,7 +127,7 @@ bool PlausibilityValidator::isTps2CircuitValid()
         lastTps2CircuitValidTime = now;
         return true;
     }
-    if (now - lastTpsPlausibleTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    if (now - lastTps2CircuitValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
     {
         gErrorHandler.raise(ERR_TPS_2_CIRCUIT_FAILURE);
         return false;

@@ -47,6 +47,7 @@ void loop()
     stepperController.setStepperOff();
     vTaskSuspend(stepperControllTask);
   }
+  gErrorHandler.clearAll();
   serialLogger.log(
       currentTime - lastTime,
       apps1.convertedValue(),
