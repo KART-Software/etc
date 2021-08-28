@@ -58,7 +58,7 @@ void StepperController::control()
     app = apps1->convertedValue();
     output = pid.calculate(app, tp);
     drv8834.setRPM(abs(output));
-    drv8834.move(output * STEPPER_CYCLE_TIME);
+    drv8834.move(TPS_DIRECTION * output * STEPPER_CYCLE_TIME);
 }
 
 void StepperController::setOutputLimit()

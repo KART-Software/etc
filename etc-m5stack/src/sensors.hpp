@@ -6,17 +6,13 @@
 #include "init_pins.hpp"
 #include "globals.hpp"
 
-#define TPS_1_SLOPE 1.0
-#define TPS_2_SLOPE 1.0
+#define TPS_1_RAW_MAX 100
+#define TPS_2_RAW_MAX 100
 
-#define TPS_1_INTERCEPT 0.0
-#define TPS_2_INTERCEPT 0.0
+#define TPS_1_RAW_MIN 500
+#define TPS_2_RAW_MIN 500
 
-#define TPS_1_RAW_MAX 768
-#define TPS_2_RAW_MAX 768
-
-#define TPS_1_RAW_MIN 256
-#define TPS_2_RAW_MIN 256
+#define TPS_DIRECTION -1
 
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
@@ -24,17 +20,11 @@
 #define TPS_1_MIN 0
 #define TPS_2_MIN 0
 
-#define APPS_1_SLOPE 1.0
-#define APPS_2_SLOPE 1.0
+#define APPS_1_RAW_MAX 427
+#define APPS_2_RAW_MAX 580
 
-#define APPS_1_INTERCEPT 0.0
-#define APPS_2_INTERCEPT 0.0
-
-#define APPS_1_RAW_MAX 1023
-#define APPS_2_RAW_MAX 1023
-
-#define APPS_1_RAW_MIN 0
-#define APPS_2_RAW_MIN 0
+#define APPS_1_RAW_MIN 626
+#define APPS_2_RAW_MIN 383
 
 #define APPS_1_MAX 100
 #define APPS_2_MAX 100
