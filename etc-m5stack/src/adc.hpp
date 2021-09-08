@@ -14,7 +14,7 @@ public:
     Adc(uint8_t address, TwoWire *wire = &Wire);
     bool begin();
     void read();
-    uint16_t value[READ_DATA_LENGTH];
+    int16_t value[READ_DATA_LENGTH];
 
 private:
     const uint8_t address;

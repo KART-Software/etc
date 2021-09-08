@@ -42,11 +42,11 @@ void loop()
   tps1.read();
   tps2.read();
 
-  // if (!plausibilityValidator.isCurrentlyValid())
-  // {
-  //   stepperController.setStepperOff();
-  //   vTaskSuspend(stepperControllTask);
-  // }
+  if (!plausibilityValidator.isCurrentlyValid())
+  {
+    stepperController.setStepperOff();
+    vTaskSuspend(stepperControllTask);
+  }
   gErrorHandler.clearAll();
   serialLogger.log(
       currentTime - lastTime,

@@ -1,6 +1,6 @@
 #include "sensors.hpp"
 
-Sensor::Sensor(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue)
+Sensor::Sensor(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue)
 {
     setRange(minValue, maxValue);
     setConversion(rawMinValue, rawMaxValue);
@@ -12,7 +12,7 @@ void Sensor::setRange(double minValue, double maxValue)
     this->maxValue = maxValue;
 }
 
-void Sensor::setConversion(uint16_t rawMinValue, uint16_t rawMaxValue)
+void Sensor::setConversion(int16_t rawMinValue, int16_t rawMaxValue)
 {
     this->slope = (maxValue - minValue) / (rawMaxValue - rawMinValue);
     this->intercept = (rawMaxValue * minValue - rawMinValue * maxValue) / (rawMaxValue - rawMinValue);
@@ -39,7 +39,7 @@ bool Sensor::isInRange()
 }
 
 Apps::
-    Apps(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t pin)
+    Apps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
     : Sensor(minValue, maxValue, rawMinValue, rawMaxValue),
       pin(pin)
 {
@@ -53,7 +53,7 @@ double Apps::read()
 }
 
 Tps::
-    Tps(double minValue, double maxValue, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t pin)
+    Tps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
     : Sensor(minValue, maxValue, rawMinValue, rawMaxValue),
       pin(pin)
 {

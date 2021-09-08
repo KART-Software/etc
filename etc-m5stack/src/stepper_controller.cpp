@@ -18,7 +18,7 @@ StepperController::
 // void StepperController::initializeOrigin()
 // {
 //     drv8834.setRPM(INITIALIZE_RPM);
-//     uint16_t tps1RawMinValue, tps1RawMaxValue, tps2RawMinValue, tps2RawMaxValue;
+//     int16_t tps1RawMinValue, tps1RawMaxValue, tps2RawMinValue, tps2RawMaxValue;
 
 //     tps1RawMinValue = gAdc.value[TPS_1_PIN];
 //     while (true)
