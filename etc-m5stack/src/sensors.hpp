@@ -48,6 +48,8 @@ public:
     double convertedValue();
     double validatedConvertedValue();
     bool isInRange();
+    double getMaxValue();
+    double getMinValue();
 
 protected:
     int16_t rawValue;

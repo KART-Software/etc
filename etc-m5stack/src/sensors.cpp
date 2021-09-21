@@ -38,6 +38,16 @@ bool Sensor::isInRange()
     return true;
 }
 
+double Sensor::getMaxValue()
+{
+    return maxValue;
+}
+
+double Sensor::getMinValue()
+{
+    return minValue;
+}
+
 Apps::
     Apps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
     : Sensor(minValue, maxValue, rawMinValue, rawMaxValue),
