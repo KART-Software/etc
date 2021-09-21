@@ -15,6 +15,14 @@ void setup()
 
 void loop()
 {
+  Serial.print(analogRead(A0));
+  Serial.print("  ");
+  Serial.print(analogRead(A1));
+  Serial.print("  ");
+  Serial.print(analogRead(A2));
+  Serial.print("  ");
+  Serial.print(analogRead(A3));
+  Serial.println();
   delay(100);
 }
 
@@ -23,7 +31,6 @@ byte sendData[8];
 
 void reply()
 {
-  Serial.print("requested");
   value[0] = analogRead(A0);
   value[1] = analogRead(A1);
   value[2] = analogRead(A2);
