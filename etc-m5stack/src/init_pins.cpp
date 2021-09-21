@@ -2,7 +2,5 @@
 
 void initPins()
 {
-    pinMode(STEPPER_ENABLE_PIN, OUTPUT);
-    pinMode(STEPPER_DIR_PIN, OUTPUT);
-    pinMode(STEPPER_STEP_PIN, OUTPUT);
+    pinMode(SERVO_POWER_PIN, OUTPUT);
 }
