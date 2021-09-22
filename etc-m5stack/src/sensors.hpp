@@ -12,8 +12,8 @@
 #define TPS_1_RAW_MIN 400
 #define TPS_2_RAW_MIN 400
 
-#define TPS_1_DIRECTION -1
-#define TPS_2_DIRECTION -1
+// #define TPS_1_DIRECTION -1
+// #define TPS_2_DIRECTION -1
 
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
@@ -21,9 +21,12 @@
 #define TPS_1_MIN 0
 #define TPS_2_MIN 0
 
-#define APPS_MARGIN 20
-#define APPS1_DIRECTION -1
-#define APPS2_DIRECTION 1
+#define TPS_MARGIN 2
+
+#define TP_SAME_POSITION_THRESHOLD 2
+
+// #define APPS1_DIRECTION -1
+// #define APPS2_DIRECTION 1
 
 #define APPS_1_RAW_MAX 20
 #define APPS_2_RAW_MAX 1000
@@ -37,11 +40,13 @@
 #define APPS_1_MIN 0
 #define APPS_2_MIN 0
 
+#define APPS_MARGIN 2
+
 class Sensor
 {
 public:
     Sensor();
-    Sensor(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue);
+    Sensor(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue);
     virtual double read() = 0;
     void setRange(double minValue, double maxValue);
     void setConversion(int16_t rawMinValue, int16_t rawMaxValue);
@@ -54,13 +59,14 @@ public:
 protected:
     int16_t rawValue;
     double maxValue, minValue;
+    double margin;
     double intercept, slope;
 };
 
 class Apps : public Sensor
 {
 public:
-    Apps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
+    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
     double read();
 
 protected:
@@ -69,7 +75,7 @@ protected:
 class Tps : public Sensor
 {
 public:
-    Tps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
+    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
     double read();
 
 protected:

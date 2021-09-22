@@ -1,6 +1,7 @@
 #include "sensors.hpp"
 
-Sensor::Sensor(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue)
+Sensor::Sensor(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue)
+    : margin(margin)
 {
     setRange(minValue, maxValue);
     setConversion(rawMinValue, rawMaxValue);
@@ -31,7 +32,7 @@ double Sensor::validatedConvertedValue()
 bool Sensor::isInRange()
 {
     double value = convertedValue();
-    if (value < minValue || value > maxValue)
+    if (value < minValue - margin || value > maxValue + margin)
     {
         return false;
     }
@@ -49,8 +50,8 @@ double Sensor::getMinValue()
 }
 
 Apps::
-    Apps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
-    : Sensor(minValue, maxValue, rawMinValue, rawMaxValue),
+    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
       pin(pin)
 {
 }
@@ -63,8 +64,8 @@ double Apps::read()
 }
 
 Tps::
-    Tps(double minValue, double maxValue, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
-    : Sensor(minValue, maxValue, rawMinValue, rawMaxValue),
+    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
       pin(pin)
 {
 }
