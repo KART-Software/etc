@@ -4,8 +4,8 @@
 #include <ESP32Servo.h>
 #include <M5Stack.h>
 
-#include "init_pins.hpp"
 #include "sensors.hpp"
+#include "globals.hpp"
 
 #define SERVO_CYCLE_TIME_MS 100
 
@@ -16,6 +16,13 @@
 
 #define SERVO_ANGLE_MIN 0
 #define SERVO_ANGLE_MAX 180
+
+#define SERVO_ANGLE_LIMIT_MIN 0
+#define SERVO_ANGLE_LIMIT_MAX 270
+
+#define SERVO_DIRECTION 1 // 1 or -1
+
+#define INITIAL_SERVO_ANGLE 90
 
 class ServoController
 {
@@ -31,14 +38,20 @@ public:
     void setServoOff();
     void start();
     enum State getState();
+    int getAngle();
+    void rotate(int angle);
+    void initializeAngleRangeAutomatic();
+    void initializeAngleRangeManual();
 
 private:
     Servo servo;
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
+    int angle;
     double intercept, slope;
     double tp, output, app;
     void setConversion();
+    void setConversion(int angleMin, int angleMax);
     int convertToAngle(double app);
     enum State state;
 };
