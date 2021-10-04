@@ -3,6 +3,8 @@
 
 #define SELF_ADDR 8
 #define NUMBER_OF_BYTES_SENT 8
+#define NUMBER_OF_VALUES_SENT 4
+#define ANALOG(i) i + 14
 
 void reply();
 
@@ -15,31 +17,29 @@ void setup()
 
 void loop()
 {
-  Serial.print(analogRead(A0));
-  Serial.print("  ");
-  Serial.print(analogRead(A1));
-  Serial.print("  ");
-  Serial.print(analogRead(A2));
-  Serial.print("  ");
-  Serial.print(analogRead(A3));
+  for (int i = 0; i < NUMBER_OF_VALUES_SENT; i++)
+  {
+    Serial.print(analogRead(ANALOG(i)));
+    Serial.print("  ");
+  }
   Serial.println();
   delay(100);
 }
 
-uint16_t value[4];
-byte sendData[8];
+uint16_t value[NUMBER_OF_VALUES_SENT];
+byte sendData[NUMBER_OF_BYTES_SENT];
 
 void reply()
 {
-  value[0] = analogRead(A0);
-  value[1] = analogRead(A1);
-  value[2] = analogRead(A2);
-  value[3] = analogRead(A3);
+  for (int i = 0; i < NUMBER_OF_VALUES_SENT; i++)
+  {
+    value[i] = analogRead(ANALOG(i));
+  }
 
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < NUMBER_OF_VALUES_SENT; i++)
   {
     sendData[2 * i] = highByte(value[i]);
     sendData[2 * i + 1] = lowByte(value[i]);
   }
-  Wire.write(sendData, 8);
+  Wire.write(sendData, NUMBER_OF_BYTES_SENT);
 }
