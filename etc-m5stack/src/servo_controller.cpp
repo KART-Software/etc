@@ -70,7 +70,7 @@ int ServoController::getAngle()
 
 void ServoController::rotate(int angle)
 {
-    this->angle = this->angle + angle;
+    this->angle = constrain(this->angle + angle, SERVO_ANGLE_LIMIT_MIN, SERVO_ANGLE_LIMIT_MAX);
     servo.write(this->angle);
 }
 
@@ -94,7 +94,7 @@ void ServoController::initializeAngleRangeAutomatic()
         tps1->read();
         if (tps1->convertedValue() < tps1->getMinValue())
         {
-            angleMin = angle;
+            angleMin = angle + 1;
             break;
         }
         rotate(SERVO_DIRECTION * (-1));
@@ -107,7 +107,7 @@ void ServoController::initializeAngleRangeAutomatic()
         tps1->read();
         if (tps1->getMaxValue() < tps1->convertedValue())
         {
-            angleMax = angle;
+            angleMax = angle - 1;
             break;
         }
         rotate(SERVO_DIRECTION * 1);
