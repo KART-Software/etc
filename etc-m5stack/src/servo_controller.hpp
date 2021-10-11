@@ -14,11 +14,8 @@
 
 #define SERVO_PWM_FREQUENCY 200
 
-#define SERVO_ANGLE_MIN 0
-#define SERVO_ANGLE_MAX 180
-
 #define SERVO_ANGLE_LIMIT_MIN 0
-#define SERVO_ANGLE_LIMIT_MAX 270
+#define SERVO_ANGLE_LIMIT_MAX 180
 
 #define SERVO_DIRECTION -1 // 1 or -1
 
@@ -49,10 +46,10 @@ private:
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
     int angle;
+    int angleMin, angleMax;
     double intercept, slope;
     double tp, output, app;
     void setConversion();
-    void setConversion(int angleMin, int angleMax);
     int convertToAngle(double app);
     enum State state;
 };

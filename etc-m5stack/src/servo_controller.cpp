@@ -12,14 +12,6 @@ void ServoController::setConversion()
 {
     double apps1Max = apps1->getMaxValue();
     double apps1Min = apps1->getMinValue();
-    slope = (SERVO_ANGLE_MAX - SERVO_ANGLE_MIN) / (apps1Max - apps1Min);
-    intercept = (apps1Max * SERVO_ANGLE_MIN - apps1Min * SERVO_ANGLE_MAX) / (apps1Max - apps1Min);
-}
-
-void ServoController::setConversion(int angleMin, int angleMax)
-{
-    double apps1Max = apps1->getMaxValue();
-    double apps1Min = apps1->getMinValue();
     slope = (angleMax - angleMin) / (apps1Max - apps1Min);
     intercept = (apps1Max * angleMin - apps1Min * angleMax) / (apps1Max - apps1Min);
 }
@@ -81,8 +73,6 @@ void ServoController::initializeAngleRangeAutomatic()
     gAdc.read();
     tps1->read();
 
-    int angleMin, angleMax;
-
     if (tps1->convertedValue() < tps1->getMinValue() || tps1->getMaxValue() < tps1->convertedValue())
     {
     }
@@ -113,7 +103,7 @@ void ServoController::initializeAngleRangeAutomatic()
         delay(20);
     }
 
-    setConversion(angleMin, angleMax);
+    setConversion();
 }
 
 void startServo(void *servoController)
