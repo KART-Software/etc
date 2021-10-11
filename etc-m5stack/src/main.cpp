@@ -27,8 +27,9 @@ void setup()
   M5.begin();
   serialLogger.initialize();
   initPins();
-  servoController.setServoOn();
   gAdc.begin();
+  servoController.setServoOn();
+  servoController.initializeAngleRangeAutomatic();
   xTaskCreatePinnedToCore(startServo, "ServoConstrollTask", 8192, (void *)&servoController, 1, &servoControllTask, 1);
 }
 
