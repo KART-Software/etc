@@ -40,6 +40,7 @@ public:
     void rotate(int angle);
     void initializeAngleRangeAutomatic();
     void initializeAngleRangeManual();
+    double appToTargetTp(double app);
 
 private:
     Servo servo;

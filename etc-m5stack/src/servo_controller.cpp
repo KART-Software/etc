@@ -24,7 +24,8 @@ int ServoController::convertToAngle(double app)
 void ServoController::control()
 {
     app = apps1->convertedValue();
-    angle = convertToAngle(app);
+    double targetTp = appToTargetTp(app);
+    angle = convertToAngle(targetTp);
     servo.write(angle);
 }
 
@@ -104,6 +105,11 @@ void ServoController::initializeAngleRangeAutomatic()
     }
 
     setConversion();
+}
+
+double ServoController::appToTargetTp(double app)
+{
+    return app;
 }
 
 void startServo(void *servoController)
