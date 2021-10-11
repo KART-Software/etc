@@ -6,7 +6,6 @@ ServoController::ServoController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
 {
     servo.setPeriodHertz(SERVO_PWM_FREQUENCY);
     servo.attach(SERVO_PWM_PIN, SERVO_PULSE_WIDTH_MICROS_MIN, SERVO_PULSE_WIDTH_MICROS_MAX);
-    initializeAngleRangeAutomatic();
 }
 
 void ServoController::setConversion()
@@ -94,7 +93,7 @@ void ServoController::initializeAngleRangeAutomatic()
         tps1->read();
         if (tps1->convertedValue() < tps1->getMinValue())
         {
-            angleMin = angle + 1;
+            angleMin = angle + SERVO_DIRECTION * (1 + INITIALIZING_AMEND_ANGLE);
             break;
         }
         rotate(SERVO_DIRECTION * (-1));
@@ -107,7 +106,7 @@ void ServoController::initializeAngleRangeAutomatic()
         tps1->read();
         if (tps1->getMaxValue() < tps1->convertedValue())
         {
-            angleMax = angle - 1;
+            angleMax = angle - SERVO_DIRECTION * (1 + INITIALIZING_AMEND_ANGLE);
             break;
         }
         rotate(SERVO_DIRECTION * 1);

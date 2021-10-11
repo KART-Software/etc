@@ -20,9 +20,10 @@
 #define SERVO_ANGLE_LIMIT_MIN 0
 #define SERVO_ANGLE_LIMIT_MAX 270
 
-#define SERVO_DIRECTION 1 // 1 or -1
+#define SERVO_DIRECTION -1 // 1 or -1
 
 #define INITIAL_SERVO_ANGLE 90
+#define INITIALIZING_AMEND_ANGLE 3
 
 class ServoController
 {
