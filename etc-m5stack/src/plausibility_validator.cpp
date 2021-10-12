@@ -138,9 +138,9 @@ bool PlausibilityValidator::isTps2CircuitValid()
 bool PlausibilityValidator::isAppsTpsTargetValid()
 {
     unsigned long now = millis();
-    double appsValue = apps1->validatedConvertedValue() + apps2->validatedConvertedValue();
+    double targetTp = apps1->convertToTargetTp() + apps2->convertToTargetTp();
     double tpsValue = tps1->validatedConvertedValue() + tps2->validatedConvertedValue();
-    if (abs(appsValue - tpsValue) < 10)
+    if (abs(targetTp - tpsValue) < 10)
     { //TODO
         lastAppsTpsTargetValidTime = now;
         return true;

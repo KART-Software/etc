@@ -40,7 +40,6 @@ public:
     void rotate(int angle);
     void initializeAngleRangeAutomatic();
     void initializeAngleRangeManual();
-    double appToTargetTp(double app);
 
 private:
     Servo servo;
@@ -49,7 +48,6 @@ private:
     int angle;
     int angleMin, angleMax;
     double intercept, slope;
-    double tp, output, app;
     void setConversion();
     int convertToAngle(double app);
     enum State state;

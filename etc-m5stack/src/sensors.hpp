@@ -6,11 +6,11 @@
 #include "init_pins.hpp"
 #include "globals.hpp"
 
-#define TPS_1_RAW_MAX 100
-#define TPS_2_RAW_MAX 100
+#define TPS_1_RAW_MAX 506
+#define TPS_2_RAW_MAX 513
 
-#define TPS_1_RAW_MIN 400
-#define TPS_2_RAW_MIN 400
+#define TPS_1_RAW_MIN 348
+#define TPS_2_RAW_MIN 670
 
 // #define TPS_1_DIRECTION -1
 // #define TPS_2_DIRECTION -1
@@ -21,18 +21,18 @@
 #define TPS_1_MIN 0
 #define TPS_2_MIN 0
 
-#define TPS_MARGIN 2
+#define TPS_MARGIN 5
 
 #define TP_SAME_POSITION_THRESHOLD 2
 
 // #define APPS1_DIRECTION -1
 // #define APPS2_DIRECTION 1
 
-#define APPS_1_RAW_MAX 20
-#define APPS_2_RAW_MAX 1000
+#define APPS_1_RAW_MAX 1
+#define APPS_2_RAW_MAX 1023
 
-#define APPS_1_RAW_MIN 1000
-#define APPS_2_RAW_MIN 20
+#define APPS_1_RAW_MIN 1023
+#define APPS_2_RAW_MIN 1
 
 #define APPS_1_MAX 100
 #define APPS_2_MAX 100
@@ -40,7 +40,7 @@
 #define APPS_1_MIN 0
 #define APPS_2_MIN 0
 
-#define APPS_MARGIN 2
+#define APPS_MARGIN 5
 
 class Sensor
 {
@@ -68,6 +68,7 @@ class Apps : public Sensor
 public:
     Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
     double read();
+    double convertToTargetTp();
 
 protected:
     uint8_t pin;
