@@ -8,6 +8,7 @@
 #include "plausibility_validator.hpp"
 #include "servo_controller.hpp"
 #include "serial_logger.hpp"
+#include "lcd_indicator.hpp"
 
 TaskHandle_t servoControllTask;
 
@@ -18,8 +19,10 @@ Tps tps2(TPS_2_MIN, TPS_2_MAX, TPS_MARGIN, TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_P
 PlausibilityValidator plausibilityValidator(&apps1, &apps2, &tps1, &tps2);
 ServoController servoController(&apps1, &apps2, &tps1, &tps2);
 SerialLogger serialLogger;
+LcdIndicator lcdIndicator;
 unsigned long currentTime = 0;
 unsigned long lastTime = 0;
+int cycleCount = 0;
 
 void setup()
 {
@@ -35,6 +38,7 @@ void setup()
 
 void loop()
 {
+  cycleCount++;
   currentTime = millis();
   gAdc.read();
   apps1.read();
@@ -47,7 +51,6 @@ void loop()
     servoController.setServoOff();
     vTaskSuspend(servoControllTask);
   }
-  gErrorHandler.clearAll();
   serialLogger.log(
       currentTime - lastTime,
       apps1.convertedValue(),
@@ -57,4 +60,10 @@ void loop()
       plausibilityValidator.isValid(),
       gErrorHandler.errorsToStr());
   lastTime = currentTime;
+
+  if (cycleCount > LCD_UPDATE_PER_CYCLES)
+  {
+    lcdIndicator.update();
+    cycleCount = 0;
+  }
 }
