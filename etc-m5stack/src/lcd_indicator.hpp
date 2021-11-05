@@ -16,22 +16,24 @@ class LcdIndicator
 {
 public:
     LcdIndicator();
-    virtual void initialize();
-    virtual void setGui();
-    virtual void update();
+    void initialize();
+    void drawFooter(String footerString[]);
+    virtual void setGui(){};
+    virtual void update(){};
 
 private:
     const int16_t lcdWidth = 320;
     const int16_t lcdHeight = 240;
-    const String footerString[3];
+    String footerString[3];
+    const int8_t footerTextSize = 1;
     const int16_t footerSeparatorX[2] = {106, 214};
     const int16_t footerCursorX[3] = {0, 106, 214};
     const int16_t footerCursorY = 208;
+    const int16_t footerCursorShiftY = 10;
     const int16_t footerHeight = 32;
-    void drawFooter();
 };
 
-class ErrorIndicator : LcdIndicator
+class ErrorIndicator : public LcdIndicator
 {
 public:
     ErrorIndicator();
@@ -39,6 +41,7 @@ public:
     void initialize();
 
 private:
+    const int8_t textSize = 2;
     const String string[ERRORS_LENGTH] = {"TPS IMPLS",
                                           "APPS IMPLS",
                                           "TPS1 CIRCT",
@@ -51,7 +54,7 @@ private:
     const int16_t cursorShiftY = 19;
     const int16_t cellWidth = 160;
     const int16_t cellHeight = 52;
-    const String footerString[3] = {"STOP", "<-LONG PRESS->", "Adjuster Mode"};
+    String footerString[3] = {"STOP", "Clear Errors", "Adjuster Mode"};
     void raise(int errorID);
     void normalizeAll();
     void normalize(int errorID);
