@@ -59,9 +59,31 @@ int ServoController::getAngle()
     return angle;
 }
 
+int ServoController::getAngleMin()
+{
+    return angleMin;
+}
+
+int ServoController::getAngleMax()
+{
+    return angleMax;
+}
+
 void ServoController::rotate(int angle)
 {
     this->angle = constrain(this->angle + angle, SERVO_ANGLE_LIMIT_MIN, SERVO_ANGLE_LIMIT_MAX);
+    servo.write(this->angle);
+}
+
+void ServoController::goTo(int angle)
+{
+    this->angle = angle;
+    servo.write(this->angle);
+}
+
+void ServoController::close()
+{
+    this->angle = getAngleMin();
     servo.write(this->angle);
 }
 
