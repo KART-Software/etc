@@ -37,9 +37,13 @@ public:
     void start();
     enum State getState();
     int getAngle();
+    int getAngleMin();
+    int getAngleMax();
     void rotate(int angle);
     void initializeAngleRangeAutomatic();
     void initializeAngleRangeManual();
+    void goTo(int angle);
+    void close();
 
 private:
     Servo servo;
