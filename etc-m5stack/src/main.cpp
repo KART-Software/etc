@@ -19,7 +19,7 @@ Tps tps2(TPS_2_MIN, TPS_2_MAX, TPS_MARGIN, TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_P
 PlausibilityValidator plausibilityValidator(&apps1, &apps2, &tps1, &tps2);
 ServoController servoController(&apps1, &apps2, &tps1, &tps2);
 SerialLogger serialLogger;
-LcdIndicator lcdIndicator;
+ErrorIndicator errorIndicator;
 unsigned long currentTime = 0;
 unsigned long lastTime = 0;
 int cycleCount = 0;
@@ -31,8 +31,8 @@ void setup()
   serialLogger.initialize();
   initPins();
   gAdc.begin();
+  errorIndicator.initialize();
   servoController.setServoOn();
-  servoController.initializeAngleRangeAutomatic();
   xTaskCreatePinnedToCore(startServo, "ServoConstrollTask", 8192, (void *)&servoController, 1, &servoControllTask, 1);
 }
 
@@ -63,7 +63,7 @@ void loop()
 
   if (cycleCount > LCD_UPDATE_PER_CYCLES)
   {
-    lcdIndicator.update();
+    errorIndicator.update();
     cycleCount = 0;
   }
 }
