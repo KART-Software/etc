@@ -15,6 +15,12 @@
 #define SERVO_POWER_PIN 19
 #define SERVO_PWM_PIN 26
 
+#define SERVO_STOP_BUTTON M5.BtnA
+#define CLEAR_ERROR_BUTTON M5.BtnB
+#define ENTER_ADJUSTER_MODE_BUTTON M5.BtnC
+
+#define BUTTON_LONG_PRESS_THRESHOLD 2000
+
 void initPins();
 
 #endif

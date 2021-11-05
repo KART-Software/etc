@@ -66,4 +66,21 @@ void loop()
     errorIndicator.update();
     cycleCount = 0;
   }
+
+  SERVO_STOP_BUTTON.read();
+  CLEAR_ERROR_BUTTON.read();
+  ENTER_ADJUSTER_MODE_BUTTON.read();
+  if (SERVO_STOP_BUTTON.pressedFor(BUTTON_LONG_PRESS_THRESHOLD))
+  {
+    servoController.close();
+    delay(1000);
+    servoController.setServoOff();
+  }
+  if (CLEAR_ERROR_BUTTON.pressedFor(BUTTON_LONG_PRESS_THRESHOLD))
+  {
+    gErrorHandler.clearAll();
+  }
+  if (ENTER_ADJUSTER_MODE_BUTTON.pressedFor(BUTTON_LONG_PRESS_THRESHOLD))
+  {
+  }
 }
