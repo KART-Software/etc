@@ -44,6 +44,8 @@ public:
     void initializeAngleRangeManual();
     void goTo(int angle);
     void close();
+    void getSensorRawValues(int16_t values[4]);
+    void getSensorConvertedValues(double values[4]);
 
 private:
     Servo servo;

@@ -77,7 +77,7 @@ void ServoController::rotate(int angle)
 
 void ServoController::goTo(int angle)
 {
-    this->angle = angle;
+    this->angle = constrain(angle, SERVO_ANGLE_LIMIT_MIN, SERVO_ANGLE_LIMIT_MAX);
     servo.write(this->angle);
 }
 
@@ -126,6 +126,30 @@ void ServoController::initializeAngleRangeAutomatic()
     }
 
     setConversion();
+}
+
+void ServoController::getSensorRawValues(int16_t values[4])
+{
+    apps1->read();
+    apps2->read();
+    tps1->read();
+    tps2->read();
+    values[0] = apps1->getRawValue();
+    values[1] = apps2->getRawValue();
+    values[2] = tps1->getRawValue();
+    values[3] = tps2->getRawValue();
+}
+
+void ServoController::getSensorConvertedValues(double values[4])
+{
+    apps1->read();
+    apps2->read();
+    tps1->read();
+    tps2->read();
+    values[0] = apps1->convertedValue();
+    values[1] = apps2->convertedValue();
+    values[2] = tps1->convertedValue();
+    values[3] = tps2->convertedValue();
 }
 
 void startServo(void *servoController)
