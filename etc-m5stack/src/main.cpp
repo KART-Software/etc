@@ -9,6 +9,7 @@
 #include "servo_controller.hpp"
 #include "serial_logger.hpp"
 #include "lcd_indicator.hpp"
+#include "manual_adjuster_mode.hpp"
 
 TaskHandle_t servoControllTask;
 
@@ -82,5 +83,8 @@ void loop()
   }
   if (ENTER_ADJUSTER_MODE_BUTTON.pressedFor(BUTTON_LONG_PRESS_THRESHOLD))
   {
+    vTaskSuspend(servoControllTask);
+    startManualAdjusterMode(&servoController);
+    vTaskResume(servoControllTask);
   }
 }

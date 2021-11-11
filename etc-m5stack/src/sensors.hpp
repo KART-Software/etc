@@ -55,6 +55,7 @@ public:
     bool isInRange();
     double getMaxValue();
     double getMinValue();
+    int16_t getRawValue();
 
 protected:
     int16_t rawValue;
