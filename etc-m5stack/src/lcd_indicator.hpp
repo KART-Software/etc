@@ -3,8 +3,10 @@
 
 #include <M5Stack.h>
 #include "globals.hpp"
+#include "servo_controller.hpp"
 
 #define LCD_UPDATE_PER_CYCLES 50
+#define ADJUSTER_INTERFACE_UPDATE_PER_MS 100
 
 #define LINE_COLOR WHITE
 
@@ -17,14 +19,14 @@ class LcdIndicator
 public:
     LcdIndicator();
     void initialize();
-    void drawFooter(String footerString[]);
+    void drawFooter(const String footerString[]);
     virtual void setGui(){};
     virtual void update(){};
 
 private:
     const int16_t lcdWidth = 320;
     const int16_t lcdHeight = 240;
-    String footerString[3];
+    const String footerString[3];
     const int8_t footerTextSize = 1;
     const int16_t footerSeparatorX[2] = {106, 214};
     const int16_t footerCursorX[3] = {0, 106, 214};
@@ -54,7 +56,7 @@ private:
     const int16_t cursorShiftY = 19;
     const int16_t cellWidth = 160;
     const int16_t cellHeight = 52;
-    String footerString[3] = {"STOP", "Clear Errors", "Adjuster Mode"};
+    const String footerString[3] = {"STOP", "Clear Errors", "Adjuster Mode"};
     void raise(int errorID);
     void normalizeAll();
     void normalize(int errorID);
@@ -63,9 +65,23 @@ private:
 class ManualParameterAdjusterInterface : LcdIndicator
 {
 public:
-    ManualParameterAdjusterInterface();
+    ManualParameterAdjusterInterface(ServoController *servoController);
+    void update();
+    void initialize();
 
 private:
+    const int8_t textSize = 2;
+    const String stringRow[4] = {"APPS1", "APPS2", "TPS1", "TPS2"};
+    const int16_t coodinatesX[4] = {0, 80, 160, 240};
+    const int16_t coodinatesY[5] = {0, 41, 82, 123, 164};
+    const int16_t cellWidth = 80;
+    const int16_t cellHeight = 41;
+    const int16_t cursorShiftY = 15;
+    const String stringColumn[2] = {"RAW", "CONV"};
+    const String stringServo = "SERVO";
+    const String footerString[3] = {"UP", "DOWN", "FINISH"};
+    void drawTitles();
+    ServoController *servoController;
 };
 
 #endif
