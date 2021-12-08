@@ -1,7 +1,7 @@
 #include "pid.hpp"
 
-PID::PID(double kp, double ki, double kd)
-    : kp(kp), ki(ki), kd(kd) {}
+PID::PID(double kp, double ki, double kd, int intervalMS)
+    : kp(kp), ki(ki), kd(kd), intervalMS(intervalMS) {}
 
 // void PID::setTargetPosition(double targetPosition){
 //     targetPosition = targetPosition;
