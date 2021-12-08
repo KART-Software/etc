@@ -1,6 +1,6 @@
 #include "plausibility_validator.hpp"
 
-//TODO リファクタ
+// TODO リファクタ
 
 PlausibilityValidator::PlausibilityValidator(
     Apps *apps1,
@@ -43,7 +43,7 @@ bool PlausibilityValidator::isAppsPlausible()
 {
     unsigned long now = millis();
     if (abs(apps1->convertedValue() - apps2->convertedValue()) < 10.0)
-    { //TODO
+    { // TODO
         lastAppsPlausibleTime = now;
         return true;
     }
@@ -59,7 +59,7 @@ bool PlausibilityValidator::isTpsPlausible()
 {
     unsigned long now = millis();
     if (abs(tps1->convertedValue() - tps2->convertedValue()) < 10.0)
-    { //TODO
+    { // TODO
         lastTpsPlausibleTime = now;
         return true;
     }
@@ -75,7 +75,7 @@ bool PlausibilityValidator::isApps1CircuitValid()
 {
     unsigned long now = millis();
     if (apps1->isInRange())
-    { //TODO
+    { // TODO
         lastApps1CircuitValidTime = now;
         return true;
     }
@@ -91,7 +91,7 @@ bool PlausibilityValidator::isApps2CircuitValid()
 {
     unsigned long now = millis();
     if (apps2->isInRange())
-    { //TODO
+    { // TODO
         lastApps2CircuitValidTime = now;
         return true;
     }
@@ -107,7 +107,7 @@ bool PlausibilityValidator::isTps1CircuitValid()
 {
     unsigned long now = millis();
     if (tps1->isInRange())
-    { //TODO
+    { // TODO
         lastTps1CircuitValidTime = now;
         return true;
     }
@@ -123,7 +123,7 @@ bool PlausibilityValidator::isTps2CircuitValid()
 {
     unsigned long now = millis();
     if (tps2->isInRange())
-    { //TODO
+    { // TODO
         lastTps2CircuitValidTime = now;
         return true;
     }
@@ -138,10 +138,10 @@ bool PlausibilityValidator::isTps2CircuitValid()
 bool PlausibilityValidator::isAppsTpsTargetValid()
 {
     unsigned long now = millis();
-    double appsValue = apps1->validatedConvertedValue() + apps2->validatedConvertedValue();
+    double targetTp = apps1->convertToTargetTp() + apps2->convertToTargetTp();
     double tpsValue = tps1->validatedConvertedValue() + tps2->validatedConvertedValue();
-    if (abs(appsValue - tpsValue) < 10)
-    { //TODO
+    if (abs(targetTp - tpsValue) < 10)
+    { // TODO
         lastAppsTpsTargetValidTime = now;
         return true;
     }

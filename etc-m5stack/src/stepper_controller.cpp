@@ -5,7 +5,7 @@ StepperController::
     : drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN, STEPPER_ENABLE_PIN)),
       apps1(apps1),
       apps2(apps2), tps1(tps1), tps2(tps2),
-      pid(PID_KP, PID_KI, PID_KD)
+      pid(PID_KP, PID_KI, PID_KD, STEPPER_CYCLE_TIME_MS)
 {
     drv8834.setEnableActiveState(LOW);
     drv8834.setSpeedProfile(BasicStepperDriver::CONSTANT_SPEED);
@@ -56,9 +56,10 @@ void StepperController::control()
     // apps1->read();
     tp = tps1->convertedValue();
     app = apps1->convertedValue();
-    output = pid.calculate(app, tp);
+    targetTp = apps1->convertToTargetTp();
+    output = pid.calculate(targetTp, tp);
     drv8834.setRPM(abs(output));
-    drv8834.move(TPS_1_DIRECTION * output * STEPPER_CYCLE_TIME);
+    drv8834.move(output * STEPPER_CYCLE_TIME);
 }
 
 void StepperController::setOutputLimit()

@@ -8,13 +8,14 @@
 #include "init_pins.hpp"
 #include "sensors.hpp"
 
-#define STEPPER_STEPS 200 //TODO change
+#define STEPPER_STEPS 200 // TODO change
 #define MICROSTEP 1
 
-#define STEPPER_OUTPUT_MAX 400 //TODO change
+#define STEPPER_OUTPUT_MAX 400 // TODO change
 #define STEPPER_OUTPUT_MIN -400
 
 #define STEPPER_CYCLE_TIME 0.1
+#define STEPPER_CYCLE_TIME_MS 100
 
 #define PID_KP 10.0
 #define PID_KI 0.0
@@ -45,7 +46,7 @@ private:
     Apps *apps1, *apps2;
     Tps *tps1, *tps2;
     PID pid;
-    double tp, output, app;
+    double tp, output, app, targetTp;
     void setOutputLimit();
     int validateOutput();
     enum State state;
