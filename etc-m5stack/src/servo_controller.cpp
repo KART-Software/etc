@@ -70,7 +70,7 @@ void ServoController::initializeAngleRangeAutomatic()
     angle = INITIAL_SERVO_ANGLE;
     servo.write(angle);
     delay(300);
-    gAdc.read();
+    // gAdc.read();
     tps1->read();
 
     if (tps1->convertedValue() < tps1->getMinValue() || tps1->getMaxValue() < tps1->convertedValue())
@@ -79,7 +79,7 @@ void ServoController::initializeAngleRangeAutomatic()
 
     while (true)
     {
-        gAdc.read();
+        // gAdc.read();
         tps1->read();
         if (tps1->convertedValue() < tps1->getMinValue())
         {
@@ -92,7 +92,7 @@ void ServoController::initializeAngleRangeAutomatic()
 
     while (true)
     {
-        gAdc.read();
+        // gAdc.read();
         tps1->read();
         if (tps1->getMaxValue() < tps1->convertedValue())
         {
@@ -110,5 +110,6 @@ void startServo(void *servoController)
 {
     ServoController *controller;
     controller = (ServoController *)servoController;
+    controller->initializeAngleRangeAutomatic();
     controller->start();
 }
