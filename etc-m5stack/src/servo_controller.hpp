@@ -20,7 +20,7 @@
 #define SERVO_DIRECTION -1 // 1 or -1
 
 #define INITIAL_SERVO_ANGLE 90
-#define INITIALIZING_AMEND_ANGLE 3
+#define INITIALIZING_AMEND_ANGLE 5
 
 class ServoController
 {

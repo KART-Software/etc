@@ -6,11 +6,11 @@
 #include "init_pins.hpp"
 #include "globals.hpp"
 
-#define TPS_1_RAW_MAX 506
-#define TPS_2_RAW_MAX 513
+#define TPS_1_RAW_MAX 492
+#define TPS_2_RAW_MAX 525
 
-#define TPS_1_RAW_MIN 348
-#define TPS_2_RAW_MIN 670
+#define TPS_1_RAW_MIN 680
+#define TPS_2_RAW_MIN 335
 
 // #define TPS_1_DIRECTION -1
 // #define TPS_2_DIRECTION -1
@@ -28,11 +28,11 @@
 // #define APPS1_DIRECTION -1
 // #define APPS2_DIRECTION 1
 
-#define APPS_1_RAW_MAX 1
-#define APPS_2_RAW_MAX 1023
+#define APPS_1_RAW_MAX 593
+#define APPS_2_RAW_MAX 411
 
-#define APPS_1_RAW_MIN 1023
-#define APPS_2_RAW_MIN 1
+#define APPS_1_RAW_MIN 481
+#define APPS_2_RAW_MIN 526
 
 #define APPS_1_MAX 100
 #define APPS_2_MAX 100
@@ -40,7 +40,7 @@
 #define APPS_1_MIN 0
 #define APPS_2_MIN 0
 
-#define APPS_MARGIN 5
+#define APPS_MARGIN 50
 
 class Sensor
 {
