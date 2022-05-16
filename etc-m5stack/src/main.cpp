@@ -1,14 +1,13 @@
 #include <M5Stack.h>
 // #include <mcp_can.h>
-#include <SPI.h>
-#include <M5Stack.h>
+// #include <SPI.h>
 
 #include "error_handler.hpp"
 #include "init_pins.hpp"
 #include "sensors.hpp"
 #include "plausibility_validator.hpp"
-#include "stepper_controller.hpp"
 #include "serial_logger.hpp"
+#include "stepper_controller.hpp"
 
 TaskHandle_t stepperControllTask;
 
@@ -28,9 +27,9 @@ void setup()
   M5.begin();
   serialLogger.initialize();
   initPins();
-  stepperController.setStepperOn();
   gAdc.begin();
-  xTaskCreatePinnedToCore(startStepper, "StepperConstrollTask", 8192, (void *)&stepperController, 1, &stepperControllTask, 1);
+  stepperController.setStepperOn();
+  xTaskCreatePinnedToCore(startStepper, "ServoConstrollTask", 8192, (void *)&stepperController, 1, &stepperControllTask, 1);
 }
 
 void loop()

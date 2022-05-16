@@ -34,7 +34,7 @@
 #define APPS_1_MIN 0
 #define APPS_2_MIN 0
 
-#define APPS_MARGIN 5
+#define APPS_MARGIN 50
 
 class Sensor
 {
