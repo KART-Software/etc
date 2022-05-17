@@ -20,3 +20,12 @@ void SerialLogger::log(unsigned int cycleTime, double apps1Value, double apps2Va
                     ", Error: " + errStr;
     Serial.println(logStr);
 }
+
+void SerialLogger::log(uint apps1RawValue, uint apps2RawValue, uint tps1RawValue, uint tps2RawValue)
+{
+    String logStr = "APPS1: " + String(apps1RawValue) +
+                    ", APPS2: " + String(apps2RawValue) +
+                    ", TPS1: " + String(tps1RawValue) +
+                    ", TPS2: " + String(tps2RawValue);
+    Serial.println(logStr);
+}
