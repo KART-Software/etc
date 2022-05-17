@@ -49,6 +49,11 @@ double Sensor::getMinValue()
     return minValue;
 }
 
+int16_t Sensor::getRawValue()
+{
+    return rawValue;
+}
+
 Apps::
     Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),

@@ -94,6 +94,11 @@ enum StepperController::State StepperController::getState()
     return state;
 }
 
+void StepperController::move(int distance)
+{
+    drv8834.move(distance);
+}
+
 void startStepper(void *stepperController)
 {
     StepperController *controller;

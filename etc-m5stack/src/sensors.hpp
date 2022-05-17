@@ -6,11 +6,11 @@
 #include "init_pins.hpp"
 #include "globals.hpp"
 
-#define TPS_1_RAW_MAX 537
-#define TPS_2_RAW_MAX 481
+#define TPS_1_RAW_MAX 496
+#define TPS_2_RAW_MAX 525
 
-#define TPS_1_RAW_MIN 359
-#define TPS_2_RAW_MIN 659
+#define TPS_1_RAW_MIN 673
+#define TPS_2_RAW_MIN 345
 
 #define TPS_1_MAX 100
 #define TPS_2_MAX 100
@@ -49,6 +49,7 @@ public:
     bool isInRange();
     double getMaxValue();
     double getMinValue();
+    int16_t getRawValue();
 
 protected:
     int16_t rawValue;
