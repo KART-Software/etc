@@ -66,7 +66,7 @@ double Apps::read()
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    return app;
+    return constrain(app, APPS_1_MIN, APPS_1_MAX);
 
     // double X1, Y1, X2, Y2;
     // X1 = 60;
