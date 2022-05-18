@@ -20,7 +20,7 @@ Apps apps2(APPS_2_MIN, APPS_2_MAX, APPS_MARGIN, APPS_2_RAW_MIN, APPS_2_RAW_MAX, 
 Tps tps1(TPS_1_MIN, TPS_1_MAX, TPS_MARGIN, TPS_1_RAW_MIN, TPS_1_RAW_MAX, TPS_1_PIN);
 Tps tps2(TPS_2_MIN, TPS_2_MAX, TPS_MARGIN, TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_PIN);
 PlausibilityValidator plausibilityValidator(&apps1, &apps2, &tps1, &tps2);
-StepperController stepperController(&apps1, &apps2, &tps1, &tps2);
+StepperController stepperController(&apps1, &tps1);
 SerialLogger serialLogger;
 unsigned long currentTime = 0;
 unsigned long lastTime = 0;

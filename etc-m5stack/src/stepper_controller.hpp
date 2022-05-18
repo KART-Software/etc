@@ -35,7 +35,7 @@ public:
         Off,
         On
     };
-    StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
+    StepperController(Apps *apps, Tps *tps);
     void initializeOrigin();
     void control();
     void setStepperOn();
@@ -46,8 +46,8 @@ public:
 
 private:
     DRV8834 drv8834;
-    Apps *apps1, *apps2;
-    Tps *tps1, *tps2;
+    Apps *apps;
+    Tps *tps;
     PID pid;
     double tp, output, app, targetTp;
     void setOutputLimit();
