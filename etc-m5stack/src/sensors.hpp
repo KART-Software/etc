@@ -36,6 +36,14 @@
 
 #define APPS_MARGIN 50
 
+#define ITTR_RAW_MAX 1023
+#define ITTR_RAW_MIN 1
+
+#define ITTR_MAX 100
+#define ITTR_MIN 0
+
+#define ITTR_MARGIN 0
+
 class Sensor
 {
 public:
@@ -68,6 +76,7 @@ public:
 protected:
     uint8_t pin;
 };
+
 class Tps : public Sensor
 {
 public:
@@ -76,6 +85,12 @@ public:
 
 protected:
     uint8_t pin;
+};
+
+class Ittr : public Apps
+{
+public:
+    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin);
 };
 
 class Bse : Sensor

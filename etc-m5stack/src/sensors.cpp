@@ -114,3 +114,9 @@ double Tps::read()
     rawValue = gAdc.value[pin];
     return validatedConvertedValue();
 }
+
+Ittr::
+    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, pin)
+{
+}
