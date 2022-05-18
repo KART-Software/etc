@@ -1,10 +1,9 @@
 #include "stepper_controller.hpp"
 
 StepperController::
-    StepperController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
+    StepperController(Apps *apps, Tps *tps)
     : drv8834(DRV8834(STEPPER_STEPS, STEPPER_DIR_PIN, STEPPER_STEP_PIN, STEPPER_ENABLE_PIN)),
-      apps1(apps1),
-      apps2(apps2), tps1(tps1), tps2(tps2),
+      apps(apps), tps(tps),
       pid(PID_KP, PID_KI, PID_KD, STEPPER_CYCLE_TIME_MS)
 {
     drv8834.setEnableActiveState(LOW);
@@ -12,7 +11,7 @@ StepperController::
     drv8834.setMicrostep(MICROSTEP);
     drv8834.begin();
     pid.setOutputLimits(STEPPER_OUTPUT_MIN, STEPPER_OUTPUT_MAX);
-    pid.initialize(tps1->convertedValue(), apps1->convertedValue());
+    pid.initialize(tps->convertedValue(), apps->convertedValue());
 }
 
 // void StepperController::initializeOrigin()
@@ -54,9 +53,9 @@ void StepperController::control()
     // gAdc.read();
     // tps1->read();
     // apps1->read();
-    tp = tps1->convertedValue();
-    app = apps1->convertedValue();
-    targetTp = apps1->convertToTargetTp();
+    tp = tps->convertedValue();
+    app = apps->convertedValue();
+    targetTp = apps->convertToTargetTp();
     output = pid.calculate(targetTp, tp);
     drv8834.setRPM(abs(output));
     drv8834.move(output * STEPPER_CYCLE_TIME);
