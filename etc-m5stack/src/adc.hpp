@@ -5,8 +5,8 @@
 #include <Wire.h>
 
 #define ADC_ARDUINO_ADDRESS 8
-#define READ_BYTE_LENGTH 8
-#define READ_DATA_LENGTH 4
+#define READ_BYTE_LENGTH 10
+#define READ_DATA_LENGTH 5
 
 class Adc
 {

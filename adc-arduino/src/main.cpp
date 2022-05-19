@@ -2,9 +2,9 @@
 #include <Wire.h>
 
 #define SELF_ADDR 8
-#define NUMBER_OF_BYTES_SENT 8
-#define NUMBER_OF_VALUES_SENT 4
-#define ANALOG(i) i + 14
+#define NUMBER_OF_BYTES_SENT 10
+#define NUMBER_OF_VALUES_SENT 5
+#define ANALOG(i) i + 54
 #define OUTPUT_PER_COUNT 1000
 
 void reply();

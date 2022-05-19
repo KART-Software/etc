@@ -71,34 +71,7 @@ double Apps::read()
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    return constrain(app, APPS_1_MIN, APPS_1_MAX);
-
-    // double X1, Y1, X2, Y2;
-    // X1 = 60;
-    // Y1 = 15;
-    // X2 = 87;
-    // Y2 = 41;
-
-    // if (app <= 0.0)
-    // {
-    //     return 0.0;
-    // }
-    // else if (app < X1)
-    // {
-    //     return map(app, 0.0, X1, 0.0, Y1);
-    // }
-    // else if (app < X2)
-    // {
-    //     return map(app, X1, X2, Y1, Y2);
-    // }
-    // else if (app < 100.0)
-    // {
-    //     return map(app, X2, 100.0, Y2, 100.0);
-    // }
-    // else
-    // {
-    //     return 100.0;
-    // }
+    return constrain(app, getMinValue(), getMaxValue()); // TODO change
 }
 
 Tps::
@@ -113,4 +86,10 @@ double Tps::read()
     // rawValue = analogRead(pin);
     rawValue = gAdc.value[pin];
     return validatedConvertedValue();
+}
+
+Ittr::
+    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, pin)
+{
 }
