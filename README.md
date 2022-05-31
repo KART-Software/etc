@@ -1,6 +1,5 @@
 # ETC
-
-Electronic throttle control
+全日本学生フォーミュラ大会　電子制御スロットル(Electronic throttle control)
 
 This project is created with [PlatformIO](https://platformio.org/)
 
