@@ -20,7 +20,7 @@
 #define SERVO_DIRECTION -1 // 1 or -1
 
 #define INITIAL_SERVO_ANGLE 90
-#define INITIALIZING_AMEND_ANGLE 5
+#define INITIALIZING_AMEND_ANGLE 3
 
 class ServoController
 {
@@ -30,7 +30,7 @@ public:
         Off,
         On
     };
-    ServoController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2);
+    ServoController(Apps *apps, Tps *tps);
     void control();
     void setServoOn();
     void setServoOff();
@@ -43,8 +43,8 @@ public:
 
 private:
     Servo servo;
-    Apps *apps1, *apps2;
-    Tps *tps1, *tps2;
+    Apps *apps;
+    Tps *tps;
     int angle;
     int angleMin, angleMax;
     double intercept, slope;

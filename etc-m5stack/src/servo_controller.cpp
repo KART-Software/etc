@@ -1,8 +1,8 @@
 #include "servo_controller.hpp"
 
-ServoController::ServoController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
+ServoController::ServoController(Apps *apps, Tps *tps)
     : servo(Servo()),
-      apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2)
+      apps(apps), tps(tps)
 {
     servo.setPeriodHertz(SERVO_PWM_FREQUENCY);
     servo.attach(SERVO_PWM_PIN, SERVO_PULSE_WIDTH_MICROS_MIN, SERVO_PULSE_WIDTH_MICROS_MAX);
@@ -10,10 +10,10 @@ ServoController::ServoController(Apps *apps1, Apps *apps2, Tps *tps1, Tps *tps2)
 
 void ServoController::setConversion()
 {
-    double apps1Max = apps1->getMaxValue();
-    double apps1Min = apps1->getMinValue();
-    slope = (angleMax - angleMin) / (apps1Max - apps1Min);
-    intercept = (apps1Max * angleMin - apps1Min * angleMax) / (apps1Max - apps1Min);
+    double appsMax = apps->getMaxValue();
+    double appsMin = apps->getMinValue();
+    slope = (angleMax - angleMin) / (appsMax - appsMin);
+    intercept = (appsMax * angleMin - appsMin * angleMax) / (appsMax - appsMin);
 }
 
 int ServoController::convertToAngle(double app)
@@ -23,7 +23,7 @@ int ServoController::convertToAngle(double app)
 
 void ServoController::control()
 {
-    double targetTp = apps1->convertToTargetTp();
+    double targetTp = apps->convertToTargetTp();
     angle = convertToAngle(targetTp);
     servo.write(angle);
 }
@@ -71,17 +71,17 @@ void ServoController::initializeAngleRangeAutomatic()
     servo.write(angle);
     delay(300);
     // gAdc.read();
-    tps1->read();
+    tps->read();
 
-    if (tps1->convertedValue() < tps1->getMinValue() || tps1->getMaxValue() < tps1->convertedValue())
+    if (tps->convertedValue() < tps->getMinValue() || tps->getMaxValue() < tps->convertedValue())
     {
     }
 
     while (true)
     {
         // gAdc.read();
-        tps1->read();
-        if (tps1->convertedValue() < tps1->getMinValue())
+        tps->read();
+        if (tps->convertedValue() < tps->getMinValue())
         {
             angleMin = angle + SERVO_DIRECTION * (1 + INITIALIZING_AMEND_ANGLE);
             break;
@@ -93,8 +93,8 @@ void ServoController::initializeAngleRangeAutomatic()
     while (true)
     {
         // gAdc.read();
-        tps1->read();
-        if (tps1->getMaxValue() < tps1->convertedValue())
+        tps->read();
+        if (tps->getMaxValue() < tps->convertedValue())
         {
             angleMax = angle - SERVO_DIRECTION * (1 + INITIALIZING_AMEND_ANGLE);
             break;

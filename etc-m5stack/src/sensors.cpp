@@ -49,6 +49,11 @@ double Sensor::getMinValue()
     return minValue;
 }
 
+int16_t Sensor::getRawValue()
+{
+    return rawValue;
+}
+
 Apps::
     Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
@@ -66,40 +71,7 @@ double Apps::read()
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    // return app;
-
-    double X1, Y1, X2, Y2, X3, Y3;
-    X1 = 41;
-    Y1 = 9;
-    X2 = 73;
-    Y2 = 27;
-    X3 = 92;
-    Y3 = 64;
-
-    if (app <= 0.0)
-    {
-        return 0.0;
-    }
-    else if (app < X1)
-    {
-        return map(app, 0.0, X1, 0.0, Y1);
-    }
-    else if (app < X2)
-    {
-        return map(app, X1, X2, Y1, Y2);
-    }
-    else if (app < X3)
-    {
-        return map(app, X2, X3, Y2, Y3);
-    }
-    else if (app < 100.0)
-    {
-        return map(app, X3, 100.0, Y3, 100.0);
-    }
-    else
-    {
-        return 100.0;
-    }
+    return constrain(app, getMinValue(), getMaxValue()); // TODO change
 }
 
 Tps::
@@ -114,4 +86,10 @@ double Tps::read()
     // rawValue = analogRead(pin);
     rawValue = gAdc.value[pin];
     return validatedConvertedValue();
+}
+
+Ittr::
+    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, pin)
+{
 }
