@@ -2,7 +2,7 @@
 #define _STEPPER_CONTROLLER_H_
 
 #include <DRV8834.h>
-#include <M5Stack.h>
+#include <Arduino.h>
 
 #include "pid.hpp"
 #include "init_pins.hpp"

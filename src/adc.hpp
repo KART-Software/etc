@@ -1,7 +1,7 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
-#include <M5Stack.h>
+#include <Arduino.h>
 #include <Wire.h>
 
 #define ADC_ARDUINO_ADDRESS 8

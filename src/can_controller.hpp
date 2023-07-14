@@ -1,6 +1,6 @@
 #ifndef _CAN_CONTROLLER_H_
 #define _CAN_CONTROLLER_H_
-#include <M5Stack.h>
+#include <Arduino.h>
 #include <ESP32CAN.h>
 #include <CAN_config.h>
 

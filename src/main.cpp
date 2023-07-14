@@ -1,9 +1,9 @@
-#include <M5Stack.h>
+#include <Arduino.h>
 // #include <mcp_can.h>
 // #include <SPI.h>
 
 #include "error_handler.hpp"
-#include "init_pins.hpp"
+#include "constants.hpp"
 #include "sensors.hpp"
 #include "plausibility_validator.hpp"
 #include "serial_logger.hpp"
@@ -30,7 +30,6 @@ void setup()
 {
   mode = Mode::Regular;
   delay(500);
-  M5.begin();
   serialLogger.initialize();
   initPins();
   gAdc.begin();

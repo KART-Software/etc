@@ -1,7 +1,7 @@
 #ifndef _PLAUSIBILITY_VALIDATOR_H_
 #define _PLAUSIBILITY_VALIDATOR_H_
 
-#include <M5Stack.h>
+#include <Arduino.h>
 #include "sensors.hpp"
 #include "error_handler.hpp"
 #include "globals.hpp"

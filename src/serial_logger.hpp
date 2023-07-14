@@ -3,7 +3,7 @@
 
 #define SERIAL_SPEED 115200
 
-#include <M5Stack.h>
+#include <Arduino.h>
 
 class SerialLogger
 {

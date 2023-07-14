@@ -1,6 +1,6 @@
 #ifndef _ERROR_HANDLER_H_
 #define _ERROR_HANDLER_H_
-#include <M5Stack.h>
+#include <Arduino.h>
 
 #define MAX_ERR_LEN 16
 #define ERR_TPS_IMPLAUSIBLE 0
