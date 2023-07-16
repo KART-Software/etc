@@ -2,23 +2,21 @@
 #define _PID_H_
 
 #include <Arduino.h>
+#include "constants.hpp"
 
 class PID
 {
 public:
-    PID(double kp, double ki, double kd, int intervalMS);
-    // void setTargetPosition(double targetPosition);
-    // void setCurrentPosition(double currentPosition);
-    void initialize(double targetPosition, double currentPosition);
-    double calculate(double targetPosition, double currentPosition);
-    void setOutputLimits(double minOutput, double maxOutput);
+    PID(double kP = KP, double kI = KI, double kD = KD, int8_t direction = MOTOR_DIRECTION);
+    double compute(double setPoint, double position);
+    void setDirection(int8_t direction);
 
 private:
-    const double kp, ki, kd;
-    const int intervalMS;
-    double error, errorPrev, integral, differential;
-    double minOutput, maxOutput;
-    // double targetPosition, currentPosition;
+    double kP, kI, kD;
+    double errorSum = 0.0;
+    double lastError;
+    unsigned long lastTime = 0;
+    int8_t direction;
 };
 
 #endif

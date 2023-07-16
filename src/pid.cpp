@@ -1,33 +1,40 @@
 #include "pid.hpp"
 
-PID::PID(double kp, double ki, double kd, int intervalMS)
-    : kp(kp), ki(ki), kd(kd), intervalMS(intervalMS) {}
-
-// void PID::setTargetPosition(double targetPosition){
-//     targetPosition = targetPosition;
-// }
-
-// void PID::setCurrentPosition(double currentPosition){
-//     currentPosition = currentPosition;
-// }
-
-void PID::initialize(double targetPosition, double currentPosition)
+PID::PID(double kP, double kI, double kD, int8_t direction) : kP(kP), kI(kI), kD(kD)
 {
-    error = currentPosition - targetPosition;
-    integral = 0;
+    setDirection(direction);
 }
 
-double PID::calculate(double targetPosition, double currentPosition)
+void PID::setDirection(int8_t direction)
 {
-    errorPrev = error;
-    error = currentPosition - targetPosition;
-    integral = integral + error;
-    differential = error - errorPrev;
-    return constrain(-kp * error - ki * integral - kd * differential, minOutput, maxOutput);
+    if (direction > 0)
+    {
+        this->direction = 1;
+    }
+    else
+    {
+        this->direction = -1;
+    }
 }
 
-void PID::setOutputLimits(double minOutput, double maxOutput)
+double PID::compute(double setPoint, double position)
 {
-    this->minOutput = minOutput;
-    this->maxOutput = maxOutput;
+    unsigned long now = micros();
+    double error = position - setPoint;
+    double differential;
+
+    if (lastTime == 0)
+    {
+        differential = 0.0;
+    }
+    else
+    {
+        double timeDelta = (now - lastTime) / 1000000.0; // sec
+        differential = (error - lastError) / timeDelta;
+        errorSum += error * timeDelta;
+    }
+    lastTime = now;
+    lastError = error;
+
+    return -direction * (kP * error + kI * errorSum + kD * differential);
 }
