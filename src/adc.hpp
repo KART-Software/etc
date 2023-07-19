@@ -32,7 +32,7 @@ public:
     Adc();
     void begin();
     void read();
-    int16_t value[ADC_NUM_CH];
+    uint16_t value[ADC_NUM_CH];
 
 private:
     SPIClass spi = SPIClass(VSPI);

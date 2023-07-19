@@ -13,9 +13,9 @@ void Adc::begin()
 
 void Adc::read()
 {
+    uint32_t readVal;
     for (uint8_t i = 0; i < numCh; i++)
     {
-        uint32_t readVal;
         spi.transferBits((SPI_BASE_BITS) | i << SPI_NUM_SHIFTS, &readVal, SPI_NUM_BITS);
         value[i] = readVal & 0xFFF;
     }
