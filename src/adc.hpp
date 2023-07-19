@@ -2,23 +2,40 @@
 #define _ADC_H_
 
 #include <Arduino.h>
-#include <Wire.h>
+#include <SPI.h>
+#include "constants.hpp"
 
-#define ADC_ARDUINO_ADDRESS 8
-#define READ_BYTE_LENGTH 10
-#define READ_DATA_LENGTH 5
+#define MCP3208
+// #define ADS8688
 
+#ifdef MCP3208
+
+#define SPI_BUS VSPI
+#define SPI_MODE SPI_MODE0
+#define SPI_BIT_ORDER MSBFIRST
+#define SPI_FREQUENCY 2000000
+
+#define SPI_BASE_BITS 0b0000011000
+#define SPI_NUM_BITS 24
+#define SPI_NUM_SHIFTS 14
+#endif
+
+#ifdef ADS8688
+#define SPI_BUS VSPI
+#define SPI_MODE SPI_MODE1
+#define SPI_BIT_ORDER MSBFIRST
+#define SPI_FREQUENCY 5000000
+#endif
 class Adc
 {
 public:
-    Adc(uint8_t address, TwoWire *wire = &Wire);
-    bool begin();
+    Adc();
+    void begin();
     void read();
-    int16_t value[READ_DATA_LENGTH];
+    int16_t value[ADC_NUM_CH];
 
 private:
-    const uint8_t address;
-    TwoWire *wire;
+    SPIClass spi = SPIClass(VSPI);
+    const uint8_t numCh = ADC_NUM_CH;
 };
-
 #endif

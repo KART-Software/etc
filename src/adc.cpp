@@ -1,23 +1,24 @@
 #include "adc.hpp"
+#ifdef MCP3208
+Adc::Adc() {}
 
-Adc::Adc(uint8_t address, TwoWire *wire)
-    : address(address), wire(wire) {}
-
-bool Adc::begin()
+void Adc::begin()
 {
-    wire->begin();
-    return true;
+    spi.begin();
+    spi.setFrequency(5000000);
+    spi.setDataMode(SPI_MODE);
+    spi.setBitOrder(SPI_BIT_ORDER);
+    spi.setHwCs(true);
 }
 
 void Adc::read()
 {
-    wire->requestFrom(ADC_ARDUINO_ADDRESS, READ_BYTE_LENGTH);
-    int count = 0;
-    while (wire->available())
+    for (uint8_t i = 0; i < numCh; i++)
     {
-        uint8_t highByte = wire->read();
-        uint8_t lowByte = wire->read();
-        value[count] = 256 * highByte + lowByte;
-        count++;
+        uint32_t readVal;
+        spi.transferBits((SPI_BASE_BITS) | i << SPI_NUM_SHIFTS, &readVal, SPI_NUM_BITS);
+        value[i] = readVal & 0xFFF;
     }
 }
+
+#endif
