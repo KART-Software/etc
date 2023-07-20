@@ -8,28 +8,21 @@
 class MotorController
 {
 public:
-    enum State
-    {
-        Off,
-        On
-    };
     MotorController(Apps &apps, Tps &tps);
     void initialize();
     void cycle();
     void start();
     void setMotorOn();
     void setMotorOff();
-    // void move(float tpDistance);
-    enum State getState();
+    bool isOn();
 
 private:
     DcMotor dcMotor = DcMotor();
     PID pid = PID();
-    unsigned long cycleTime = MOTOR_CONTROLL_CYCLE_TIME;
     Apps &apps;
     Tps &tps;
+    const unsigned long cycleTime = MOTOR_CONTROLL_CYCLE_TIME;
     double output;
-    enum State state;
 };
 
 void startMotor(void *motorController);

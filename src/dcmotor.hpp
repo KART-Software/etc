@@ -17,6 +17,7 @@ public:
     void write(double value);
     void on();
     void off();
+    bool isOn();
 
 private:
     const uint8_t pwmPin1 = DC_MOTOR_PWM_1_PIN;
@@ -29,7 +30,7 @@ private:
     void write(uint16_t duty1, uint16_t duty2);
     void ledcAttach();
     void ledcDetach();
-    bool isOn = false;
+    bool _isOn = false;
 };
 
 #endif

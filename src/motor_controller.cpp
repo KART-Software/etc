@@ -16,9 +16,6 @@ void MotorController::cycle()
     double target = apps.convertToTargetTp();
     double tp = tps.convertedValue();
     output = pid.compute(target, tp);
-    // Serial.print(target);
-    // Serial.print(" ");
-    // Serial.println(tp);
     dcMotor.write(output);
 }
 
@@ -27,7 +24,7 @@ void MotorController::start()
     while (true)
     {
         cycle();
-        delayMicroseconds(cycleTime);
+        delay(cycleTime);
     }
 }
 
@@ -39,6 +36,11 @@ void MotorController::setMotorOn()
 void MotorController::setMotorOff()
 {
     dcMotor.off();
+}
+
+bool MotorController::isOn()
+{
+    return dcMotor.isOn();
 }
 
 void startMotor(void *motorController)

@@ -38,14 +38,14 @@ double DcMotor::min(double a, double b)
 void DcMotor::on()
 {
     ledcAttach();
-    isOn = true;
+    _isOn = true;
 }
 
 void DcMotor::off()
 {
     write(0, 0);
     ledcDetach();
-    isOn = false;
+    _isOn = false;
 }
 
 void DcMotor::ledcAttach()
@@ -58,4 +58,9 @@ void DcMotor::ledcDetach()
 {
     ledcDetachPin(pwmPin1);
     ledcDetachPin(pwmPin2);
+}
+
+bool DcMotor::isOn()
+{
+    return _isOn;
 }
