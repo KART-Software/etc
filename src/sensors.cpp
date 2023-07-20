@@ -55,16 +55,15 @@ int16_t Sensor::getRawValue()
 }
 
 Apps::
-    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
-      pin(pin)
+      ch(ch)
 {
 }
 
 double Apps::read()
 {
-    // rawValue = analogRead(pin);
-    rawValue = gAdc.value[pin];
+    rawValue = gAdc.value[ch];
     return validatedConvertedValue();
 }
 
@@ -75,21 +74,20 @@ double Apps::convertToTargetTp()
 }
 
 Tps::
-    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
+    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
-      pin(pin)
+      ch(ch)
 {
 }
 
 double Tps::read()
 {
-    // rawValue = analogRead(pin);
-    rawValue = gAdc.value[pin];
+    rawValue = gAdc.value[ch];
     return validatedConvertedValue();
 }
 
 Ittr::
-    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t pin)
-    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, pin)
+    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
+    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, ch)
 {
 }
