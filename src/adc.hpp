@@ -5,9 +5,6 @@
 #include <SPI.h>
 #include "constants.hpp"
 
-#define MCP3208
-// #define ADS8688
-
 #ifdef MCP3208
 
 #define SPI_BUS VSPI
