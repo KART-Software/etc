@@ -13,7 +13,7 @@ public:
         Off,
         On
     };
-    MotorController(Apps &apps, Tps &tps, DcMotor dcMotor = DcMotor(), PID pid = PID(), unsigned long cycleTime = MOTOR_CONTROLL_CYCLE_TIME);
+    MotorController(Apps &apps, Tps &tps);
     void initialize();
     void cycle();
     void start();
@@ -23,12 +23,12 @@ public:
     enum State getState();
 
 private:
-    DcMotor dcMotor;
-    PID pid;
+    DcMotor dcMotor = DcMotor();
+    PID pid = PID();
+    unsigned long cycleTime = MOTOR_CONTROLL_CYCLE_TIME;
     Apps &apps;
     Tps &tps;
     double output;
-    unsigned long cycleTime;
     enum State state;
 };
 

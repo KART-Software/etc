@@ -1,23 +1,11 @@
 #include "dcmotor.hpp"
 
-DcMotor::DcMotor(uint8_t pwmPin1, uint8_t pwmPin2, uint8_t ch1, uint8_t ch2) : pwmPin1(pwmPin1), pwmPin2(pwmPin2), ch1(ch1), ch2(ch2)
-{
-}
+DcMotor::DcMotor() {}
 
 void DcMotor::initialize()
 {
     ledcSetup(ch1, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     ledcSetup(ch2, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
-}
-
-void DcMotor::setScaleMax(double scaleMax)
-{
-    this->scaleMax = abs(scaleMax);
-}
-
-void DcMotor::setOutputMax(uint16_t outputMax)
-{
-    this->outputMax = outputMax;
 }
 
 void DcMotor::write(double value)

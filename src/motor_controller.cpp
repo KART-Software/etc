@@ -1,6 +1,6 @@
 #include "motor_controller.hpp"
 
-MotorController::MotorController(Apps &apps, Tps &tps, DcMotor dcMotor, PID pid, unsigned long cycleTime) : apps(apps), tps(tps), dcMotor(dcMotor), pid(pid), cycleTime(cycleTime)
+MotorController::MotorController(Apps &apps, Tps &tps) : apps(apps), tps(tps)
 {
 }
 
