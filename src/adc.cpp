@@ -5,7 +5,7 @@ Adc::Adc() {}
 void Adc::begin()
 {
     spi.begin();
-    spi.setFrequency(5000000);
+    spi.setFrequency(SPI_FREQUENCY);
     spi.setDataMode(SPI_MODE);
     spi.setBitOrder(SPI_BIT_ORDER);
     spi.setHwCs(true);
