@@ -9,15 +9,20 @@
 // #include "moving_average.hpp"
 
 TaskHandle_t motorControllTask;
-// TaskHandle_t sensorManualAdjustTask;
 
 Apps apps1(APPS_1_MIN, APPS_1_MAX, APPS_MARGIN, APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
 Apps apps2(APPS_2_MIN, APPS_2_MAX, APPS_MARGIN, APPS_2_RAW_MIN, APPS_2_RAW_MAX, APPS_2_CH);
-// Ittr ittr(ITTR_MIN, ITTR_MAX, ITTR_MARGIN, ITTR_RAW_MIN, ITTR_RAW_MAX, ITTR_CH);
 Tps tps1(TPS_1_MIN, TPS_1_MAX, TPS_MARGIN, TPS_1_RAW_MIN, TPS_1_RAW_MAX, TPS_1_CH);
 Tps tps2(TPS_2_MIN, TPS_2_MAX, TPS_MARGIN, TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_CH);
-PlausibilityValidator plausibilityValidator(&apps1, &apps2, &tps1, &tps2);
+#ifdef IST_CONTROLLER
+Ittr ittr(ITTR_MIN, ITTR_MAX, ITTR_MARGIN, ITTR_RAW_MIN, ITTR_RAW_MAX, ITTR_CH);
+PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, ittr);
+MotorController motorController(ittr, tps1);
+#else
+PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2);
 MotorController motorController(apps1, tps1);
+#endif
+
 // SerialLogger serialLogger;
 
 // MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
