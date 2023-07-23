@@ -41,6 +41,8 @@
 /// PWM Settings ///
 ////////////////////
 
+#define DC_MOTOR_ENABLE_PIN 5 // TODO CHANGE
+
 #define DC_MOTOR_PWM_1_PIN 33
 #define DC_MOTOR_PWM_2_PIN 32
 #define PWM_1_LEDC_CHANNEL 0
@@ -97,5 +99,21 @@
 #define ITTR_MIN 0
 
 #define ITTR_MARGIN 0
+
+///////////////////////
+/// Button Settings ///
+///////////////////////
+
+#define BUTTON_1_PIN 1 // TODO CHANGE
+#define BUTTON_2_PIN 2 // TODO CHANGE
+#define BUTTON_3_PIN 3 // TODO CHANGE
+
+#define MONITOR_ON_PIN BUTTON_1_PIN
+
+/////////////////////////////////
+/// Other Output Pin Settings ///
+/////////////////////////////////
+
+#define FUEL_PUMP_PIN 4 // TODO CHANGE
 
 #endif
