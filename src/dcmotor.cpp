@@ -6,6 +6,8 @@ void DcMotor::initialize()
 {
     ledcSetup(ch1, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     ledcSetup(ch2, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
+    pinMode(enablePin, OUTPUT);
+    digitalWrite(enablePin, LOW);
 }
 
 void DcMotor::write(double value)
@@ -38,12 +40,14 @@ double DcMotor::min(double a, double b)
 void DcMotor::on()
 {
     ledcAttach();
+    digitalWrite(enablePin, HIGH);
     _isOn = true;
 }
 
 void DcMotor::off()
 {
     write(0, 0);
+    digitalWrite(enablePin, LOW);
     ledcDetach();
     _isOn = false;
 }

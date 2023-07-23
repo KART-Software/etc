@@ -20,6 +20,7 @@ public:
     bool isOn();
 
 private:
+    const uint8_t enablePin = DC_MOTOR_ENABLE_PIN;
     const uint8_t pwmPin1 = DC_MOTOR_PWM_1_PIN;
     const uint8_t pwmPin2 = DC_MOTOR_PWM_2_PIN;
     const uint8_t ch1 = PWM_1_LEDC_CHANNEL;
