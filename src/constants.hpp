@@ -28,25 +28,39 @@
 #endif
 
 #ifdef ADS8688
-#define ADC_NUM_CH 6
+#define ADC_NUM_CH 7
 #define APPS_1_CH 0
 #define APPS_2_CH 1
 #define TPS_1_CH 2
 #define TPS_2_CH 3
 #define ITTR_CH 4 // IST Throttle Position Target Receiver (ITTR)
 #define BSE_CH 5  // Brake System Encoder
+#define MOTOR_CURRENT_CH 6
 #endif
 
 ////////////////////
 /// PWM Settings ///
 ////////////////////
 
-#define DC_MOTOR_ENABLE_PIN 5 // TODO CHANGE
+// #define HILITAND
+#define VNH5019
 
+#ifdef HILITAND
+#define DC_MOTOR_ENABLE_PIN 5 // TODO CHANGE
 #define DC_MOTOR_PWM_1_PIN 33
 #define DC_MOTOR_PWM_2_PIN 32
 #define PWM_1_LEDC_CHANNEL 0
 #define PWM_2_LEDC_CHANNEL 1
+#endif
+
+#ifdef VNH5019
+#define DC_MOTOR_IN_A_PIN 17
+#define DC_MOTOR_IN_B_PIN 2
+#define DC_MOTOR_EN_A_PIN 16
+#define DC_MOTOR_EN_B_PIN 0
+#define DC_MOTOR_PWM_PIN 4
+#define PWM_LEDC_CHANNEL 0
+#endif
 
 //////////////////////////////
 /// Motor Control Settings ///
