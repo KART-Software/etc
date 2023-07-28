@@ -10,19 +10,19 @@ class Sensor
 {
 public:
     Sensor();
-    Sensor(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue);
+    Sensor(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue);
     virtual double read() = 0;
     void setRange(double minValue, double maxValue);
-    void setConversion(int16_t rawMinValue, int16_t rawMaxValue);
+    void setConversion(uint16_t rawMinValue, uint16_t rawMaxValue);
     double convertedValue();
     double validatedConvertedValue();
     bool isInRange();
     double getMaxValue();
     double getMinValue();
-    int16_t getRawValue();
+    uint16_t getRawValue();
 
 protected:
-    int16_t rawValue;
+    uint16_t rawValue;
     double maxValue, minValue;
     double margin;
     double intercept, slope;
@@ -31,7 +31,7 @@ protected:
 class Apps : public Sensor
 {
 public:
-    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch);
+    Apps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
     double read();
     double convertToTargetTp();
 
@@ -42,7 +42,7 @@ protected:
 class Tps : public Sensor
 {
 public:
-    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch);
+    Tps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
     double read();
 
 protected:
@@ -52,7 +52,7 @@ protected:
 class Ittr : public Apps
 {
 public:
-    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch);
+    Ittr(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
 };
 
 class Bse : Sensor

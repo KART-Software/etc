@@ -1,6 +1,6 @@
 #include "sensors.hpp"
 
-Sensor::Sensor(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue)
+Sensor::Sensor(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue)
     : margin(margin)
 {
     setRange(minValue, maxValue);
@@ -13,7 +13,7 @@ void Sensor::setRange(double minValue, double maxValue)
     this->maxValue = maxValue;
 }
 
-void Sensor::setConversion(int16_t rawMinValue, int16_t rawMaxValue)
+void Sensor::setConversion(uint16_t rawMinValue, uint16_t rawMaxValue)
 {
     this->slope = (maxValue - minValue) / (rawMaxValue - rawMinValue);
     this->intercept = (rawMaxValue * minValue - rawMinValue * maxValue) / (rawMaxValue - rawMinValue);
@@ -49,13 +49,13 @@ double Sensor::getMinValue()
     return minValue;
 }
 
-int16_t Sensor::getRawValue()
+uint16_t Sensor::getRawValue()
 {
     return rawValue;
 }
 
 Apps::
-    Apps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
+    Apps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
       ch(ch)
 {
@@ -74,7 +74,7 @@ double Apps::convertToTargetTp()
 }
 
 Tps::
-    Tps(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
+    Tps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
     : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
       ch(ch)
 {
@@ -87,7 +87,7 @@ double Tps::read()
 }
 
 Ittr::
-    Ittr(double minValue, double maxValue, double margin, int16_t rawMinValue, int16_t rawMaxValue, uint8_t ch)
+    Ittr(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
     : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, ch)
 {
 }
