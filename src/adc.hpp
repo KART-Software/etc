@@ -47,11 +47,11 @@
 #define RANGE_SELECT_ADDR_7 0x0C
 
 #define RANGE_0 0b0000 // ±2.5 x VREF
-#define RANGE_1 0b0001 // ±1.5 x VREF
+#define RANGE_1 0b0001 // ±1.25 x VREF
 #define RANGE_2 0b0010 // ±0.625 x VREF
 #define RANGE_3 0b0101 // 0 ~ 2.5 x VREF
 #define RANGE_4 0b0110 // 0 ~ 1.25 x VREF
-// VREF = 4.096V
+                       // VREF = 4.096V
 
 #endif
 class Adc
@@ -66,7 +66,7 @@ private:
     SPIClass spi = SPIClass(SPI_BUS);
     const uint8_t numCh = ADC_NUM_CH;
 #ifdef ADS8688
-    uint8_t chs[ADC_NUM_CH] = ADC_CHANNELS;
+    const uint8_t chs[ADC_NUM_CH] = ADC_CHANNELS;
     void setReadChannels();
     void setReadModeAutoSeq();
     void setReadRanges();

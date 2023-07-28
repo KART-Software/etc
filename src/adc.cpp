@@ -43,13 +43,13 @@ void Adc::begin()
 void Adc::read()
 {
     uint32_t readVal;
-    for (int i = 0; i++; i < ADC_NUM_CH - 1)
+    for (int i = 0; i < ADC_NUM_CH - 1; i++)
     {
-        spi.transferBits(NO_OP, &readVal, NUM_COMMAND_REGISTER_BITS);
-        value[chs[i]] = readVal;
+        spi.transferBits(NO_OP << 16, &readVal, NUM_COMMAND_REGISTER_BITS);
+        value[chs[i]] = readVal >> 1; // なぜか 2ビット目から17ビット目までがデータになっている（？）ので、">> 1" をつけて、16ビットにキャストしたときにちょうどになるようにしている。
     }
-    spi.transferBits(AUTO_RST, &readVal, NUM_COMMAND_REGISTER_BITS);
-    value[chs[ADC_NUM_CH - 1]] = readVal;
+    spi.transferBits(AUTO_RST << 16, &readVal, NUM_COMMAND_REGISTER_BITS);
+    value[chs[ADC_NUM_CH - 1]] = readVal >> 1;
 }
 
 void Adc::setReadChannels()
@@ -64,14 +64,14 @@ void Adc::setReadChannels()
 
 uint32_t Adc::createChannelSelectBits()
 {
-    uint32_t bits = 0;
-    bits &= 1 << APPS_1_CH;
-    bits &= 1 << APPS_2_CH;
-    bits &= 1 << TPS_1_CH;
-    bits &= 1 << TPS_2_CH;
-    bits &= 1 << ITTR_CH;
-    bits &= 1 << BSE_CH;
-    bits &= 1 << MOTOR_CURRENT_CH;
+    uint8_t bits = 0;
+    bits |= 1 << APPS_1_CH;
+    bits |= 1 << APPS_2_CH;
+    bits |= 1 << TPS_1_CH;
+    bits |= 1 << TPS_2_CH;
+    bits |= 1 << ITTR_CH;
+    bits |= 1 << BSE_CH;
+    bits |= 1 << MOTOR_CURRENT_CH;
     return bits;
 }
 
@@ -87,14 +87,15 @@ void Adc::setReadRanges()
 uint32_t Adc::createWriteProgramRegister(uint8_t addr /* 7 bits */, uint8_t data)
 {
     uint32_t reg = addr & 0b1111111;
-    reg = (reg << 1) | uint8_t(1);
+    reg = (reg << 1) | 1;
     reg = (reg << 8) | data;
+    reg = reg << 8;
     return reg;
 }
 
 void Adc::setReadModeAutoSeq()
 {
-    spi.transferBits(AUTO_RST, NULL, NUM_COMMAND_REGISTER_BITS);
+    spi.transferBits(AUTO_RST << 16, NULL, NUM_COMMAND_REGISTER_BITS);
 }
 
 #endif
