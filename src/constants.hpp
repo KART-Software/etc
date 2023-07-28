@@ -14,8 +14,8 @@
 ////////////////////
 
 /// MCP3208 or ADS8688 ///
-#define MCP3208
-// #define ADS8688
+// #define MCP3208
+#define ADS8688
 
 #ifdef MCP3208
 #define ADC_NUM_CH 6
@@ -28,13 +28,18 @@
 #endif
 
 #ifdef ADS8688
-#define ADC_NUM_CH 6
-#define APPS_1_CH 0
-#define APPS_2_CH 1
-#define TPS_1_CH 2
-#define TPS_2_CH 3
-#define ITTR_CH 4 // IST Throttle Position Target Receiver (ITTR)
-#define BSE_CH 5  // Brake System Encoder
+#define ADC_NUM_CH 7       // TODO CHANGE
+#define APPS_1_CH 0        // TODO CHANGE
+#define APPS_2_CH 1        // TODO CHANGE
+#define TPS_1_CH 2         // TODO CHANGE
+#define TPS_2_CH 3         // TODO CHANGE
+#define ITTR_CH 4          // TODO CHANGE  // IST Throttle Position Target Receiver (ITTR)
+#define BSE_CH 5           // TODO CHANGE  // Brake System Encoder
+#define MOTOR_CURRENT_CH 6 // TODO CHANGE  // Connected to motor driver's CS PIN.The voltage is about 20 mV/A plus a 50 mV offset.
+#define ADC_CHANNELS        \
+    {                       \
+        0, 1, 2, 3, 4, 5, 6 \
+    } // TODO CHANGE  // Sorted Channels
 #endif
 
 ////////////////////
