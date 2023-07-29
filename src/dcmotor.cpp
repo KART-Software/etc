@@ -116,6 +116,52 @@ void DcMotor::ledcDetach()
 }
 #endif
 
+#ifdef G2_18V17
+void DcMotor::initialize()
+{
+    ledcSetup(ch, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
+    pinMode(dirPin, OUTPUT);
+    pinMode(slpPin, OUTPUT);
+    digitalWrite(slpPin, LOW);
+}
+
+void DcMotor::write(double value)
+{
+    write(min(outputMax, outputMax * abs(value) / scaleMax), value < 0);
+}
+
+void DcMotor::write(uint16_t duty, uint8_t forward)
+{
+    ledcWrite(ch, duty);
+    digitalWrite(dirPin, forward);
+}
+
+void DcMotor::on()
+{
+    ledcAttach();
+    digitalWrite(slpPin, HIGH);
+    _isOn = true;
+}
+
+void DcMotor::off()
+{
+    write(0, LOW);
+    digitalWrite(slpPin, LOW);
+    ledcDetach();
+    _isOn = false;
+}
+
+void DcMotor::ledcAttach()
+{
+    ledcAttachPin(pwmPin, ch);
+}
+
+void DcMotor::ledcDetach()
+{
+    ledcDetachPin(pwmPin);
+}
+#endif
+
 bool DcMotor::isOn()
 {
     return _isOn;
