@@ -28,18 +28,18 @@
 #endif
 
 #ifdef ADS8688
-#define ADC_NUM_CH 7       // TODO CHANGE
-#define APPS_1_CH 0        // TODO CHANGE
-#define APPS_2_CH 1        // TODO CHANGE
-#define TPS_1_CH 2         // TODO CHANGE
-#define TPS_2_CH 3         // TODO CHANGE
-#define ITTR_CH 4          // TODO CHANGE  // IST Throttle Position Target Receiver (ITTR)
-#define BSE_CH 5           // TODO CHANGE  // Brake System Encoder
-#define MOTOR_CURRENT_CH 6 // TODO CHANGE  // Connected to motor driver's CS PIN.The voltage is about 20 mV/A plus a 50 mV offset.
+#define ADC_NUM_CH 7
+#define APPS_1_CH 6
+#define APPS_2_CH 7
+#define TPS_1_CH 0
+#define TPS_2_CH 1
+#define ITTR_CH 2          // IST Throttle Position Target Receiver (ITTR)
+#define BSE_CH 3           // Brake System Encoder
+#define MOTOR_CURRENT_CH 5 // Connected to motor driver's CS PIN.The voltage is about 20 mV/A plus a 50 mV offset.
 #define ADC_CHANNELS        \
     {                       \
-        0, 1, 2, 3, 4, 5, 6 \
-    } // TODO CHANGE  // Sorted Channels
+        0, 1, 2, 3, 5, 6, 7 \
+    } // Sorted Channels
 #endif
 
 ////////////////////
@@ -68,10 +68,10 @@
 #endif
 
 #ifdef G2_18V17
-#define DC_MOTOR_SLP_PIN 1 // TODO CHANGE
-#define DC_MOTOR_PWM_PIN 2 // TODO CHANGE
-#define DC_MOTOR_DIR_PIN 3 // TODO CHANGE
-#define DC_MOTOR_FLT_PIN 4 // TODO CHANGE
+#define DC_MOTOR_SLP_PIN 4
+#define DC_MOTOR_PWM_PIN 16
+#define DC_MOTOR_DIR_PIN 17
+#define DC_MOTOR_FLT_PIN 15 // TODO CHANGE
 #define PWM_LEDC_CHANNEL 0
 #endif
 
@@ -83,7 +83,7 @@
 
 #define KP 3
 #define KI 0
-#define KD 0.01
+#define KD 0.0
 
 #define MOTOR_DIRECTION -1
 
@@ -91,11 +91,11 @@
 /// Sensor Settings ///
 ///////////////////////
 
-#define TPS_1_RAW_MIN 1817
-#define TPS_2_RAW_MIN 2272
+#define TPS_1_RAW_MIN 26081
+#define TPS_2_RAW_MIN 31238
 
-#define TPS_1_RAW_MAX 1120
-#define TPS_2_RAW_MAX 2967
+#define TPS_1_RAW_MAX 15800
+#define TPS_2_RAW_MAX 41372
 
 #define TPS_1_MIN 0
 #define TPS_2_MIN 0
@@ -105,11 +105,11 @@
 
 #define TPS_MARGIN 5
 
-#define APPS_1_RAW_MIN 7
-#define APPS_2_RAW_MIN 4066
+#define APPS_1_RAW_MIN 221
+#define APPS_2_RAW_MIN 56483
 
-#define APPS_1_RAW_MAX 4068
-#define APPS_2_RAW_MAX 12
+#define APPS_1_RAW_MAX 56849
+#define APPS_2_RAW_MAX 305
 
 #define APPS_1_MIN 0
 #define APPS_2_MIN 0
@@ -131,9 +131,9 @@
 /// Button Settings ///
 ///////////////////////
 
-#define BUTTON_1_PIN 1 // TODO CHANGE
-#define BUTTON_2_PIN 2 // TODO CHANGE
-#define BUTTON_3_PIN 3 // TODO CHANGE
+#define BUTTON_1_PIN 12
+#define BUTTON_2_PIN 13
+#define BUTTON_3_PIN 14
 
 #define MONITOR_ON_PIN BUTTON_1_PIN
 
@@ -141,6 +141,6 @@
 /// Other Output Pin Settings ///
 /////////////////////////////////
 
-#define FUEL_PUMP_PIN 4 // TODO CHANGE
+#define FUEL_PUMP_PIN 33
 
 #endif
