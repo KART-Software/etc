@@ -3,16 +3,22 @@
 PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(apps1)
 {
-    initialize();
+    initParameters();
 }
 
 PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor)
 {
-    initialize();
+    initParameters();
+    hasIttr = true;
 }
 
 void PlausibilityValidator::initialize()
+{
+    Serial.begin(SERIAL_SPEED);
+}
+
+void PlausibilityValidator::initParameters()
 {
     lastAppsPlausibleTime = 0;
     lastTpsPlausibleTime = 0;
@@ -20,6 +26,7 @@ void PlausibilityValidator::initialize()
     lastTps2CircuitValidTime = 0;
     lastApps1CircuitValidTime = 0;
     lastApps2CircuitValidTime = 0;
+    lastAppsTpsTargetValidTime = 0;
     isValidAllTime = true;
 }
 
@@ -157,4 +164,41 @@ bool PlausibilityValidator::isAppsTpsTargetValid()
         return false;
     }
     return true;
+}
+
+void PlausibilityValidator::serialLog()
+{
+    String logStr;
+    if (hasIttr)
+    {
+        logStr = "APPS1: " + String(apps1.getRawValue()) +
+                 ", APPS2: " + String(apps2.getRawValue()) +
+                 ", ITTR: " + String(targetSensor.getRawValue()) +
+                 ", TPS1: " + String(tps1.getRawValue()) +
+                 ", TPS2: " + String(tps2.getRawValue());
+    }
+    else
+    {
+        logStr = "APPS1: " + String(apps1.getRawValue()) +
+                 ", APPS2: " + String(apps2.getRawValue()) +
+                 ", TPS1: " + String(tps1.getRawValue()) +
+                 ", TPS2: " + String(tps2.getRawValue());
+    }
+    Serial.println(logStr);
+}
+
+void PlausibilityValidator::startLog()
+{
+    while (true)
+    {
+        serialLog();
+        delay(SERIAL_LOG_INTERVAL);
+    }
+}
+
+void startLogging(void *plausibilityValidator)
+{
+    PlausibilityValidator *validator;
+    validator = (PlausibilityValidator *)plausibilityValidator;
+    validator->startLog();
 }

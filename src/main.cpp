@@ -9,6 +9,7 @@
 // #include "moving_average.hpp"
 
 TaskHandle_t motorControllTask;
+TaskHandle_t serialLoggingTask;
 
 Apps apps1(APPS_1_MIN, APPS_1_MAX, APPS_MARGIN, APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
 Apps apps2(APPS_2_MIN, APPS_2_MAX, APPS_MARGIN, APPS_2_RAW_MIN, APPS_2_RAW_MAX, APPS_2_CH);
@@ -36,6 +37,7 @@ void setup()
   // xTaskCreatePinnedToCore(startManualAdjusterMode, "SensorManualAdjustTask", 8192, (void *)&motorController, 1, &sensorManualAdjustTask, 1);
   // vTaskSuspend(sensorManualAdjustTask);
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 0);
+  xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 1);
   // lastTime = micros();
 }
 
