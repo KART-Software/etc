@@ -175,14 +175,23 @@ void PlausibilityValidator::serialLog()
                  ", APPS2: " + String(apps2.getRawValue()) +
                  ", ITTR: " + String(targetSensor.getRawValue()) +
                  ", TPS1: " + String(tps1.getRawValue()) +
-                 ", TPS2: " + String(tps2.getRawValue());
+                 ", TPS2: " + String(tps2.getRawValue()) +
+                 ", APPS1: " + String(apps1.convertedValue()) +
+                 ", APPS2: " + String(apps2.convertedValue()) +
+                 ", ITTR: " + String(targetSensor.convertedValue()) +
+                 ", TPS1: " + String(tps1.convertedValue()) +
+                 ", TPS2: " + String(tps2.convertedValue());
     }
     else
     {
         logStr = "APPS1: " + String(apps1.getRawValue()) +
                  ", APPS2: " + String(apps2.getRawValue()) +
                  ", TPS1: " + String(tps1.getRawValue()) +
-                 ", TPS2: " + String(tps2.getRawValue());
+                 ", TPS2: " + String(tps2.getRawValue()) +
+                 ", APPS1: " + String(apps1.convertedValue()) +
+                 ", APPS2: " + String(apps2.convertedValue()) +
+                 ", TPS1: " + String(tps1.convertedValue()) +
+                 ", TPS2: " + String(tps2.convertedValue());
     }
     Serial.println(logStr);
 }

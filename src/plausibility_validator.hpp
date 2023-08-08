@@ -17,6 +17,7 @@ class PlausibilityValidator
 public:
     PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2);
     PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor);
+    void initialize();
     bool isCurrentlyValid();
     bool isValid();
     void serialLog();
@@ -36,7 +37,6 @@ private:
         lastApps1CircuitValidTime,
         lastApps2CircuitValidTime,
         lastAppsTpsTargetValidTime;
-    void initialize();
     void initParameters();
     bool isAppsPlausible();
     bool isTpsPlausible();

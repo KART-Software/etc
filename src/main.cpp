@@ -37,6 +37,7 @@ void setup()
   // xTaskCreatePinnedToCore(startManualAdjusterMode, "SensorManualAdjustTask", 8192, (void *)&motorController, 1, &sensorManualAdjustTask, 1);
   // vTaskSuspend(sensorManualAdjustTask);
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 0);
+  plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 1);
   // lastTime = micros();
 }
