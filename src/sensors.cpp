@@ -1,6 +1,6 @@
 #include "sensors.hpp"
 
-Sensor::Sensor(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue)
+Sensor::Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, double maxValue, double margin)
     : margin(margin)
 {
     setRange(minValue, maxValue);
@@ -55,8 +55,8 @@ uint16_t Sensor::getRawValue()
 }
 
 Apps::
-    Apps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
-    : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
+    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
       ch(ch)
 {
 }
@@ -74,8 +74,8 @@ double Apps::convertToTargetTp()
 }
 
 Tps::
-    Tps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
-    : Sensor(minValue, maxValue, margin, rawMinValue, rawMaxValue),
+    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
       ch(ch)
 {
 }
@@ -87,7 +87,24 @@ double Tps::read()
 }
 
 Ittr::
-    Ittr(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch)
-    : Apps(minValue, maxValue, margin, rawMinValue, rawMaxValue, ch)
+    Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin)
 {
+}
+
+Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double highPressureThreshold, double margin)
+    : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
+      ch(ch), highPressureThreshold(highPressureThreshold)
+{
+}
+
+double Bps::read()
+{
+    rawValue = gAdc.value[ch];
+    return validatedConvertedValue();
+}
+
+bool Bps::isHighPressure()
+{
+    return convertedValue() > highPressureThreshold;
 }

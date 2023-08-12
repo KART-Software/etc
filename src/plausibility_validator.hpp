@@ -15,8 +15,8 @@
 class PlausibilityValidator
 {
 public:
-    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2);
-    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor);
+    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Bps &bps);
+    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor, Bps &bps);
     void initialize();
     bool isCurrentlyValid();
     bool isValid();
@@ -28,6 +28,7 @@ private:
     Apps &apps1, &apps2;
     Tps &tps1, &tps2;
     Apps &targetSensor;
+    Bps &bps;
     bool isValidAllTime;
     unsigned long
         lastTpsPlausibleTime,

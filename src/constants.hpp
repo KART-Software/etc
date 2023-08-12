@@ -24,7 +24,7 @@
 #define TPS_1_CH 2
 #define TPS_2_CH 3
 #define ITTR_CH 0 // IST Throttle Position Target Receiver (ITTR)
-#define BSE_CH 1  // Brake System Encoder
+#define BPS_CH 1  // Brake Pressure Sensor
 #endif
 
 #ifdef ADS8688
@@ -34,7 +34,7 @@
 #define TPS_1_CH 0
 #define TPS_2_CH 1
 #define ITTR_CH 2          // IST Throttle Position Target Receiver (ITTR)
-#define BSE_CH 3           // Brake System Encoder
+#define BPS_CH 3           // Brake Pressure Sensor
 #define MOTOR_CURRENT_CH 5 // Connected to motor driver's CS PIN.The voltage is about 20 mV/A plus a 50 mV offset.
 #define ADC_CHANNELS        \
     {                       \
@@ -91,32 +91,30 @@
 /// Sensor Settings ///
 ///////////////////////
 
-#define TPS_1_RAW_MIN 26081
-#define TPS_2_RAW_MIN 31238
+#define TPS_1_RAW_MIN 18282
+#define TPS_2_RAW_MIN 47580
 
-#define TPS_1_RAW_MAX 15800
-#define TPS_2_RAW_MAX 41372
+#define TPS_1_RAW_MAX 7197
+#define TPS_2_RAW_MAX 58558
 
-#define TPS_1_MIN 0
-#define TPS_2_MIN 0
+#define TPS_MIN 0
+#define TPS_MAX 100
+#define TPS_MARGIN 15
 
-#define TPS_1_MAX 100
-#define TPS_2_MAX 100
+// #define APPS_1_RAW_MIN 30720
+// #define APPS_2_RAW_MIN 35154
 
-#define TPS_MARGIN 5
+// #define APPS_1_RAW_MAX 32907
+// #define APPS_2_RAW_MAX 32977
 
-#define APPS_1_RAW_MIN 221
-#define APPS_2_RAW_MIN 56483
+#define APPS_1_RAW_MIN 65385
+#define APPS_2_RAW_MIN 108
 
-#define APPS_1_RAW_MAX 56849
-#define APPS_2_RAW_MAX 305
+#define APPS_1_RAW_MAX 155
+#define APPS_2_RAW_MAX 65467
 
-#define APPS_1_MIN 0
-#define APPS_2_MIN 0
-
-#define APPS_1_MAX 100
-#define APPS_2_MAX 100
-
+#define APPS_MIN 0
+#define APPS_MAX 100
 #define APPS_MARGIN 50
 
 #define ITTR_RAW_MAX 1023
@@ -127,6 +125,14 @@
 
 #define ITTR_MARGIN 0
 
+#define BPS_RAW_MAX 4.5 * 65535 / 5.12 // 4.5V
+#define BPS_RAW_MIN 0.5 * 65535 / 5.12 // 0.5V
+
+#define BPS_MAX 1000                    // psi
+#define BPS_MIN 0                       // psi
+#define BPS_HIGH_PRESSURE_THRESHOLD 600 // psi
+#define BPS_MARGIN 0
+
 ///////////////////////
 /// Button Settings ///
 ///////////////////////
@@ -134,8 +140,6 @@
 #define BUTTON_1_PIN 12
 #define BUTTON_2_PIN 13
 #define BUTTON_3_PIN 14
-
-#define MONITOR_ON_PIN BUTTON_1_PIN
 
 /////////////////////////////////
 /// Other Output Pin Settings ///

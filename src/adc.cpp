@@ -70,7 +70,7 @@ uint32_t Adc::createChannelSelectBits()
     bits |= 1 << TPS_1_CH;
     bits |= 1 << TPS_2_CH;
     bits |= 1 << ITTR_CH;
-    bits |= 1 << BSE_CH;
+    bits |= 1 << BPS_CH;
     bits |= 1 << MOTOR_CURRENT_CH;
     return bits;
 }

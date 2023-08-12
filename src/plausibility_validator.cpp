@@ -1,13 +1,13 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(apps1)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Bps &bps)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(apps1), bps(bps)
 {
     initParameters();
 }
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor, Bps &bps)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
 {
     initParameters();
     hasIttr = true;
@@ -176,11 +176,13 @@ void PlausibilityValidator::serialLog()
                  ", ITTR: " + toNChars(String(targetSensor.getRawValue()), 5) +
                  ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
                  ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
+                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
+                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
                  ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
                  ", ITTR: " + toNChars(String(targetSensor.convertedValue()), 7) +
                  ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7);
+                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
+                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
     }
     else
     {
@@ -188,10 +190,12 @@ void PlausibilityValidator::serialLog()
                  ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
                  ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
                  ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
+                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
+                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
                  ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
                  ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7);
+                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
+                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
     }
     Serial.println(logStr);
 }

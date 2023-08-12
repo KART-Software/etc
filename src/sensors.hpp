@@ -9,8 +9,7 @@
 class Sensor
 {
 public:
-    Sensor();
-    Sensor(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue);
+    Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, double maxValue, double margin);
     virtual double read() = 0;
     void setRange(double minValue, double maxValue);
     void setConversion(uint16_t rawMinValue, uint16_t rawMaxValue);
@@ -31,34 +30,41 @@ protected:
 class Apps : public Sensor
 {
 public:
-    Apps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
+    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = APPS_MARGIN);
     double read();
     double convertToTargetTp();
 
-protected:
+private:
     uint8_t ch;
 };
 
 class Tps : public Sensor
 {
 public:
-    Tps(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
+    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = TPS_MIN, double maxValue = TPS_MAX, double margin = TPS_MARGIN);
     double read();
 
-protected:
+private:
     uint8_t ch;
 };
 
 class Ittr : public Apps
 {
 public:
-    Ittr(double minValue, double maxValue, double margin, uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch);
+    Ittr(uint16_t rawMinValue = ITTR_RAW_MIN, uint16_t rawMaxValue = ITTR_RAW_MAX, uint8_t ch = ITTR_CH, double minValue = ITTR_MIN, double maxValue = ITTR_MAX, double margin = ITTR_MARGIN);
 };
 
-class Bse : Sensor
+class Bps : public Sensor
 {
 public:
+    Bps(uint16_t rawMinValue = BPS_RAW_MIN, uint16_t rawMaxValue = BPS_RAW_MAX, uint8_t ch = BPS_CH, double minValue = BPS_MIN, double maxValue = BPS_MAX, double highPressureThreshold = BPS_HIGH_PRESSURE_THRESHOLD, double margin = BPS_MARGIN);
     double read();
+    bool isHighPressure();
+
+private:
+    uint8_t ch;
+
+    double highPressureThreshold;
 };
 
 #endif
