@@ -171,27 +171,27 @@ void PlausibilityValidator::serialLog()
     String logStr;
     if (hasIttr)
     {
-        logStr = "APPS1: " + String(apps1.getRawValue()) +
-                 ", APPS2: " + String(apps2.getRawValue()) +
-                 ", ITTR: " + String(targetSensor.getRawValue()) +
-                 ", TPS1: " + String(tps1.getRawValue()) +
-                 ", TPS2: " + String(tps2.getRawValue()) +
-                 ", APPS1: " + String(apps1.convertedValue()) +
-                 ", APPS2: " + String(apps2.convertedValue()) +
-                 ", ITTR: " + String(targetSensor.convertedValue()) +
-                 ", TPS1: " + String(tps1.convertedValue()) +
-                 ", TPS2: " + String(tps2.convertedValue());
+        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
+                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
+                 ", ITTR: " + toNChars(String(targetSensor.getRawValue()), 5) +
+                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
+                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
+                 ", APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
+                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
+                 ", ITTR: " + toNChars(String(targetSensor.convertedValue()), 7) +
+                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
+                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7);
     }
     else
     {
-        logStr = "APPS1: " + String(apps1.getRawValue()) +
-                 ", APPS2: " + String(apps2.getRawValue()) +
-                 ", TPS1: " + String(tps1.getRawValue()) +
-                 ", TPS2: " + String(tps2.getRawValue()) +
-                 ", APPS1: " + String(apps1.convertedValue()) +
-                 ", APPS2: " + String(apps2.convertedValue()) +
-                 ", TPS1: " + String(tps1.convertedValue()) +
-                 ", TPS2: " + String(tps2.convertedValue());
+        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
+                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
+                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
+                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
+                 ", APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
+                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
+                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
+                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7);
     }
     Serial.println(logStr);
 }
@@ -203,6 +203,16 @@ void PlausibilityValidator::startLog()
         serialLog();
         delay(SERIAL_LOG_INTERVAL);
     }
+}
+
+String PlausibilityValidator::toNChars(String value, uint8_t n)
+{
+    int spaces = n - value.length();
+    for (int i = 0; i < spaces; i++)
+    {
+        value = " " + value;
+    }
+    return value;
 }
 
 void startLogging(void *plausibilityValidator)

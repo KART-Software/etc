@@ -10,7 +10,7 @@
 #define SENSOR_SAME_POSITION_THRESHOLD 10.0
 
 #define SERIAL_SPEED 115200
-#define SERIAL_LOG_INTERVAL 100
+#define SERIAL_LOG_INTERVAL 150
 
 class PlausibilityValidator
 {
@@ -46,6 +46,7 @@ private:
     bool isTps2CircuitValid();
     bool isAppsTpsTargetValid();
     bool hasIttr = false;
+    String toNChars(String value, uint8_t n);
 };
 
 void startLogging(void *plausibilityValidator);
