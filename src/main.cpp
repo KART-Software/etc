@@ -24,13 +24,10 @@ PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2);
 MotorController motorController(apps1, tps1);
 #endif
 
-// SerialLogger serialLogger;
-
 // MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
 
 void setup()
 {
-  // serialLogger.initialize();
   gAdc.begin();
   motorController.initialize();
   motorController.setMotorOn();
@@ -51,9 +48,12 @@ void loop()
   tps1.read();
   tps2.read();
 
-  // if (!plausibilityValidator.isCurrentlyValid())
-  // {
-  //   motorController.setMotorOff();
-  //   vTaskSuspend(motorControllTask);
-  // }
+  if (!plausibilityValidator.isCurrentlyValid())
+  {
+    if (motorController.isOn())
+    {
+      motorController.setMotorOff();
+      vTaskSuspend(motorControllTask);
+    }
+  }
 }
