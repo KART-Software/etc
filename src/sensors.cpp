@@ -1,19 +1,12 @@
 #include "sensors.hpp"
 
 Sensor::Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, double maxValue, double margin)
-    : margin(margin)
+    : rawMinValue(rawMinValue), rawMaxValue(rawMaxValue), minValue(minValue), maxValue(maxValue), margin(margin)
 {
-    setRange(minValue, maxValue);
-    setConversion(rawMinValue, rawMaxValue);
+    setConversion(minValue, maxValue);
 }
 
-void Sensor::setRange(double minValue, double maxValue)
-{
-    this->minValue = minValue;
-    this->maxValue = maxValue;
-}
-
-void Sensor::setConversion(uint16_t rawMinValue, uint16_t rawMaxValue)
+void Sensor::setConversion(double minValue, double maxValue)
 {
     this->slope = (maxValue - minValue) / (rawMaxValue - rawMinValue);
     this->intercept = (rawMaxValue * minValue - rawMinValue * maxValue) / (rawMaxValue - rawMinValue);
@@ -22,11 +15,6 @@ void Sensor::setConversion(uint16_t rawMinValue, uint16_t rawMaxValue)
 double Sensor::convertedValue()
 {
     return rawValue * slope + intercept;
-}
-
-double Sensor::validatedConvertedValue()
-{
-    return constrain(convertedValue(), minValue, maxValue);
 }
 
 bool Sensor::isInRange()
@@ -55,22 +43,33 @@ uint16_t Sensor::getRawValue()
 }
 
 Apps::
-    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin, double idlingValue)
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
-      ch(ch)
+      ch(ch), idlingValue(idlingValue)
 {
 }
 
-double Apps::read()
+void Apps::read()
 {
     rawValue = gAdc.value[ch];
-    return validatedConvertedValue();
 }
 
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
     return constrain(app, getMinValue(), getMaxValue()); // TODO change
+}
+
+void Apps::setIdling(bool idling)
+{
+    if (idling)
+    {
+        setConversion(idlingValue, maxValue);
+    }
+    else
+    {
+        setConversion(minValue, maxValue);
+    }
 }
 
 Tps::
@@ -80,15 +79,14 @@ Tps::
 {
 }
 
-double Tps::read()
+void Tps::read()
 {
     rawValue = gAdc.value[ch];
-    return validatedConvertedValue();
 }
 
 Ittr::
-    Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
-    : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin)
+    Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin, double idlingValue)
+    : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin, idlingValue)
 {
 }
 
@@ -98,10 +96,9 @@ Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue
 {
 }
 
-double Bps::read()
+void Bps::read()
 {
     rawValue = gAdc.value[ch];
-    return validatedConvertedValue();
 }
 
 bool Bps::isHighPressure()

@@ -101,20 +101,15 @@
 #define TPS_MAX 100
 #define TPS_MARGIN 15
 
-// #define APPS_1_RAW_MIN 30720
-// #define APPS_2_RAW_MIN 35154
+#define APPS_1_RAW_MIN 25825
+#define APPS_2_RAW_MIN 40230
 
-// #define APPS_1_RAW_MAX 32907
-// #define APPS_2_RAW_MAX 32977
-
-#define APPS_1_RAW_MIN 65385
-#define APPS_2_RAW_MIN 108
-
-#define APPS_1_RAW_MAX 155
-#define APPS_2_RAW_MAX 65467
+#define APPS_1_RAW_MAX 33780
+#define APPS_2_RAW_MAX 32282
 
 #define APPS_MIN 0
 #define APPS_MAX 100
+#define APPS_IDLING 10
 #define APPS_MARGIN 50
 
 #define ITTR_RAW_MAX 1023
@@ -122,7 +117,7 @@
 
 #define ITTR_MAX 100
 #define ITTR_MIN 0
-
+#define ITTR_IDLING 10
 #define ITTR_MARGIN 0
 
 #define BPS_RAW_MAX 4.5 * 65535 / 5.12 // 4.5V
@@ -131,7 +126,7 @@
 #define BPS_MAX 1000                    // psi
 #define BPS_MIN 0                       // psi
 #define BPS_HIGH_PRESSURE_THRESHOLD 600 // psi
-#define BPS_MARGIN 0
+#define BPS_MARGIN 10                   // psi
 
 ///////////////////////
 /// Button Settings ///
