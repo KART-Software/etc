@@ -91,11 +91,11 @@
 /// Sensor Settings ///
 ///////////////////////
 
-#define TPS_1_RAW_MIN 18282
-#define TPS_2_RAW_MIN 47580
+#define TPS_1_RAW_MIN 47580
+#define TPS_2_RAW_MIN 18282
 
-#define TPS_1_RAW_MAX 7197
-#define TPS_2_RAW_MAX 58558
+#define TPS_1_RAW_MAX 58558
+#define TPS_2_RAW_MAX 7197
 
 #define TPS_MIN 0
 #define TPS_MAX 100
