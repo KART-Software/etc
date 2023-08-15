@@ -47,6 +47,7 @@ Apps::
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
       ch(ch), idlingValue(idlingValue)
 {
+    setIdling(true);
 }
 
 void Apps::read()
