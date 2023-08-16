@@ -27,19 +27,23 @@ void PlausibilityValidator::initParameters()
     lastApps1CircuitValidTime = 0;
     lastApps2CircuitValidTime = 0;
     lastAppsTpsTargetValidTime = 0;
+    lastBpsCircuitValidTime = 0;
+    lastBpsTpsPlausibleTime = 0;
     isValidAllTime = true;
 }
 
 bool PlausibilityValidator::isCurrentlyValid()
 {
     bool flag = true;
-    flag *= isAppsPlausible();
+    // flag *= isAppsPlausible();
     flag *= isTpsPlausible();
-    flag *= isApps1CircuitValid();
-    flag *= isApps2CircuitValid();
+    // flag *= isApps1CircuitValid();
+    // flag *= isApps2CircuitValid();
     flag *= isTps1CircuitValid();
     flag *= isTps2CircuitValid();
-    flag *= isAppsTpsTargetValid();
+    // flag *= isAppsTpsTargetValid();
+    // flag *= isBpsCircuitValid();
+    // flag *= isBpsTpsPlausible();
 
     isValidAllTime *= flag;
 
@@ -158,9 +162,43 @@ bool PlausibilityValidator::isAppsTpsTargetValid()
         lastAppsTpsTargetValidTime = now;
         return true;
     }
-    if (now - lastAppsTpsTargetValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    if (now - lastAppsTpsTargetValidTime > APPS_TPS_TARGET_IMPLAUSIBLE_THRESHOLD_TIME)
     {
         errorHandler.raise(ERR_APPS_TPS_TARGET_FAILURE);
+        return false;
+    }
+    return true;
+}
+
+bool PlausibilityValidator::isBpsCircuitValid()
+{
+    unsigned long now = millis();
+    if (bps.isInRange())
+    {
+        lastBpsCircuitValidTime = now;
+        return true;
+    }
+    if (now - lastBpsCircuitValidTime > SENSOR_IMPLAUSIBLE_THRESHOLD_TIME)
+    {
+        errorHandler.raise(ERR_BPS_CIRCUIT_FAILURE);
+        return false;
+    }
+    return true;
+}
+
+bool PlausibilityValidator::isBpsTpsPlausible()
+{
+    unsigned long now = millis();
+    double targetTp = targetSensor.convertToTargetTp();
+    double tpsValue = tps1.convertedValue();
+    if (!bps.isHighPressure() || tps1.isLargeOpen())
+    {
+        lastBpsTpsPlausibleTime = now;
+        return true;
+    }
+    if (now - lastBpsTpsPlausibleTime > BPS_TPS_IMPLAUSIBLE_THRESHOLD_TIME)
+    {
+        errorHandler.raise(ERR_BPS_TPS_IMPLAUSIBLE);
         return false;
     }
     return true;

@@ -99,6 +99,7 @@
 
 #define TPS_MIN 0
 #define TPS_MAX 100
+#define TPS_LARGE_OPEN_THRESHOLD 50
 #define TPS_MARGIN 15
 
 #define APPS_1_RAW_MIN 25825

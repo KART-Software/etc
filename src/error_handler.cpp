@@ -11,6 +11,8 @@ ErrorHandler::
               {ERR_APPS_1_CIRCUIT_FAILURE, false},
               {ERR_APPS_2_CIRCUIT_FAILURE, false},
               {ERR_APPS_TPS_TARGET_FAILURE, false},
+              {ERR_BPS_CIRCUIT_FAILURE, false},
+              {ERR_BPS_TPS_IMPLAUSIBLE, false},
           }){};
 
 void ErrorHandler::raise(int8_t errID)

@@ -74,15 +74,20 @@ void Apps::setIdling(bool idling)
 }
 
 Tps::
-    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double largeOpenThreshold, double margin)
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
-      ch(ch)
+      ch(ch), largeOpenThreshold(largeOpenThreshold)
 {
 }
 
 void Tps::read()
 {
     rawValue = gAdc.value[ch];
+}
+
+bool Tps::isLargeOpen()
+{
+    return convertedValue() > largeOpenThreshold;
 }
 
 Ittr::

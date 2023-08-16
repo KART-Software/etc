@@ -7,6 +7,8 @@
 #include "globals.hpp"
 
 #define SENSOR_IMPLAUSIBLE_THRESHOLD_TIME 100
+#define APPS_TPS_TARGET_IMPLAUSIBLE_THRESHOLD_TIME 1000
+#define BPS_TPS_IMPLAUSIBLE_THRESHOLD_TIME 1000
 #define SENSOR_SAME_POSITION_THRESHOLD 10.0
 
 #define SERIAL_SPEED 115200
@@ -37,7 +39,10 @@ private:
         lastTps2CircuitValidTime,
         lastApps1CircuitValidTime,
         lastApps2CircuitValidTime,
-        lastAppsTpsTargetValidTime;
+        lastAppsTpsTargetValidTime,
+        lastBpsCircuitValidTime,
+        lastBpsTpsPlausibleTime;
+
     void initParameters();
     bool isAppsPlausible();
     bool isTpsPlausible();
@@ -46,6 +51,8 @@ private:
     bool isTps1CircuitValid();
     bool isTps2CircuitValid();
     bool isAppsTpsTargetValid();
+    bool isBpsCircuitValid();
+    bool isBpsTpsPlausible();
     bool hasIttr = false;
     String toNChars(String value, uint8_t n);
 };

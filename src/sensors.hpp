@@ -42,11 +42,13 @@ private:
 class Tps : public Sensor
 {
 public:
-    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = TPS_MIN, double maxValue = TPS_MAX, double margin = TPS_MARGIN);
+    Tps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = TPS_MIN, double maxValue = TPS_MAX, double largeOpenThreshold = TPS_LARGE_OPEN_THRESHOLD, double margin = TPS_MARGIN);
     void read();
+    bool isLargeOpen();
 
 private:
     const uint8_t ch;
+    const double largeOpenThreshold;
 };
 
 class Ittr : public Apps
