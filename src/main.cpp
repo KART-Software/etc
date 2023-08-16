@@ -38,6 +38,8 @@ void setup()
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 0);
   plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 1);
+  apps1.setIdling(toggleSwitch.isOn());
+  apps2.setIdling(toggleSwitch.isOn());
 }
 
 void loop()
