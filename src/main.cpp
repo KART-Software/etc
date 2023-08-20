@@ -40,6 +40,7 @@ void setup()
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 1);
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
+  ittr.setIdling(toggleSwitch.isOn());
 }
 
 void loop()
@@ -65,5 +66,6 @@ void loop()
   {
     apps1.setIdling(toggleSwitch.isOn());
     apps2.setIdling(toggleSwitch.isOn());
+    ittr.setIdling(toggleSwitch.isOn());
   }
 }
