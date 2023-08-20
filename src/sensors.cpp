@@ -58,11 +58,18 @@ void Apps::read()
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    return constrain(app, getMinValue(), getMaxValue()); // TODO change
+    double x = constrain(app, getMinValue(), getMaxValue());
+    double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
+    if (idling)
+    {
+        return idlingValue + y * (100.0 - idlingValue) / 100.0;
+    }
+    return y;
 }
 
 void Apps::setIdling(bool idling)
 {
+    this->idling = idling;
     if (idling)
     {
         setConversion(idlingValue, maxValue);

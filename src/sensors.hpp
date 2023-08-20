@@ -37,6 +37,7 @@ public:
 private:
     const uint8_t ch;
     const double idlingValue;
+    bool idling = true;
 };
 
 class Tps : public Sensor
