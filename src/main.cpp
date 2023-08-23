@@ -31,6 +31,8 @@ MotorController motorController(apps1, tps1);
 
 void setup()
 {
+  pinMode(FUEL_PUMP_PIN, OUTPUT);
+  digitalWrite(FUEL_PUMP_PIN, HIGH);
   gAdc.begin();
   toggleSwitch.initialize();
   motorController.initialize();
@@ -60,6 +62,7 @@ void loop()
     {
       motorController.setMotorOff();
       vTaskSuspend(motorControllTask);
+      digitalWrite(FUEL_PUMP_PIN, LOW);
     }
   }
   if (toggleSwitch.switched())
