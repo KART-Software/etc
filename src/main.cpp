@@ -4,7 +4,6 @@
 #include "constants.hpp"
 #include "sensors.hpp"
 #include "plausibility_validator.hpp"
-#include "serial_logger.hpp"
 #include "motor_controller.hpp"
 #include "toggle_switch.hpp"
 // #include "moving_average.hpp"
