@@ -36,9 +36,9 @@ void setup()
   toggleSwitch.initialize();
   motorController.initialize();
   motorController.setMotorOn();
-  xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 0);
+  xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
   plausibilityValidator.initialize();
-  xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 1);
+  xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
   ittr.setIdling(toggleSwitch.isOn());

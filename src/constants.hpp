@@ -49,8 +49,8 @@
 // #define HILITAND
 // #define VNH5019
 // #define G2_18V17
-// #define DRV8256P
-#define TB67H450
+#define DRV8256P
+// #define TB67H450
 
 #ifdef HILITAND
 #define DC_MOTOR_ENABLE_PIN 5 // TODO CHANGE
@@ -78,8 +78,8 @@
 #endif
 
 #ifdef DRV8256P
-#define DC_MOTOR_PWM_1_PIN 16
-#define DC_MOTOR_PWM_2_PIN 17
+#define DC_MOTOR_PWM_1_PIN 17
+#define DC_MOTOR_PWM_2_PIN 16
 #define DC_MOTOR_FLT_PIN 4 // TODO CHANGE
 #define DC_MOTOR_SLP_PIN 2
 #define PWM_1_LEDC_CHANNEL 0
@@ -99,8 +99,8 @@
 
 #define MOTOR_CONTROLL_CYCLE_TIME 1 // ms
 
-#define KP 10
-#define KI 10
+#define KP 3
+#define KI 1
 #define KD 0.0
 
 #define MOTOR_DIRECTION 1
@@ -109,11 +109,11 @@
 /// Sensor Settings ///
 ///////////////////////
 
-#define TPS_1_RAW_MIN 21376
-#define TPS_2_RAW_MIN 44336
+#define TPS_1_RAW_MIN 19278
+#define TPS_2_RAW_MIN 44710
 
-#define TPS_1_RAW_MAX 33080
-#define TPS_2_RAW_MAX 32840
+#define TPS_1_RAW_MAX 30657
+#define TPS_2_RAW_MAX 33505
 
 #define TPS_MIN 0
 #define TPS_MAX 100
