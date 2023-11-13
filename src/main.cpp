@@ -6,10 +6,12 @@
 #include "plausibility_validator.hpp"
 #include "motor_controller.hpp"
 #include "toggle_switch.hpp"
+#include "calibrator.hpp"
 // #include "moving_average.hpp"
 
 TaskHandle_t motorControllTask;
 TaskHandle_t serialLoggingTask;
+TaskHandle_t calibrationTask;
 
 ToggleSwitch toggleSwitch(BUTTON_3_PIN);
 Apps apps1(APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
@@ -25,6 +27,7 @@ MotorController motorController(ittr, tps1);
 PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, bps);
 MotorController motorController(apps1, tps1);
 #endif
+Calibrator calibrator = Calibrator(apps1, apps2, tps1, tps2, ittr, motorController);
 
 // MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
 
@@ -39,6 +42,9 @@ void setup()
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
   plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
+  calibrator.initialize();
+  calibrator.calibrateFromFlash();
+  xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&calibrator, 3, &calibrationTask, 0);
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
   ittr.setIdling(toggleSwitch.isOn());
