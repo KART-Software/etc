@@ -1,10 +1,10 @@
 #ifndef _FLASH_H_
 #define _FLASH_H_
 
-#include "FS.h"
-#include "SPIFFS.h"
+#include <FS.h>
+#include <FFat.h>
 
-#define FORMAT_SPIFFS_IF_FAILED true
+#define FORMAT_FFAT_IF_FAILED true
 #define FILE_NAME "/sensor_values.txt"
 
 class Flash

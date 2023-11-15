@@ -4,12 +4,16 @@ Flash::Flash() {}
 
 void Flash::initialize()
 {
-    SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
+    if (!FFat.begin(FORMAT_FFAT_IF_FAILED))
+    {
+        // TODO Failのときの処理
+        Serial.println("FFat begin failed.");
+    }
 }
 
 void Flash::write(const char *jsonStr)
 {
-    File file = SPIFFS.open(FILE_NAME, FILE_WRITE);
+    File file = FFat.open(FILE_NAME, FILE_WRITE, true);
     file.print(jsonStr);
     file.close();
     Serial.println("---- Saved ----");
@@ -18,7 +22,7 @@ void Flash::write(const char *jsonStr)
 
 const char *Flash::read()
 {
-    File file = SPIFFS.open(FILE_NAME);
+    File file = FFat.open(FILE_NAME);
     int len = file.available();
     char *jsonStr = new char[len + 1];
     if (len)
