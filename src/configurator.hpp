@@ -1,12 +1,13 @@
-#ifndef _CALIBRATOR_H_
-#define _CALIBRATOR_H_
+#ifndef _CONFIGURATOR_H_
+#define _CONFIGURATOR_H_
 
 #include "sensors.hpp"
 #include "motor_controller.hpp"
 #include <ArduinoJson.h>
 #include "flash.hpp"
 
-#define JSON_SIZE 256
+#define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
+#define RAW_SENSOR_VALUES_JSON_SIZE 256
 
 #define WAIT_INTERVAL 1000
 #define CALIBRATE_INTERVAL 100
@@ -18,40 +19,34 @@
 #define TPS_MIN_CALIBRATE_FLAG '3'
 #define TPS_MAX_CALIBRATE_FLAG '4'
 
-struct RawSensorValues
+struct Config
 {
 public:
-    RawSensorValues();
-    RawSensorValues(uint16_t apps1Min,
-                    uint16_t apps1Max,
-                    uint16_t apps2Min,
-                    uint16_t apps2Max,
-                    uint16_t ittrMin,
-                    uint16_t ittrMax,
-                    uint16_t tps1Min,
-                    uint16_t tps1Max,
-                    uint16_t tps2Min,
-                    uint16_t tps2Max);
-    Flash flash = Flash();
+    virtual bool loadFromJsonStr(const char *jsonStr);
+    virtual void loadFronConstants();
+    virtual const char *toJsonStr();
+};
+
+struct RawSensorValues : Config
+{
+public:
     uint16_t apps1Min, apps1Max, apps2Min, apps2Max, ittrMin, ittrMax, tps1Min, tps1Max, tps2Min, tps2Max;
-    void initialize();
-    void saveToFlash();
-    void loadFromFlash();
-    void loadFronJsonStr(const char *jsonStr);
+    bool loadFromJsonStr(const char *jsonStr);
     void loadFronConstants();
     const char *toJsonStr();
 };
 
-class Calibrator
+class Configurator
 {
 public:
-    Calibrator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController);
     void initialize();
     void calibrateFromFlash();
     void startWaiting();
 
 private:
-    RawSensorValues rawValues = RawSensorValues();
+    Flash flash;
+    RawSensorValues rawValues;
     Apps &apps1, &apps2;
     Tps &tps1, &tps2;
     Ittr &ittr;
@@ -62,10 +57,9 @@ private:
     void setTpsMax();
     void calibrate();
     void calibrate(char c);
-    void calibrateFromConstants();
     void start();
     void finish();
 };
 
-void startWatingCalibration(void *calibrator);
+void startWatingCalibration(void *configurator);
 #endif

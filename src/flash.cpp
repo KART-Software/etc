@@ -1,28 +1,34 @@
 #include "flash.hpp"
 
-Flash::Flash() {}
-
-void Flash::initialize()
+bool Flash::initialize()
 {
-    if (!FFat.begin(FORMAT_FFAT_IF_FAILED))
+    for (int i = 0; i < BEGIN_FFAT_LIMIT_TIMES; i++)
     {
-        // TODO Failのときの処理
-        Serial.println("FFat begin failed.");
+        if (FFat.begin(FORMAT_FFAT_IF_FAILED))
+        {
+            return true;
+        }
     }
+    Serial.println("FFat begin failed.");
+    return false;
 }
 
-void Flash::write(const char *jsonStr)
+void Flash::write(const char *fileName, const char *jsonStr)
 {
-    File file = FFat.open(FILE_NAME, FILE_WRITE, true);
+    File file = FFat.open(fileName, FILE_WRITE);
     file.print(jsonStr);
     file.close();
-    Serial.println("---- Saved ----");
+    Serial.printf("---- Saved to %s ----\n", fileName);
     Serial.println(jsonStr);
 }
 
-const char *Flash::read()
+const char *Flash::read(const char *fileName)
 {
-    File file = FFat.open(FILE_NAME);
+    File file = FFat.open(fileName);
+    if (!file || file.isDirectory())
+    {
+        return "";
+    }
     int len = file.available();
     char *jsonStr = new char[len + 1];
     if (len)
@@ -31,6 +37,7 @@ const char *Flash::read()
     }
     file.close();
     jsonStr[len] = '\0';
-    Serial.println("---- Loaded ----");
+    Serial.printf("---- Loaded from %s ----\n", fileName);
+    Serial.println(jsonStr);
     return jsonStr;
 }
