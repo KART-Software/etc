@@ -1,4 +1,4 @@
-#include "calibrator.hpp"
+#include "configurator.hpp"
 
 RawSensorValues::RawSensorValues() {}
 
@@ -90,17 +90,17 @@ const char *RawSensorValues::toJsonStr()
     return jsonStr;
 }
 
-Calibrator::Calibrator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController)
+Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), motorController(motorController)
 {
 }
 
-void Calibrator::initialize()
+void Configurator::initialize()
 {
     rawValues.initialize();
 }
 
-void Calibrator::calibrate()
+void Configurator::calibrate()
 {
     apps1.setRawMin(rawValues.apps1Min);
     apps1.setRawMax(rawValues.apps1Max);
@@ -114,13 +114,13 @@ void Calibrator::calibrate()
     tps2.setRawMax(rawValues.tps2Max);
 }
 
-void Calibrator::calibrateFromFlash()
+void Configurator::calibrateFromFlash()
 {
     rawValues.loadFromFlash();
     calibrate();
 }
 
-void Calibrator::calibrate(char c)
+void Configurator::calibrate(char c)
 {
     switch (c)
     {
@@ -149,33 +149,33 @@ void Calibrator::calibrate(char c)
     }
 }
 
-void Calibrator::setAppsMin()
+void Configurator::setAppsMin()
 {
     rawValues.apps1Min = apps1.setCurrentValRawMin();
     rawValues.apps2Min = apps2.setCurrentValRawMin();
     rawValues.ittrMin = ittr.setCurrentValRawMin();
 }
 
-void Calibrator::setAppsMax()
+void Configurator::setAppsMax()
 {
     rawValues.apps1Max = apps1.setCurrentValRawMax();
     rawValues.apps2Max = apps2.setCurrentValRawMax();
     rawValues.ittrMax = ittr.setCurrentValRawMax();
 }
 
-void Calibrator::setTpsMin()
+void Configurator::setTpsMin()
 {
     rawValues.tps1Min = tps1.setCurrentValRawMin();
     rawValues.tps2Min = tps2.setCurrentValRawMin();
 }
 
-void Calibrator::setTpsMax()
+void Configurator::setTpsMax()
 {
     rawValues.tps1Max = tps1.setCurrentValRawMax();
     rawValues.tps2Max = tps2.setCurrentValRawMax();
 }
 
-void Calibrator::start()
+void Configurator::start()
 {
     while (true)
     {
@@ -192,7 +192,7 @@ void Calibrator::start()
     }
 }
 
-void Calibrator::startWaiting()
+void Configurator::startWaiting()
 {
     while (true)
     {
@@ -219,7 +219,7 @@ void Calibrator::startWaiting()
     }
 }
 
-void Calibrator::finish()
+void Configurator::finish()
 {
     rawValues.saveToFlash();
     startWaiting();
@@ -227,7 +227,7 @@ void Calibrator::finish()
 
 void startWatingCalibration(void *calibrator)
 {
-    Calibrator *tor;
-    tor = (Calibrator *)calibrator;
+    Configurator *tor;
+    tor = (Configurator *)calibrator;
     tor->startWaiting();
 }

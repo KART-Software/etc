@@ -1,5 +1,5 @@
-#ifndef _CALIBRATOR_H_
-#define _CALIBRATOR_H_
+#ifndef _CONFIGURATOR_H_
+#define _CONFIGURATOR_H_
 
 #include "sensors.hpp"
 #include "motor_controller.hpp"
@@ -42,10 +42,10 @@ public:
     const char *toJsonStr();
 };
 
-class Calibrator
+class Configurator
 {
 public:
-    Calibrator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController);
     void initialize();
     void calibrateFromFlash();
     void startWaiting();
