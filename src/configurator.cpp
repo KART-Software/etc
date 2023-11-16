@@ -1,29 +1,8 @@
 #include "configurator.hpp"
 
-RawSensorValues::RawSensorValues() {}
-
-RawSensorValues::RawSensorValues(uint16_t apps1Min, uint16_t apps1Max, uint16_t apps2Min, uint16_t apps2Max, uint16_t ittrMin, uint16_t ittrMax, uint16_t tps1Min, uint16_t tps1Max, uint16_t tps2Min, uint16_t tps2Max)
-    : apps1Min(apps1Min), apps1Max(apps1Max), apps2Min(apps2Min), apps2Max(apps2Max), ittrMin(ittrMin), ittrMax(ittrMax), tps1Min(tps1Min), tps1Max(tps1Max), tps2Min(tps2Min), tps2Max(tps2Max) {}
-
-void RawSensorValues::initialize()
+bool RawSensorValues::loadFromJsonStr(const char *jsonStr)
 {
-    flash.initialize();
-}
-
-void RawSensorValues::saveToFlash()
-{
-    flash.write(toJsonStr());
-}
-
-void RawSensorValues::loadFromFlash()
-{
-    const char *jsonStr = flash.read();
-    loadFronJsonStr(jsonStr);
-}
-
-void RawSensorValues::loadFronJsonStr(const char *jsonStr)
-{
-    StaticJsonDocument<JSON_SIZE> json;
+    StaticJsonDocument<RAW_SENSOR_VALUES_JSON_SIZE> json;
     DeserializationError error = deserializeJson(json, jsonStr);
 
     bool ok = !bool(error);
@@ -39,23 +18,20 @@ void RawSensorValues::loadFronJsonStr(const char *jsonStr)
     ok &= json.containsKey("tps2Max");
     if (!ok)
     {
-        // メンバーが足りなかったときはConstantsから読み込む
-        loadFronConstants();
-        saveToFlash();
+        // メンバーが足りなかったときは何もせず False を返す
+        return false;
     }
-    else
-    {
-        apps1Min = json["apps1Min"];
-        apps1Max = json["apps1Max"];
-        apps2Min = json["apps2Min"];
-        apps2Max = json["apps2Max"];
-        ittrMin = json["ittrMin"];
-        ittrMax = json["ittrMax"];
-        tps1Min = json["tps1Min"];
-        tps1Max = json["tps1Max"];
-        tps2Min = json["tps2Min"];
-        tps2Max = json["tps2Max"];
-    }
+    apps1Min = json["apps1Min"];
+    apps1Max = json["apps1Max"];
+    apps2Min = json["apps2Min"];
+    apps2Max = json["apps2Max"];
+    ittrMin = json["ittrMin"];
+    ittrMax = json["ittrMax"];
+    tps1Min = json["tps1Min"];
+    tps1Max = json["tps1Max"];
+    tps2Min = json["tps2Min"];
+    tps2Max = json["tps2Max"];
+    return true;
 }
 
 void RawSensorValues::loadFronConstants()
@@ -74,7 +50,7 @@ void RawSensorValues::loadFronConstants()
 
 const char *RawSensorValues::toJsonStr()
 {
-    StaticJsonDocument<JSON_SIZE> json;
+    StaticJsonDocument<RAW_SENSOR_VALUES_JSON_SIZE> json;
     json["apps1Min"] = apps1Min;
     json["apps1Max"] = apps1Max;
     json["apps2Min"] = apps2Min;
@@ -85,8 +61,8 @@ const char *RawSensorValues::toJsonStr()
     json["tps1Max"] = tps1Max;
     json["tps2Min"] = tps2Min;
     json["tps2Max"] = tps2Max;
-    char *jsonStr = new char[JSON_SIZE];
-    serializeJson(json, jsonStr, JSON_SIZE);
+    char *jsonStr = new char[RAW_SENSOR_VALUES_JSON_SIZE];
+    serializeJson(json, jsonStr, RAW_SENSOR_VALUES_JSON_SIZE);
     return jsonStr;
 }
 
@@ -97,7 +73,8 @@ Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr 
 
 void Configurator::initialize()
 {
-    rawValues.initialize();
+    flash.initialize();
+    // TODO initialize 失敗時の処理
 }
 
 void Configurator::calibrate()
@@ -116,7 +93,12 @@ void Configurator::calibrate()
 
 void Configurator::calibrateFromFlash()
 {
-    rawValues.loadFromFlash();
+    const char *jsonStr = flash.read(SENSOR_VALUES_FILE_NAME);
+    if (!rawValues.loadFromJsonStr(jsonStr))
+    {
+        // False のときは Constants から読み込む。
+        rawValues.loadFronConstants();
+    }
     calibrate();
 }
 
@@ -221,13 +203,13 @@ void Configurator::startWaiting()
 
 void Configurator::finish()
 {
-    rawValues.saveToFlash();
+    flash.write(SENSOR_VALUES_FILE_NAME, rawValues.toJsonStr());
     startWaiting();
 }
 
-void startWatingCalibration(void *calibrator)
+void startWatingCalibration(void *configurator)
 {
-    Configurator *tor;
-    tor = (Configurator *)calibrator;
-    tor->startWaiting();
+    Configurator *configurator_;
+    configurator_ = (Configurator *)configurator;
+    configurator_->startWaiting();
 }

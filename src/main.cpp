@@ -6,7 +6,7 @@
 #include "plausibility_validator.hpp"
 #include "motor_controller.hpp"
 #include "toggle_switch.hpp"
-#include "calibrator.hpp"
+#include "configurator.hpp"
 // #include "moving_average.hpp"
 
 TaskHandle_t motorControllTask;
@@ -27,7 +27,7 @@ MotorController motorController(ittr, tps1);
 PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, bps);
 MotorController motorController(apps1, tps1);
 #endif
-Calibrator calibrator = Calibrator(apps1, apps2, tps1, tps2, ittr, motorController);
+Configurator configurator = Configurator(apps1, apps2, tps1, tps2, ittr, motorController);
 
 // MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
 
@@ -37,17 +37,17 @@ void setup()
   digitalWrite(FUEL_PUMP_PIN, HIGH);
   gAdc.begin();
   toggleSwitch.initialize();
-  motorController.initialize();
-  motorController.setMotorOn();
-  xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
+  configurator.initialize();
+  configurator.calibrateFromFlash();
+  xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
   plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
-  calibrator.initialize();
-  calibrator.calibrateFromFlash();
-  xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&calibrator, 3, &calibrationTask, 0);
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
   ittr.setIdling(toggleSwitch.isOn());
+  motorController.initialize();
+  motorController.setMotorOn();
+  xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
 }
 
 void loop()
