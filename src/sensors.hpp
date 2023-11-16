@@ -12,6 +12,11 @@ public:
     Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, double maxValue, double margin);
     virtual void read() = 0;
     void setConversion(double minValue, double maxValue);
+    void setConversion();
+    void setRawMin(uint16_t val);
+    void setRawMax(uint16_t val);
+    uint16_t setCurrentValRawMin();
+    uint16_t setCurrentValRawMax();
     double convertedValue();
     bool isInRange();
     double getMaxValue();
@@ -20,7 +25,7 @@ public:
 
 protected:
     uint16_t rawValue;
-    const uint16_t rawMinValue, rawMaxValue;
+    uint16_t rawMinValue, rawMaxValue;
     const double maxValue, minValue;
     const double margin;
     double intercept, slope;
