@@ -106,23 +106,23 @@ void Configurator::calibrate(char c)
 {
     switch (c)
     {
-    case APPS_MIN_CALIBRATE_FLAG:
+    case APPS_MIN_CALIBRATE_KEY:
         setAppsMin();
         Serial.println("---- APPS Min Set ----");
         break;
-    case APPS_MAX_CALIBRATE_FLAG:
+    case APPS_MAX_CALIBRATE_KEY:
         setAppsMax();
         Serial.println("---- APPS Max Set ----");
         break;
-    case TPS_MIN_CALIBRATE_FLAG:
+    case TPS_MIN_CALIBRATE_KEY:
         setTpsMin();
         Serial.println("---- TPS Min Set ----");
         break;
-    case TPS_MAX_CALIBRATE_FLAG:
+    case TPS_MAX_CALIBRATE_KEY:
         setTpsMax();
         Serial.println("---- TPS Max Set ----");
         break;
-    case CALIBRATION_FINISH_FLAG:
+    case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
         finish();
         break;
@@ -180,7 +180,7 @@ void Configurator::startWaiting()
     {
         if (Serial.available())
         {
-            if (Serial.read() == CALIBRATION_START_FLAG)
+            if (Serial.read() == CALIBRATION_START_KEY)
             {
                 while (Serial.available())
                 {
