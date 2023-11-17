@@ -34,21 +34,21 @@ void PlausibilityValidator::initParameters()
 
 bool PlausibilityValidator::isCurrentlyValid()
 {
-    bool flag = true;
-    flag *= isAppsPlausible();
-    flag &= isTpsPlausible();
-    flag *= isApps1CircuitValid();
-    flag *= isApps2CircuitValid();
-    flag &= isTps1CircuitValid();
-    flag &= isTps2CircuitValid();
-    flag *= isAppsTpsTargetValid();
-    // flag *= isBpsCircuitValid();
-    // flag *= isBpsTpsPlausible();
-    flag |= millis() < PLAUSIBLE_DURATION;
+    bool isValid = true;
+    isValid &= isAppsPlausible();
+    isValid &= isTpsPlausible();
+    isValid &= isApps1CircuitValid();
+    isValid &= isApps2CircuitValid();
+    isValid &= isTps1CircuitValid();
+    isValid &= isTps2CircuitValid();
+    isValid &= isAppsTpsTargetValid();
+    // isValid &= isBpsCircuitValid();
+    // isValid &= isBpsTpsPlausible();
+    isValid |= millis() < PLAUSIBLE_DURATION;
 
-    isValidAllTime &= flag;
+    isValidAllTime &= isValid;
 
-    return flag;
+    return isValid;
 }
 
 bool PlausibilityValidator::isValid()
