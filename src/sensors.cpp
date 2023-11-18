@@ -102,14 +102,6 @@ double Apps::convertToTargetTp()
 void Apps::setIdling(bool idling)
 {
     this->idling = idling;
-    if (idling)
-    {
-        setConversion(idlingValue, maxValue);
-    }
-    else
-    {
-        setConversion(minValue, maxValue);
-    }
 }
 
 Tps::

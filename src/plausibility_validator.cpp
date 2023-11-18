@@ -207,36 +207,37 @@ bool PlausibilityValidator::isBpsTpsPlausible()
 
 void PlausibilityValidator::serialLog()
 {
-    String logStr;
     if (hasIttr)
     {
-        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
-                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
-                 ", ITTR: " + toNChars(String(targetSensor.getRawValue()), 5) +
-                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
-                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
-                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
-                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
-                 ", ITTR: " + toNChars(String(targetSensor.convertedValue()), 7) +
-                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
-                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
+        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\n",
+                      apps1.getRawValue(),
+                      apps2.getRawValue(),
+                      targetSensor.getRawValue(),
+                      tps1.getRawValue(),
+                      tps2.getRawValue(),
+                      bps.getRawValue(),
+                      apps1.convertedValue(),
+                      apps2.convertedValue(),
+                      targetSensor.convertToTargetTp(),
+                      tps1.convertedValue(),
+                      tps2.convertedValue(),
+                      bps.convertedValue());
     }
     else
     {
-        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
-                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
-                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
-                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
-                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
-                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
-                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
-                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
+        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\n",
+                      apps1.getRawValue(),
+                      apps2.getRawValue(),
+                      tps1.getRawValue(),
+                      tps2.getRawValue(),
+                      bps.getRawValue(),
+                      apps1.convertedValue(),
+                      apps2.convertedValue(),
+                      targetSensor.convertToTargetTp(),
+                      tps1.convertedValue(),
+                      tps2.convertedValue(),
+                      bps.convertedValue());
     }
-    Serial.println(logStr);
 }
 
 void PlausibilityValidator::startLog()
