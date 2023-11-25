@@ -5,6 +5,7 @@
 
 #include "constants.hpp"
 #include "globals.hpp"
+#include "moving_average.hpp"
 
 class Sensor
 {
@@ -24,6 +25,7 @@ public:
     uint16_t getRawValue();
 
 protected:
+    MovingAverage mvgAvg = MovingAverage(60);
     uint16_t rawValue;
     uint16_t rawMinValue, rawMaxValue;
     const double maxValue, minValue;

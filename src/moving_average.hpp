@@ -14,8 +14,6 @@ private:
     const uint size;
     float *value;
     uint index = 0;
-    bool sizeFull = false;
-    float getAvg(uint size);
 };
 
 #endif
