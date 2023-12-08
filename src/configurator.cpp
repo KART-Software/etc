@@ -16,6 +16,7 @@ bool RawSensorValues::loadFromJsonStr(const char *jsonStr)
     ok &= json.containsKey("tps1Max");
     ok &= json.containsKey("tps2Min");
     ok &= json.containsKey("tps2Max");
+    ok &= json.containsKey("idling");
     if (!ok)
     {
         // メンバーが足りなかったときは何もせず False を返す
@@ -31,6 +32,7 @@ bool RawSensorValues::loadFromJsonStr(const char *jsonStr)
     tps1Max = json["tps1Max"];
     tps2Min = json["tps2Min"];
     tps2Max = json["tps2Max"];
+    idling = json["idling"];
     return true;
 }
 
@@ -46,6 +48,7 @@ void RawSensorValues::loadFronConstants()
     tps1Max = TPS_1_RAW_MAX;
     tps2Min = TPS_2_RAW_MIN;
     tps2Max = TPS_2_RAW_MAX;
+    idling = APPS_IDLING;
 }
 
 const char *RawSensorValues::toJsonStr()
@@ -61,6 +64,7 @@ const char *RawSensorValues::toJsonStr()
     json["tps1Max"] = tps1Max;
     json["tps2Min"] = tps2Min;
     json["tps2Max"] = tps2Max;
+    json["idling"] = idling;
     char *jsonStr = new char[RAW_SENSOR_VALUES_JSON_SIZE];
     serializeJson(json, jsonStr, RAW_SENSOR_VALUES_JSON_SIZE);
     return jsonStr;
@@ -85,6 +89,12 @@ void Configurator::calibrate()
     apps2.setRawMax(rawValues.apps2Max);
     ittr.setRawMin(rawValues.ittrMin);
     ittr.setRawMax(rawValues.ittrMax);
+    apps1.setIdlingValue(rawValues.idling);
+    apps1.setIdlingValue(rawValues.idling);
+    apps2.setIdlingValue(rawValues.idling);
+    apps2.setIdlingValue(rawValues.idling);
+    ittr.setIdlingValue(rawValues.idling);
+    ittr.setIdlingValue(rawValues.idling);
     tps1.setRawMin(rawValues.tps1Min);
     tps1.setRawMax(rawValues.tps1Max);
     tps2.setRawMin(rawValues.tps2Min);
@@ -126,6 +136,10 @@ void Configurator::calibrate(char c)
         setTpsMax();
         Serial.println("---- TPS Max Set ----");
         break;
+    case IDLING_CALIBRATE_KEY:
+        setIdling();
+        Serial.println("---- Idling Set ----");
+        break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
         finish();
@@ -159,6 +173,17 @@ void Configurator::setTpsMax()
 {
     rawValues.tps1Max = tps1.setCurrentValRawMax();
     rawValues.tps2Max = tps2.setCurrentValRawMax();
+}
+
+void Configurator::setIdling()
+{
+    rawValues.idling = tps1.convertedValue();
+    apps1.setIdlingValue(rawValues.idling);
+    apps1.setIdlingValue(rawValues.idling);
+    apps2.setIdlingValue(rawValues.idling);
+    apps2.setIdlingValue(rawValues.idling);
+    ittr.setIdlingValue(rawValues.idling);
+    ittr.setIdlingValue(rawValues.idling);
 }
 
 void Configurator::start()

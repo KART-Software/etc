@@ -31,6 +31,7 @@ This project is created with [PlatformIO](https://platformio.org/)
     * `2` $\cdot\cdot\cdot$ アクセルペダル全開時 (`APPS1_MIN`, `APPS2_MIN`, `ITTR_MIN`)
     * `3` $\cdot\cdot\cdot$ スロットル全閉時 (`TPS1_MIN`, `TPS2_MIN`)
     * `4` $\cdot\cdot\cdot$ スロットル全開時 (`TPS1_MAX`, `TPS2_MAX`)
+    * `5` $\cdot\cdot\cdot$ アイドリング時 (`APPS_IDLING`)
     
     例えば、アクセルペダル全閉時のセンサー値を設定したいときは、アクセルペダル全閉の状態で `1` を入力します。
     ※必ずしも全パターンを設定する必要はありません。

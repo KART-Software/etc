@@ -101,6 +101,11 @@ double Apps::convertToTargetTp()
     return y;
 }
 
+void Apps::setIdlingValue(double val)
+{
+    idlingValue = val;
+}
+
 void Apps::setIdling(bool idling)
 {
     this->idling = idling;
