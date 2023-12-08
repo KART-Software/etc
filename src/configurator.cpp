@@ -106,6 +106,10 @@ void Configurator::calibrate(char c)
 {
     switch (c)
     {
+    case MOTOR_OFF_KEY:
+        motorController.setMotorOff();
+        Serial.println("---- Motor Off ----");
+        break;
     case APPS_MIN_CALIBRATE_KEY:
         setAppsMin();
         Serial.println("---- APPS Min Set ----");
