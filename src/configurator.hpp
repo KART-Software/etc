@@ -7,7 +7,7 @@
 #include "flash.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
-#define RAW_SENSOR_VALUES_JSON_SIZE 256
+#define RAW_SENSOR_VALUES_JSON_SIZE 300
 
 #define WAIT_INTERVAL 1000
 #define CALIBRATE_INTERVAL 100
