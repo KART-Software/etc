@@ -46,7 +46,8 @@ void Sensor::setConversion()
 
 double Sensor::convertedValue()
 {
-    return rawValue * slope + intercept;
+    double raw = mvgAvg.getAvg();
+    return raw * slope + intercept;
 }
 
 bool Sensor::isInRange()
@@ -85,6 +86,7 @@ Apps::
 void Apps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 double Apps::convertToTargetTp()
@@ -99,17 +101,14 @@ double Apps::convertToTargetTp()
     return y;
 }
 
+void Apps::setIdlingValue(double val)
+{
+    idlingValue = val;
+}
+
 void Apps::setIdling(bool idling)
 {
     this->idling = idling;
-    if (idling)
-    {
-        setConversion(idlingValue, maxValue);
-    }
-    else
-    {
-        setConversion(minValue, maxValue);
-    }
 }
 
 Tps::
@@ -122,6 +121,7 @@ Tps::
 void Tps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 bool Tps::isLargeOpen()
@@ -144,6 +144,7 @@ Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue
 void Bps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 bool Bps::isHighPressure()

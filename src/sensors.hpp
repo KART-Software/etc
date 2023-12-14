@@ -5,6 +5,7 @@
 
 #include "constants.hpp"
 #include "globals.hpp"
+#include "moving_average.hpp"
 
 class Sensor
 {
@@ -24,6 +25,7 @@ public:
     uint16_t getRawValue();
 
 protected:
+    MovingAverage mvgAvg = MovingAverage(60);
     uint16_t rawValue;
     uint16_t rawMinValue, rawMaxValue;
     const double maxValue, minValue;
@@ -37,11 +39,12 @@ public:
     Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = APPS_MARGIN, double idlingValue = APPS_IDLING);
     void read();
     double convertToTargetTp();
+    void setIdlingValue(double val);
     void setIdling(bool idling);
 
 private:
     const uint8_t ch;
-    const double idlingValue;
+    double idlingValue;
     bool idling = true;
 };
 

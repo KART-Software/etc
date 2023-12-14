@@ -7,17 +7,19 @@
 #include "flash.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
-#define RAW_SENSOR_VALUES_JSON_SIZE 256
+#define RAW_SENSOR_VALUES_JSON_SIZE 300
 
 #define WAIT_INTERVAL 1000
 #define CALIBRATE_INTERVAL 100
 
 #define CALIBRATION_START_KEY 's'
 #define CALIBRATION_FINISH_KEY 'f'
+#define MOTOR_OFF_KEY 'm'
 #define APPS_MIN_CALIBRATE_KEY '1'
 #define APPS_MAX_CALIBRATE_KEY '2'
 #define TPS_MIN_CALIBRATE_KEY '3'
 #define TPS_MAX_CALIBRATE_KEY '4'
+#define IDLING_CALIBRATE_KEY '5'
 
 struct Config
 {
@@ -31,6 +33,7 @@ struct RawSensorValues : Config
 {
 public:
     uint16_t apps1Min, apps1Max, apps2Min, apps2Max, ittrMin, ittrMax, tps1Min, tps1Max, tps2Min, tps2Max;
+    double idling;
     bool loadFromJsonStr(const char *jsonStr);
     void loadFronConstants();
     const char *toJsonStr();
@@ -55,6 +58,7 @@ private:
     void setAppsMax();
     void setTpsMin();
     void setTpsMax();
+    void setIdling();
     void calibrate();
     void calibrate(char c);
     void start();
