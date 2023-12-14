@@ -38,9 +38,9 @@ void setup()
   gAdc.begin();
   toggleSwitch.initialize();
   configurator.initialize();
+  plausibilityValidator.initialize();
   configurator.calibrateFromFlash();
   xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
-  plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
