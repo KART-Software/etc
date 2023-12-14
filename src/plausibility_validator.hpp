@@ -25,6 +25,16 @@ public:
     bool isValid();
     void serialLog();
     void startLog();
+    void setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps);
+    bool appsCheckFlag = false,
+         tpsCheckFlag = false,
+         apps1CheckFlag = false,
+         apps2CheckFlag = false,
+         tps1CheckFlag = false,
+         tps2CheckFlag = false,
+         targetCheckFlag = false,
+         bpsCheckFlag = false,
+         bpsTpsCheckFlag = false;
 
 private:
     ErrorHandler errorHandler = ErrorHandler();

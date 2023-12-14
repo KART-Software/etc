@@ -5,6 +5,7 @@
 #include "motor_controller.hpp"
 #include <ArduinoJson.h>
 #include "flash.hpp"
+#include "plausibility_validator.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
 #define RAW_SENSOR_VALUES_JSON_SIZE 256
@@ -20,6 +21,8 @@
 #define TPS_MIN_CALIBRATE_KEY '3'
 #define TPS_MAX_CALIBRATE_KEY '4'
 #define IDLING_CALIBRATE_KEY '5'
+
+#define APPS_CHECK_FLAG_SET_KEY 'q'
 
 struct Config
 {
@@ -39,10 +42,19 @@ public:
     const char *toJsonStr();
 };
 
+struct PlausibilityCheckFlags : Config
+{
+public:
+    bool apps, tps, apps1, apps2, tps1, tps2, target, bps, bpsTps;
+    bool loadFromJsonStr(const char *jsonStr);
+    void loadFronConstants();
+    const char *toJsonStr();
+};
+
 class Configurator
 {
 public:
-    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
     void calibrateFromFlash();
     void startWaiting();
@@ -54,6 +66,8 @@ private:
     Tps &tps1, &tps2;
     Ittr &ittr;
     MotorController &motorController;
+    PlausibilityCheckFlags plausibilityCheckFlags;
+    PlausibilityValidator &plausibilityValidator;
     void setAppsMin();
     void setAppsMax();
     void setTpsMin();

@@ -35,15 +35,15 @@ void PlausibilityValidator::initParameters()
 bool PlausibilityValidator::isCurrentlyValid()
 {
     bool isValid = true;
-    isValid &= isAppsPlausible();
-    isValid &= isTpsPlausible();
-    isValid &= isApps1CircuitValid();
-    isValid &= isApps2CircuitValid();
-    isValid &= isTps1CircuitValid();
-    isValid &= isTps2CircuitValid();
-    isValid &= isAppsTpsTargetValid();
-    // isValid &= isBpsCircuitValid();
-    // isValid &= isBpsTpsPlausible();
+    isValid &= isAppsPlausible() || !appsCheckFlag;
+    isValid &= isTpsPlausible() || !tpsCheckFlag;
+    isValid &= isApps1CircuitValid() || !apps1CheckFlag;
+    isValid &= isApps2CircuitValid() || !apps2CheckFlag;
+    isValid &= isTps1CircuitValid() || !tps1CheckFlag;
+    isValid &= isTps2CircuitValid() || !tps2CheckFlag;
+    isValid &= isAppsTpsTargetValid() || !targetCheckFlag;
+    isValid &= isBpsCircuitValid() || !bpsCheckFlag;
+    isValid &= isBpsTpsPlausible() || !bpsTpsCheckFlag;
     isValid |= millis() < PLAUSIBLE_DURATION;
 
     isValidAllTime &= isValid;
@@ -247,6 +247,19 @@ void PlausibilityValidator::startLog()
         serialLog();
         delay(SERIAL_LOG_INTERVAL);
     }
+}
+
+void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps)
+{
+    appsCheckFlag = apps;
+    tpsCheckFlag = tps;
+    apps1CheckFlag = apps1;
+    apps2CheckFlag = apps2;
+    tps1CheckFlag = tps1;
+    tps2CheckFlag = tps2;
+    targetCheckFlag = target;
+    bpsCheckFlag = bps;
+    bpsTpsCheckFlag = bpsTps;
 }
 
 String PlausibilityValidator::toNChars(String value, uint8_t n)

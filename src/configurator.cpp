@@ -70,8 +70,8 @@ const char *RawSensorValues::toJsonStr()
     return jsonStr;
 }
 
-Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), motorController(motorController)
+Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), motorController(motorController), plausibilityValidator(plausibilityValidator)
 {
 }
 
@@ -140,6 +140,42 @@ void Configurator::calibrate(char c)
         setIdling();
         Serial.println("---- Idling Set ----");
         break;
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case APPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
+        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
+        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
     case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
         finish();
