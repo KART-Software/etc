@@ -23,6 +23,15 @@
 #define IDLING_CALIBRATE_KEY '5'
 
 #define APPS_CHECK_FLAG_SET_KEY 'q'
+#define TPS_CHECK_FLAG_SET_KEY 'w'
+#define APPS1_CHECK_FLAG_SET_KEY 'e'
+#define APPS2_CHECK_FLAG_SET_KEY 'r'
+#define TPS1_CHECK_FLAG_SET_KEY 't'
+#define TPS2_CHECK_FLAG_SET_KEY 'y'
+#define TARGET_CHECK_FLAG_SET_KEY 'u'
+#define BPS_CHECK_FLAG_SET_KEY 'i'
+#define BPSTPS_CHECK_FLAG_SET_KEY 'o'
+
 
 struct Config
 {

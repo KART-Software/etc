@@ -144,38 +144,38 @@ void Configurator::calibrate(char c)
         plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
         plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
         Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+    case TPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
+        plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
+        Serial.printf("---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+    case APPS1_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps1 = !plausibilityCheckFlags.apps1;
+        plausibilityValidator.apps1CheckFlag = plausibilityCheckFlags.apps1;
+        Serial.printf("---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
+    case APPS2_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.apps2 = !plausibilityCheckFlags.apps2;
+        plausibilityValidator.apps2CheckFlag = plausibilityCheckFlags.apps2;
+        Serial.printf("---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
+    case TPS1_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.tps1 = !plausibilityCheckFlags.tps1;
+        plausibilityValidator.tps1CheckFlag = plausibilityCheckFlags.tps1;
+        Serial.printf("---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
+    case TPS2_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.tps2 = !plausibilityCheckFlags.tps2;
+        plausibilityValidator.tps2CheckFlag = plausibilityCheckFlags.tps2;
+        Serial.printf("---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
+    case TARGET_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.target = !plausibilityCheckFlags.target;
+        plausibilityValidator.targetCheckFlag = plausibilityCheckFlags.target;
+        Serial.printf("---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
+    case BPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.bps = !plausibilityCheckFlags.bps;
+        plausibilityValidator.bpsCheckFlag = plausibilityCheckFlags.bps;
+        Serial.printf("---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
+    case BPSTPS_CHECK_FLAG_SET_KEY:
+        plausibilityCheckFlags.bpsTps = !plausibilityCheckFlags.bpsTps;
+        plausibilityValidator.bpsTpsCheckFlag = plausibilityCheckFlags.bpsTps;
+        Serial.printf("---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
     case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
         finish();
