@@ -70,6 +70,68 @@ const char *RawSensorValues::toJsonStr()
     return jsonStr;
 }
 
+bool PlausibilityCheckFlags::loadFromJsonStr(const char *jsonStr)
+{
+    StaticJsonDocument<PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE> json;
+    DeserializationError error = deserializeJson(json, jsonStr);
+
+    bool ok = !bool(error);
+    ok &= json.containsKey("apps");
+    ok &= json.containsKey("tps");
+    ok &= json.containsKey("apps1");
+    ok &= json.containsKey("apps2");
+    ok &= json.containsKey("tps1");
+    ok &= json.containsKey("tps2");
+    ok &= json.containsKey("target");
+    ok &= json.containsKey("bps");
+    ok &= json.containsKey("bpsTps");
+    if (!ok)
+    {
+        // メンバーが足りなかったときは何もせず False を返す
+        return false;
+    }
+    apps = json["apps"];
+    tps = json["tps"];
+    apps1 = json["apps1"];
+    apps2 = json["apps2"];
+    tps1 = json["tps1"];
+    tps2 = json["tps2"];
+    target = json["target"];
+    bps = json["bps"];
+    bpsTps = json["bpsTps"];
+    return true;
+}
+
+void PlausibilityCheckFlags::loadFronConstants()
+{
+    apps = plausibilityValidator.appsCheckFlag;
+    tps = plausibilityValidator.tpsCheckFlag;
+    apps1 = plausibilityValidator.apps1CheckFlag;
+    apps2 = plausibilityValidator.apps2CheckFlag;
+    tps1 = plausibilityValidator.tps1CheckFlag;
+    tps2 = plausibilityValidator.tps2CheckFlag;
+    target = plausibilityValidator.targetCheckFlag;
+    bps = plausibilityValidator.bpsCheckFlag;
+    bpsTps = plausibilityValidator.bpsTpsCheckFlag;
+}
+
+const char *PlausibilityCheckFlags::toJsonStr()
+{
+    StaticJsonDocument<PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE> json;
+    json["apps"] = apps;
+    json["tps"] = tps;
+    json["apps1"] = apps1;
+    json["apps2"] = apps2;
+    json["tps1"] = tps1;
+    json["tps2"] = tps2;
+    json["target"] = target;
+    json["bps"] = bps;
+    json["bpsTps"] = bpsTps;
+    char *jsonStr = new char[PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE];
+    serializeJson(json, jsonStr, PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE);
+    return jsonStr;
+}
+
 Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), motorController(motorController), plausibilityValidator(plausibilityValidator)
 {
