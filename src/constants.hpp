@@ -162,4 +162,15 @@
 #define FUEL_PUMP_PIN 33
 #define DC_MOTOR_RELAY_PIN 32
 
+#define APPS_CHECK_FLAG false
+#define TPS_CHECK_FLAG false
+#define APPS1_CHECK_FLAG false
+#define APPS2_CHECK_FLAG false
+#define TPS1_CHECK_FLAG false
+#define TPS2_CHECK_FLAG false
+#define TARGET_CHECK_FLAG false
+#define BPS_CHECK_FLAG false
+#define BPSTPS_CHECK_FLAG false
+
+
 #endif

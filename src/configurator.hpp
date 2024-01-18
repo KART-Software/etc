@@ -34,11 +34,12 @@
 #define BPSTPS_CHECK_FLAG_SET_KEY 'o'
 
 
+
 struct Config
 {
 public:
     virtual bool loadFromJsonStr(const char *jsonStr);
-    virtual void loadFronConstants();
+    virtual void loadFromConstants();
     virtual const char *toJsonStr();
 };
 
@@ -48,7 +49,7 @@ public:
     uint16_t apps1Min, apps1Max, apps2Min, apps2Max, ittrMin, ittrMax, tps1Min, tps1Max, tps2Min, tps2Max;
     double idling;
     bool loadFromJsonStr(const char *jsonStr);
-    void loadFronConstants();
+    void loadFromConstants();
     const char *toJsonStr();
 };
 
@@ -57,7 +58,7 @@ struct PlausibilityCheckFlags : Config
 public:
     bool apps, tps, apps1, apps2, tps1, tps2, target, bps, bpsTps;
     bool loadFromJsonStr(const char *jsonStr);
-    void loadFronConstants();
+    void loadFromConstants();
     const char *toJsonStr();
 };
 

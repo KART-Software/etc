@@ -36,7 +36,7 @@ bool RawSensorValues::loadFromJsonStr(const char *jsonStr)
     return true;
 }
 
-void RawSensorValues::loadFronConstants()
+void RawSensorValues::loadFromConstants()
 {
     apps1Min = APPS_1_RAW_MIN;
     apps1Max = APPS_1_RAW_MAX;
@@ -102,17 +102,17 @@ bool PlausibilityCheckFlags::loadFromJsonStr(const char *jsonStr)
     return true;
 }
 
-void PlausibilityCheckFlags::loadFronConstants()
+void PlausibilityCheckFlags::loadFromConstants()
 {
-    apps = plausibilityValidator.appsCheckFlag;
-    tps = plausibilityValidator.tpsCheckFlag;
-    apps1 = plausibilityValidator.apps1CheckFlag;
-    apps2 = plausibilityValidator.apps2CheckFlag;
-    tps1 = plausibilityValidator.tps1CheckFlag;
-    tps2 = plausibilityValidator.tps2CheckFlag;
-    target = plausibilityValidator.targetCheckFlag;
-    bps = plausibilityValidator.bpsCheckFlag;
-    bpsTps = plausibilityValidator.bpsTpsCheckFlag;
+    apps = APPS_CHECK_FLAG;
+    tps = TPS_CHECK_FLAG;
+    apps1 = APPS1_CHECK_FLAG;
+    apps2 = APPS2_CHECK_FLAG;
+    tps1 = TPS1_CHECK_FLAG;
+    tps2 = TPS2_CHECK_FLAG;
+    target = TARGET_CHECK_FLAG;
+    bps = BPS_CHECK_FLAG;
+    bpsTps = BPSTPS_CHECK_FLAG;
 }
 
 const char *PlausibilityCheckFlags::toJsonStr()
@@ -169,7 +169,7 @@ void Configurator::calibrateFromFlash()
     if (!rawValues.loadFromJsonStr(jsonStr))
     {
         // False のときは Constants から読み込む。
-        rawValues.loadFronConstants();
+        rawValues.loadFromConstants();
     }
     calibrate();
 }
