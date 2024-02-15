@@ -8,6 +8,8 @@
 #include "plausibility_validator.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
+// 追加
+#define PLAUSIBILITY_CHECK_FLAGS_FILE_NAME "/plausibility_check_flags.txt"
 #define RAW_SENSOR_VALUES_JSON_SIZE 300
 #define PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE 300
 
