@@ -40,6 +40,8 @@ void setup()
   configurator.initialize();
   plausibilityValidator.initialize();
   configurator.calibrateFromFlash();
+  // 二通り目
+  // configurator.calibrateFromFlash2();
   xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
   apps1.setIdling(toggleSwitch.isOn());

@@ -70,6 +70,8 @@ public:
     Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
     void calibrateFromFlash();
+    // 二通り目
+    // void calibrateFromFlash2();
     void startWaiting();
 
 private:
