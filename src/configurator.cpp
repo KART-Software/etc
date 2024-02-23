@@ -177,7 +177,6 @@ void Configurator::calibrateValuesFromFlash()
 void Configurator::calibrateFlagsFromFlash()
 {
     const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
-    // 追加
     if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr))
     {
         // False のときは Constants から読み込む。
@@ -343,10 +342,7 @@ void Configurator::startWaiting()
 void Configurator::finish()
 {
     flash.write(SENSOR_VALUES_FILE_NAME, rawValues.toJsonStr());
-    // 追加
-    // plausibilityCheckFlags を保存するファイル
     flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.toJsonStr());
-
     startWaiting();
 }
 
