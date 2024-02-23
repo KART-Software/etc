@@ -8,7 +8,6 @@
 #include "plausibility_validator.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
-// 追加
 #define PLAUSIBILITY_CHECK_FLAGS_FILE_NAME "/plausibility_check_flags.txt"
 #define RAW_SENSOR_VALUES_JSON_SIZE 300
 #define PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE 300
@@ -69,9 +68,8 @@ class Configurator
 public:
     Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
-    void calibrateFromFlash();
-    // 二通り目
-    // void calibrateFromFlash2();
+    void calibrateValuesFromFlash();
+    void calibrateFlagsFromFlash();
     void startWaiting();
 
 private:

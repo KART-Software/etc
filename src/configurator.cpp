@@ -163,7 +163,7 @@ void Configurator::calibrate()
     tps2.setRawMax(rawValues.tps2Max);
 }
 
-void Configurator::calibrateFromFlash()
+void Configurator::calibrateValuesFromFlash()
 {
     const char *jsonStr = flash.read(SENSOR_VALUES_FILE_NAME);
     const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
@@ -172,8 +172,12 @@ void Configurator::calibrateFromFlash()
         // False のときは Constants から読み込む。
         rawValues.loadFromConstants();
     }
-    // 追加
+    calibrate();
+}
+void Configurator::calibrateFlagsFromFlash()
+{
     const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
+    // 追加
     if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr))
     {
         // False のときは Constants から読み込む。
@@ -181,18 +185,6 @@ void Configurator::calibrateFromFlash()
     }
     calibrate();
 }
-// 二通り目
-// void Configurator::calibrateFromFlash2()
-// {
-//     const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
-//     // 追加
-//     if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr))
-//     {
-//         // False のときは Constants から読み込む。
-//         plausibilityCheckFlags.loadFromConstants();
-//     }
-//     calibrate();
-// }
 
 void Configurator::calibrate(char c)
 {
