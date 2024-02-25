@@ -211,67 +211,81 @@ void Configurator::calibrate(char c)
     case APPS_MIN_CALIBRATE_KEY:
         setAppsMin();
         Serial.println("---- APPS Min Set ----");
+        rawValuesChanged = true;
         break;
     case APPS_MAX_CALIBRATE_KEY:
         setAppsMax();
         Serial.println("---- APPS Max Set ----");
+        rawValuesChanged = true;
         break;
     case TPS_MIN_CALIBRATE_KEY:
         setTpsMin();
         Serial.println("---- TPS Min Set ----");
+        rawValuesChanged = true;
         break;
     case TPS_MAX_CALIBRATE_KEY:
         setTpsMax();
         Serial.println("---- TPS Max Set ----");
+        rawValuesChanged = true;
         break;
     case IDLING_CALIBRATE_KEY:
         setIdling();
         Serial.println("---- Idling Set ----");
+        rawValuesChanged = true;
         break;
     case APPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
         plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
         Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+        plausibilityCheckFlagsChanged = true;
         break;
     case TPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
         plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
         Serial.printf("---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+        plausibilityCheckFlagsChanged = true;
         break;
     case APPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps1 = !plausibilityCheckFlags.apps1;
         plausibilityValidator.apps1CheckFlag = plausibilityCheckFlags.apps1;
         Serial.printf("---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
+        plausibilityCheckFlagsChanged = true;
         break;
     case APPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps2 = !plausibilityCheckFlags.apps2;
         plausibilityValidator.apps2CheckFlag = plausibilityCheckFlags.apps2;
         Serial.printf("---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
+        plausibilityCheckFlagsChanged = true;
         break;
     case TPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps1 = !plausibilityCheckFlags.tps1;
         plausibilityValidator.tps1CheckFlag = plausibilityCheckFlags.tps1;
         Serial.printf("---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
+        plausibilityCheckFlagsChanged = true;
         break;
     case TPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps2 = !plausibilityCheckFlags.tps2;
         plausibilityValidator.tps2CheckFlag = plausibilityCheckFlags.tps2;
         Serial.printf("---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
+        plausibilityCheckFlagsChanged = true;
         break;
     case TARGET_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.target = !plausibilityCheckFlags.target;
         plausibilityValidator.targetCheckFlag = plausibilityCheckFlags.target;
         Serial.printf("---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
+        plausibilityCheckFlagsChanged = true;
         break;
     case BPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bps = !plausibilityCheckFlags.bps;
         plausibilityValidator.bpsCheckFlag = plausibilityCheckFlags.bps;
         Serial.printf("---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
+        plausibilityCheckFlagsChanged = true;
         break;
     case BPSTPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bpsTps = !plausibilityCheckFlags.bpsTps;
         plausibilityValidator.bpsTpsCheckFlag = plausibilityCheckFlags.bpsTps;
         Serial.printf("---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
+        plausibilityCheckFlagsChanged = true;
         break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
@@ -321,6 +335,8 @@ void Configurator::setIdling()
 
 void Configurator::start()
 {
+    rawValuesChanged = false;
+    plausibilityCheckFlagsChanged = false;
     while (true)
     {
         if (Serial.available())
@@ -365,8 +381,16 @@ void Configurator::startWaiting()
 
 void Configurator::finish()
 {
-    flash.write(SENSOR_VALUES_FILE_NAME, rawValues.toJsonStr());
-    flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.toJsonStr());
+    if (rawValuesChanged)
+    {
+        flash.write(SENSOR_VALUES_FILE_NAME, rawValues.toJsonStr());
+    }
+    if (plausibilityCheckFlagsChanged)
+    {
+        flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.toJsonStr());
+    }
+    rawValuesChanged = false;
+    plausibilityCheckFlagsChanged = false;
     startWaiting();
 }
 

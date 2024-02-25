@@ -80,6 +80,7 @@ private:
     MotorController &motorController;
     PlausibilityCheckFlags plausibilityCheckFlags;
     PlausibilityValidator &plausibilityValidator;
+    bool rawValuesChanged, plausibilityCheckFlagsChanged;
     void setAppsMin();
     void setAppsMax();
     void setTpsMin();
