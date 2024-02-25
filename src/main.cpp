@@ -27,7 +27,7 @@ MotorController motorController(ittr, tps1);
 PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, bps);
 MotorController motorController(apps1, tps1);
 #endif
-Configurator configurator = Configurator(apps1, apps2, tps1, tps2, ittr, motorController);
+Configurator configurator = Configurator(apps1, apps2, tps1, tps2, ittr, motorController, plausibilityValidator);
 
 // MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
 
@@ -40,8 +40,6 @@ void setup()
   configurator.initialize();
   plausibilityValidator.initialize();
   configurator.calibrateFromFlash();
-  // 二通り目
-  // configurator.calibrateFromFlash2();
   xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
   apps1.setIdling(toggleSwitch.isOn());

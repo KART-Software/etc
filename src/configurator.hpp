@@ -34,8 +34,6 @@
 #define BPS_CHECK_FLAG_SET_KEY 'i'
 #define BPSTPS_CHECK_FLAG_SET_KEY 'o'
 
-
-
 struct Config
 {
 public:
@@ -68,8 +66,9 @@ class Configurator
 public:
     Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
-    void calibrateValuesFromFlash();
-    void calibrateFlagsFromFlash();
+    void loadRawValuesFromFlash();
+    void loadPlausibilityCheckFlagsFromFlash();
+    void calibrateFromFlash();
     void startWaiting();
 
 private:

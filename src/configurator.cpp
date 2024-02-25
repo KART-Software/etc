@@ -161,20 +161,29 @@ void Configurator::calibrate()
     tps1.setRawMax(rawValues.tps1Max);
     tps2.setRawMin(rawValues.tps2Min);
     tps2.setRawMax(rawValues.tps2Max);
+    plausibilityValidator.setCheckFlags(
+        plausibilityCheckFlags.apps,
+        plausibilityCheckFlags.tps,
+        plausibilityCheckFlags.apps1,
+        plausibilityCheckFlags.apps2,
+        plausibilityCheckFlags.tps1,
+        plausibilityCheckFlags.tps2,
+        plausibilityCheckFlags.target,
+        plausibilityCheckFlags.bps,
+        plausibilityCheckFlags.bpsTps);
 }
 
-void Configurator::calibrateValuesFromFlash()
+void Configurator::loadRawValuesFromFlash()
 {
     const char *jsonStr = flash.read(SENSOR_VALUES_FILE_NAME);
-    const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
     if (!rawValues.loadFromJsonStr(jsonStr))
     {
         // False のときは Constants から読み込む。
         rawValues.loadFromConstants();
     }
-    calibrate();
 }
-void Configurator::calibrateFlagsFromFlash()
+
+void Configurator::loadPlausibilityCheckFlagsFromFlash()
 {
     const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
     if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr))
@@ -182,6 +191,12 @@ void Configurator::calibrateFlagsFromFlash()
         // False のときは Constants から読み込む。
         plausibilityCheckFlags.loadFromConstants();
     }
+}
+
+void Configurator::calibrateFromFlash()
+{
+    loadRawValuesFromFlash();
+    loadPlausibilityCheckFlagsFromFlash();
     calibrate();
 }
 
@@ -217,38 +232,47 @@ void Configurator::calibrate(char c)
         plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
         plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
         Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+        break;
     case TPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
         plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
         Serial.printf("---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+        break;
     case APPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps1 = !plausibilityCheckFlags.apps1;
         plausibilityValidator.apps1CheckFlag = plausibilityCheckFlags.apps1;
         Serial.printf("---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
+        break;
     case APPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps2 = !plausibilityCheckFlags.apps2;
         plausibilityValidator.apps2CheckFlag = plausibilityCheckFlags.apps2;
         Serial.printf("---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
+        break;
     case TPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps1 = !plausibilityCheckFlags.tps1;
         plausibilityValidator.tps1CheckFlag = plausibilityCheckFlags.tps1;
         Serial.printf("---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
+        break;
     case TPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps2 = !plausibilityCheckFlags.tps2;
         plausibilityValidator.tps2CheckFlag = plausibilityCheckFlags.tps2;
         Serial.printf("---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
+        break;
     case TARGET_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.target = !plausibilityCheckFlags.target;
         plausibilityValidator.targetCheckFlag = plausibilityCheckFlags.target;
         Serial.printf("---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
+        break;
     case BPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bps = !plausibilityCheckFlags.bps;
         plausibilityValidator.bpsCheckFlag = plausibilityCheckFlags.bps;
         Serial.printf("---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
+        break;
     case BPSTPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bpsTps = !plausibilityCheckFlags.bpsTps;
         plausibilityValidator.bpsTpsCheckFlag = plausibilityCheckFlags.bpsTps;
         Serial.printf("---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
+        break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("---- Calibration Finish ----");
         finish();
