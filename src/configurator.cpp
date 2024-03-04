@@ -206,89 +206,89 @@ void Configurator::calibrate(char c)
     {
     case MOTOR_OFF_KEY:
         motorController.setMotorOff();
-        Serial.println("---- Motor Off ----");
+        Serial.println("\033[K---- Motor Off ----");
         break;
     case APPS_MIN_CALIBRATE_KEY:
         setAppsMin();
-        Serial.println("---- APPS Min Set ----");
+        Serial.println("\033[K---- APPS Min Set ----");
         rawValuesChanged = true;
         break;
     case APPS_MAX_CALIBRATE_KEY:
         setAppsMax();
-        Serial.println("---- APPS Max Set ----");
+        Serial.println("\033[K---- APPS Max Set ----");
         rawValuesChanged = true;
         break;
     case TPS_MIN_CALIBRATE_KEY:
         setTpsMin();
-        Serial.println("---- TPS Min Set ----");
+        Serial.println("\033[K---- TPS Min Set ----");
         rawValuesChanged = true;
         break;
     case TPS_MAX_CALIBRATE_KEY:
         setTpsMax();
-        Serial.println("---- TPS Max Set ----");
+        Serial.println("\033[K---- TPS Max Set ----");
         rawValuesChanged = true;
         break;
     case IDLING_CALIBRATE_KEY:
         setIdling();
-        Serial.println("---- Idling Set ----");
+        Serial.println("\033[K---- Idling Set ----");
         rawValuesChanged = true;
         break;
     case APPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
         plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
+        Serial.printf("\033[K---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
         plausibilityCheckFlagsChanged = true;
         break;
     case TPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
         plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
-        Serial.printf("---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+        Serial.printf("\033[K---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
         plausibilityCheckFlagsChanged = true;
         break;
     case APPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps1 = !plausibilityCheckFlags.apps1;
         plausibilityValidator.apps1CheckFlag = plausibilityCheckFlags.apps1;
-        Serial.printf("---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
+        Serial.printf("\033[K---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
         plausibilityCheckFlagsChanged = true;
         break;
     case APPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.apps2 = !plausibilityCheckFlags.apps2;
         plausibilityValidator.apps2CheckFlag = plausibilityCheckFlags.apps2;
-        Serial.printf("---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
+        Serial.printf("\033[K---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
         plausibilityCheckFlagsChanged = true;
         break;
     case TPS1_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps1 = !plausibilityCheckFlags.tps1;
         plausibilityValidator.tps1CheckFlag = plausibilityCheckFlags.tps1;
-        Serial.printf("---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
+        Serial.printf("\033[K---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
         plausibilityCheckFlagsChanged = true;
         break;
     case TPS2_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps2 = !plausibilityCheckFlags.tps2;
         plausibilityValidator.tps2CheckFlag = plausibilityCheckFlags.tps2;
-        Serial.printf("---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
+        Serial.printf("\033[K---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
         plausibilityCheckFlagsChanged = true;
         break;
     case TARGET_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.target = !plausibilityCheckFlags.target;
         plausibilityValidator.targetCheckFlag = plausibilityCheckFlags.target;
-        Serial.printf("---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
+        Serial.printf("\033[K---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
         plausibilityCheckFlagsChanged = true;
         break;
     case BPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bps = !plausibilityCheckFlags.bps;
         plausibilityValidator.bpsCheckFlag = plausibilityCheckFlags.bps;
-        Serial.printf("---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
+        Serial.printf("\033[K---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
         plausibilityCheckFlagsChanged = true;
         break;
     case BPSTPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.bpsTps = !plausibilityCheckFlags.bpsTps;
         plausibilityValidator.bpsTpsCheckFlag = plausibilityCheckFlags.bpsTps;
-        Serial.printf("---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
+        Serial.printf("\033[K---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
         plausibilityCheckFlagsChanged = true;
         break;
     case CALIBRATION_FINISH_KEY:
-        Serial.println("---- Calibration Finish ----");
+        Serial.println("\033[K---- Calibration Finish ----");
         finish();
         break;
     default:
@@ -364,7 +364,7 @@ void Configurator::startWaiting()
                 {
                     Serial.read();
                 }
-                Serial.println("---- Calibration Start ----");
+                Serial.println("\033[K---- Calibration Start ----");
                 start();
             }
             else

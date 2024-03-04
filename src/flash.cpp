@@ -9,7 +9,7 @@ bool Flash::initialize()
             return true;
         }
     }
-    Serial.println("FFat begin failed.");
+    Serial.println("\033[KFFat begin failed.");
     return false;
 }
 
@@ -18,7 +18,7 @@ void Flash::write(const char *fileName, const char *jsonStr)
     File file = FFat.open(fileName, FILE_WRITE);
     file.print(jsonStr);
     file.close();
-    Serial.printf("---- Saved to %s ----\n", fileName);
+    Serial.printf("\033[K---- Saved to %s ----\n", fileName);
     Serial.println(jsonStr);
 }
 
@@ -37,7 +37,7 @@ const char *Flash::read(const char *fileName)
     }
     file.close();
     jsonStr[len] = '\0';
-    Serial.printf("---- Loaded from %s ----\n", fileName);
+    Serial.printf("\033[K---- Loaded from %s ----\n", fileName);
     Serial.println(jsonStr);
     return jsonStr;
 }
