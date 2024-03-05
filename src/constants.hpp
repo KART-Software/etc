@@ -7,7 +7,7 @@
 /// IST Controller ///
 //////////////////////
 
-#define IST_CONTROLLER
+// #define IST_CONTROLLER
 
 ////////////////////
 /// ADC Settings ///
@@ -171,6 +171,5 @@
 #define TARGET_CHECK_FLAG false
 #define BPS_CHECK_FLAG false
 #define BPSTPS_CHECK_FLAG false
-
 
 #endif

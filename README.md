@@ -32,9 +32,20 @@ This project is created with [PlatformIO](https://platformio.org/)
     * `3` $\cdot\cdot\cdot$ スロットル全閉時 (`TPS1_MIN`, `TPS2_MIN`)
     * `4` $\cdot\cdot\cdot$ スロットル全開時 (`TPS1_MAX`, `TPS2_MAX`)
     * `5` $\cdot\cdot\cdot$ アイドリング時 (`APPS_IDLING`)
+    * `q` $\cdot\cdot\cdot$ APPSの値の検定の有無 (`APPS_CHECK_FLAG`)
+    * `w` $\cdot\cdot\cdot$ TPSの値の検定の有無 (`BPS_CHECK_FLAG`)
+    * `e` $\cdot\cdot\cdot$ APPS1の値の検定の有無 (`APPS1_CHECK_FLAG`)
+    * `r` $\cdot\cdot\cdot$ APPS2の値の検定の有無 (`APPS2_CHECK_FLAG`)
+    * `t` $\cdot\cdot\cdot$ TPS1の値の検定の有無 (`TPS1_CHECK_FLAG`)
+    * `y` $\cdot\cdot\cdot$ TPS2の値の検定の有無 (`TPS2_CHECK_FLAG`)
+    * `u` $\cdot\cdot\cdot$ TARGETの値の検定の有無 (`TARGET_CHECK_FLAG`)
+    * `i` $\cdot\cdot\cdot$ BPSの値の検定の有無 (`BPS_CHECK_FLAG`)
+    * `o` $\cdot\cdot\cdot$ BPSTPSの値の検定の有無 (`BPSTPS_CHECK_FLAG`)
     
     例えば、アクセルペダル全閉時のセンサー値を設定したいときは、アクセルペダル全閉の状態で `1` を入力します。
     ※必ずしも全パターンを設定する必要はありません。
+    
+    q~oについては、押すとtrueとfalseが入れ替わります。defaultはfalseです。
     
     また、必要であれば以下のキーも使用します。
     * `m` $\cdot\cdot\cdot$ モーターの電源OFF
