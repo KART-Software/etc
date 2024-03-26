@@ -28,7 +28,7 @@ protected:
     MovingAverage mvgAvg = MovingAverage(60);
     uint16_t rawValue;
     uint16_t rawMinValue, rawMaxValue;
-    const double maxValue, minValue;
+    const double minValue, maxValue;
     const double margin;
     double intercept, slope;
 };
