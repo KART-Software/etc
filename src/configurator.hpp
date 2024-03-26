@@ -34,6 +34,8 @@
 #define BPS_CHECK_FLAG_SET_KEY 'i'
 #define BPSTPS_CHECK_FLAG_SET_KEY 'o'
 
+#define REBOOT_KEY 'z'
+
 struct Config
 {
 public:

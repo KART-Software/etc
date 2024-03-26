@@ -291,6 +291,9 @@ void Configurator::calibrate(char c)
         Serial.println("\033[K---- Calibration Finish ----");
         finish();
         break;
+    case REBOOT_KEY:
+        Serial.println("\033[K---- Reboot ----");
+        ESP.restart();
     default:
         break;
     }
