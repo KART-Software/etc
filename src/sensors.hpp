@@ -78,4 +78,18 @@ private:
     const double highPressureThreshold;
 };
 
+class TargetSensor
+{
+public:
+    TargetSensor(Apps &apps, Ittr &ittr);
+    bool isIttr;
+    uint16_t getRawValue();
+    double convertedValue();
+    double convertToTargetTp();
+
+private:
+    Apps &apps;
+    Ittr &ittr;
+};
+
 #endif

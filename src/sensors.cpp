@@ -151,3 +151,8 @@ bool Bps::isHighPressure()
 {
     return convertedValue() > highPressureThreshold;
 }
+
+TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
+    : apps(apps), ittr(ittr), isIttr(true)
+{
+}
