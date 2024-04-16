@@ -9,8 +9,10 @@
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
 #define PLAUSIBILITY_CHECK_FLAGS_FILE_NAME "/plausibility_check_flags.txt"
+#define USE_ITTR_FLAG_FILE_NAME "/use_ittr_flag.txt"
 #define RAW_SENSOR_VALUES_JSON_SIZE 300
 #define PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE 300
+#define USE_ITTR_FLAG_JSON_SIZE 50
 
 #define WAIT_INTERVAL 1000
 #define CALIBRATE_INTERVAL 100
@@ -33,6 +35,8 @@
 #define TARGET_CHECK_FLAG_SET_KEY 'u'
 #define BPS_CHECK_FLAG_SET_KEY 'i'
 #define BPSTPS_CHECK_FLAG_SET_KEY 'o'
+
+#define IST_CONTROLLER_SET_KEY 'x'
 
 #define REBOOT_KEY 'z'
 
@@ -63,26 +67,38 @@ public:
     const char *toJsonStr();
 };
 
+struct UseIttrFlag : Config
+{
+public:
+    bool useIttr;
+    bool loadFromJsonStr(const char *jsonStr);
+    void loadFromConstants();
+    const char *toJsonStr();
+};
+
 class Configurator
 {
 public:
-    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, TargetSensor &targetSensor, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
     void loadRawValuesFromFlash();
     void loadPlausibilityCheckFlagsFromFlash();
+    void loadUseIttrFlagFromFlash();
     void calibrateFromFlash();
     void startWaiting();
 
 private:
     Flash flash;
     RawSensorValues rawValues;
+    PlausibilityCheckFlags plausibilityCheckFlags;
+    UseIttrFlag useIttrFlag;
     Apps &apps1, &apps2;
     Tps &tps1, &tps2;
     Ittr &ittr;
+    TargetSensor &targetSensor;
     MotorController &motorController;
-    PlausibilityCheckFlags plausibilityCheckFlags;
     PlausibilityValidator &plausibilityValidator;
-    bool rawValuesChanged, plausibilityCheckFlagsChanged;
+    bool rawValuesChanged, plausibilityCheckFlagsChanged, useIttrFlagChanged;
     void setAppsMin();
     void setAppsMax();
     void setTpsMin();

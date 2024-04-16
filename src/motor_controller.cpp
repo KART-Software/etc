@@ -1,6 +1,6 @@
 #include "motor_controller.hpp"
 
-MotorController::MotorController(Apps &apps, Tps &tps) : apps(apps), tps(tps)
+MotorController::MotorController(TargetSensor &targetSensor, Tps &tps) : targetSensor(targetSensor), tps(tps)
 {
 }
 
@@ -11,9 +11,9 @@ void MotorController::initialize()
 
 void MotorController::cycle()
 {
-    apps.read();
+    targetSensor.read();
     tps.read();
-    double target = apps.convertToTargetTp();
+    double target = targetSensor.convertToTargetTp();
     double tp = tps.convertedValue();
     output = pid.compute(target, tp);
     dcMotor.write(output);

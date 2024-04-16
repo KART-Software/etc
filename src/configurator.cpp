@@ -132,8 +132,42 @@ const char *PlausibilityCheckFlags::toJsonStr()
     return jsonStr;
 }
 
-Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), motorController(motorController), plausibilityValidator(plausibilityValidator)
+bool UseIttrFlag::loadFromJsonStr(const char *jsonStr)
+{
+    StaticJsonDocument<USE_ITTR_FLAG_JSON_SIZE> json;
+    DeserializationError error = deserializeJson(json, jsonStr);
+
+    bool ok = !bool(error);
+    ok &= json.containsKey("useIttr");
+    if (!ok)
+    {
+        // メンバーが足りなかったときは何もせず False を返す
+        return false;
+    }
+    useIttr = json["useIttr"];
+    return true;
+}
+
+void UseIttrFlag::loadFromConstants()
+{
+#ifdef IST_CONTROLLER
+    useIttr = true;
+#else
+    useIttr = false;
+#endif
+}
+
+const char *UseIttrFlag::toJsonStr()
+{
+    StaticJsonDocument<USE_ITTR_FLAG_JSON_SIZE> json;
+    json["useIttr"] = useIttr;
+    char *jsonStr = new char[USE_ITTR_FLAG_JSON_SIZE];
+    serializeJson(json, jsonStr, USE_ITTR_FLAG_JSON_SIZE);
+    return jsonStr;
+}
+
+Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, TargetSensor &targetSensor, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), targetSensor(targetSensor), motorController(motorController), plausibilityValidator(plausibilityValidator)
 {
 }
 
@@ -193,10 +227,21 @@ void Configurator::loadPlausibilityCheckFlagsFromFlash()
     }
 }
 
+void Configurator::loadUseIttrFlagFromFlash()
+{
+    const char *jsonStr = flash.read(USE_ITTR_FLAG_FILE_NAME);
+    if (!useIttrFlag.loadFromJsonStr(jsonStr))
+    {
+        // False のときは Constants から読み込む。
+        useIttrFlag.loadFromConstants();
+    }
+}
+
 void Configurator::calibrateFromFlash()
 {
     loadRawValuesFromFlash();
     loadPlausibilityCheckFlagsFromFlash();
+    loadUseIttrFlagFromFlash();
     calibrate();
 }
 
@@ -287,6 +332,12 @@ void Configurator::calibrate(char c)
         Serial.printf("\033[K---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
         plausibilityCheckFlagsChanged = true;
         break;
+    case IST_CONTROLLER_SET_KEY:
+        useIttrFlag.useIttr = !useIttrFlag.useIttr;
+        targetSensor.setIttr(useIttrFlag.useIttr);
+        Serial.printf("\033[K---- Use ITTR : %d ----\n", useIttrFlag.useIttr);
+        useIttrFlagChanged = true;
+        break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("\033[K---- Calibration Finish ----");
         finish();
@@ -340,6 +391,7 @@ void Configurator::start()
 {
     rawValuesChanged = false;
     plausibilityCheckFlagsChanged = false;
+    useIttrFlagChanged = false;
     while (true)
     {
         if (Serial.available())
@@ -392,8 +444,13 @@ void Configurator::finish()
     {
         flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.toJsonStr());
     }
+    if (useIttrFlagChanged)
+    {
+        flash.write(USE_ITTR_FLAG_FILE_NAME, useIttrFlag.toJsonStr());
+    }
     rawValuesChanged = false;
     plausibilityCheckFlagsChanged = false;
+    useIttrFlagChanged = false;
     startWaiting();
 }
 

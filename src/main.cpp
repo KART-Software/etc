@@ -20,16 +20,12 @@ Tps tps1(TPS_1_RAW_MIN, TPS_1_RAW_MAX, TPS_1_CH);
 Tps tps2(TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_CH);
 Ittr ittr = Ittr();
 Bps bps = Bps();
-#ifdef IST_CONTROLLER
-PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, ittr, bps);
-MotorController motorController(ittr, tps1);
-#else
-PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, bps);
-MotorController motorController(apps1, tps1);
-#endif
-Configurator configurator = Configurator(apps1, apps2, tps1, tps2, ittr, motorController, plausibilityValidator);
+TargetSensor targetSensor(apps1, ittr);
 
-// MovingAverage movingAverage[4] = {MovingAverage(), MovingAverage(), MovingAverage(), MovingAverage()};
+PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, targetSensor, bps);
+MotorController motorController(targetSensor, tps1);
+Configurator configurator(apps1, apps2, tps1, tps2, ittr, targetSensor, motorController, plausibilityValidator);
+
 
 void setup()
 {

@@ -82,14 +82,16 @@ class TargetSensor
 {
 public:
     TargetSensor(Apps &apps, Ittr &ittr);
-    bool isIttr;
+    bool isIttr();
+    void setIttr(bool isIttr);
     uint16_t getRawValue();
     double convertedValue();
     double convertToTargetTp();
+    void read();
 
 private:
     Apps &apps;
     Ittr &ittr;
+    bool _isIttr;
 };
-
 #endif

@@ -135,6 +135,69 @@ Ittr::
 {
 }
 
+TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
+    : apps(apps), ittr(ittr)
+{
+}
+
+void TargetSensor::read()
+{
+    if (_isIttr)
+    {
+        ittr.read();
+    }
+    else
+    {
+        apps.read();
+    }
+}
+
+uint16_t TargetSensor::getRawValue()
+{
+    if (_isIttr)
+    {
+        return ittr.getRawValue();
+    }
+    else
+    {
+        return apps.getRawValue();
+    }
+}
+
+double TargetSensor::convertedValue()
+{
+    if (_isIttr)
+    {
+        return ittr.convertedValue();
+    }
+    else
+    {
+        return apps.convertedValue();
+    }
+}
+
+double TargetSensor::convertToTargetTp()
+{
+    if (_isIttr)
+    {
+        return ittr.convertToTargetTp();
+    }
+    else
+    {
+        return apps.convertToTargetTp();
+    }
+}
+
+bool TargetSensor::isIttr()
+{
+    return _isIttr;
+}
+
+void TargetSensor::setIttr(bool isIttr)
+{
+    _isIttr = isIttr;
+}
+
 Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double highPressureThreshold, double margin)
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
       ch(ch), highPressureThreshold(highPressureThreshold)
@@ -150,9 +213,4 @@ void Bps::read()
 bool Bps::isHighPressure()
 {
     return convertedValue() > highPressureThreshold;
-}
-
-TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
-    : apps(apps), ittr(ittr), isIttr(true)
-{
 }

@@ -7,7 +7,7 @@
 /// IST Controller ///
 //////////////////////
 
-// #define IST_CONTROLLER
+#define IST_CONTROLLER
 
 ////////////////////
 /// ADC Settings ///
