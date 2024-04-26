@@ -41,6 +41,7 @@ This project is created with [PlatformIO](https://platformio.org/)
     * `u` $\cdot\cdot\cdot$ APPSとTPSの値に矛盾がないかの検定の有無 (`TARGET_CHECK_FLAG`)
     * `i` $\cdot\cdot\cdot$ BPSの値の範囲内に存在するかの検定の有無 (`BPS_CHECK_FLAG`)
     * `o` $\cdot\cdot\cdot$ BPSとTPSの値が同時に大きくなっていないかの検定の有無 (`BPSTPS_CHECK_FLAG`)
+    * `x` $\cdot\cdot\cdot$ ISTコントローラーを用いるかどうか (`IST_CONTROLLER_CHECK_FLAG`)
     
     例えば、アクセルペダル全閉時のセンサー値を設定したいときは、アクセルペダル全閉の状態で `1` を入力します。
     ※必ずしも全パターンを設定する必要はありません。
