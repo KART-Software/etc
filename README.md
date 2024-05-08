@@ -20,36 +20,41 @@ This project is created with [PlatformIO](https://platformio.org/)
 1. `Baud Rate` を `115200`、ポートを `Silicon Labs CP210x ...`に指定して、モニターを開始してください。 
 1. 左半分が生のセンサーの値、右半分が変換後の％表示です。（BPSだけはpsi）（IST Controllerからくるスロットル指令値は "ITTR" で表示されています）
 
-### センサーのキャリブレーション
-簡単な操作でセンサー値をキャリブレーションできます。
+### センサーのキャリブレーション、その他設定
+簡単な操作で設定を変更することができます。
 1. シリアルモニターを開始して`s`を入力すると `---- Calibration Start ----` と表示されて、キャリブレーションモードに入ります。
 
     注：　キャリブレーション中もモーターは動いています。（電スロの動作をしています。）
 
-1. 以下を入力して、センサー値を設定します。
-    * `1` $\cdot\cdot\cdot$ アクセルペダル全閉時 (`APPS1_MIN`, `APPS2_MIN`, `ITTR_MIN`)
-    * `2` $\cdot\cdot\cdot$ アクセルペダル全開時 (`APPS1_MAX`, `APPS2_MAX`, `ITTR_MAX`)
-    * `3` $\cdot\cdot\cdot$ スロットル全閉時 (`TPS1_MIN`, `TPS2_MIN`)
-    * `4` $\cdot\cdot\cdot$ スロットル全開時 (`TPS1_MAX`, `TPS2_MAX`)
-    * `5` $\cdot\cdot\cdot$ アイドリング時 (`APPS_IDLING`)
-    * `q` $\cdot\cdot\cdot$ APPS1と２の値の整合性検定の有無 (`APPS_CHECK_FLAG`)
-    * `w` $\cdot\cdot\cdot$ TPS1と２の値の整合性検定の有無 (`BPS_CHECK_FLAG`)
-    * `e` $\cdot\cdot\cdot$ APPS1の値の範囲内に存在するかの検定の有無 (`APPS1_CHECK_FLAG`)
-    * `r` $\cdot\cdot\cdot$ APPS2の値の範囲内に存在するかの検定の有無 (`APPS2_CHECK_FLAG`)
-    * `t` $\cdot\cdot\cdot$ TPS1の値の範囲内に存在するかの検定の有無 (`TPS1_CHECK_FLAG`)
-    * `y` $\cdot\cdot\cdot$ TPS2の値の範囲内に存在するかの検定の有無 (`TPS2_CHECK_FLAG`)
-    * `u` $\cdot\cdot\cdot$ APPSとTPSの値に矛盾がないかの検定の有無 (`TARGET_CHECK_FLAG`)
-    * `i` $\cdot\cdot\cdot$ BPSの値の範囲内に存在するかの検定の有無 (`BPS_CHECK_FLAG`)
-    * `o` $\cdot\cdot\cdot$ BPSとTPSの値が同時に大きくなっていないかの検定の有無 (`BPSTPS_CHECK_FLAG`)
-    * `x` $\cdot\cdot\cdot$ ISTコントローラーを用いるかどうか (`IST_CONTROLLER_CHECK_FLAG`)
-    
-    例えば、アクセルペダル全閉時のセンサー値を設定したいときは、アクセルペダル全閉の状態で `1` を入力します。
-    ※必ずしも全パターンを設定する必要はありません。
-    
-    q~oについては、押すとtrueとfalseが入れ替わります。defaultはfalseです。
-    
-    また、必要であれば以下のキーも使用します。
-    * `m` $\cdot\cdot\cdot$ モーターの電源OFF
+1. 各設定項目
+    * 以下を入力して、センサー値を設定します。
+        * `1` $\cdot\cdot\cdot$ アクセルペダル全閉時 (`APPS1_MIN`, `APPS2_MIN`, `ITTR_MIN`)
+        * `2` $\cdot\cdot\cdot$ アクセルペダル全開時 (`APPS1_MAX`, `APPS2_MAX`, `ITTR_MAX`)
+        * `3` $\cdot\cdot\cdot$ スロットル全閉時 (`TPS1_MIN`, `TPS2_MIN`)
+        * `4` $\cdot\cdot\cdot$ スロットル全開時 (`TPS1_MAX`, `TPS2_MAX`)
+        * `5` $\cdot\cdot\cdot$ アイドリング時 (`APPS_IDLING`)
+
+        例えば、アクセルペダル全閉時のセンサー値を設定したいときは、アクセルペダル全閉の状態で `1` を入力します。
+        ※必ずしも全パターンを設定する必要はありません。
+
+    * 以下を入力して、Plausibility Checkの有無を設定します。（押すたびに`true`と`false`が入れ替わります）
+        * `q` $\cdot\cdot\cdot$ APPS1とAPPS2の値の整合性 (`APPS_CHECK_FLAG`)
+        * `w` $\cdot\cdot\cdot$ TPS1とTPS2の値の整合性 (`BPS_CHECK_FLAG`)
+        * `e` $\cdot\cdot\cdot$ APPS1の値が範囲内にあるか (`APPS1_CHECK_FLAG`)
+        * `r` $\cdot\cdot\cdot$ APPS2の値が範囲内にあるか (`APPS2_CHECK_FLAG`)
+        * `t` $\cdot\cdot\cdot$ TPS1の値が範囲内にあるか (`TPS1_CHECK_FLAG`)
+        * `y` $\cdot\cdot\cdot$ TPS2の値が範囲内にあるか (`TPS2_CHECK_FLAG`)
+        * `u` $\cdot\cdot\cdot$ APPSとTPSの値に矛盾がないか（スロットルがターゲットポジションに正確に動いているか） (`TARGET_CHECK_FLAG`)
+        * `i` $\cdot\cdot\cdot$ BPSの値が範囲内に存在するか (`BPS_CHECK_FLAG`)
+        * `o` $\cdot\cdot\cdot$ BPSとTPSの値が同時に大きくなっていないか（ブレーキを踏んでいてかつスロットルが開いている状況は☓） (`BPSTPS_CHECK_FLAG`)
+
+    * 以下を入力して、ISTコントローラーからのスロットルポジション指令値を使用するかどうかを設定します。（FLAGが`false`のときはAPPS、`true`のときはISTからの指令値を使用します）
+        * `x` $\cdot\cdot\cdot$ ISTコントローラーを用いるかどうか (`IST_CONTROLLER_CHECK_FLAG`)
+
+    * 必要であれば以下のキーも使用します。
+        * `m` $\cdot\cdot\cdot$ モーターの電源OFF
+        * `z` $\cdot\cdot\cdot$ 電スロを再起動
+
 1. `f` を入力すると `---- Calibration Finish ----`、`---- Saved ----` と表示されてキャリブレーションモードが終了します。
     ここで保存されたセンサー値は再起動しても保存されているので、一度キャリブレーションをすれば次回からする必要はありません。
 
