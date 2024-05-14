@@ -99,8 +99,8 @@
 
 #define MOTOR_CONTROLL_CYCLE_TIME 1 // ms
 
-#define KP 2.0
-#define KI 0.0
+#define KP 1.5
+#define KI 0.4
 #define KD 0.0
 
 #define MOTOR_DIRECTION 1
