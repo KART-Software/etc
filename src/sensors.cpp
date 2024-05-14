@@ -96,7 +96,7 @@ double Apps::convertToTargetTp()
     double x = constrain(app, 0.0, 100.0);
     double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
     double min = idling ? idlingValue : getMinValue();
-    double max = restricted ? restrictedMaxValue : getMaxValue();
+    double max = restricted ? restrictedMaxValue : targetMax;
     return min + y * (max - min) / 100.0;
 }
 

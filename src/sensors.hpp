@@ -47,6 +47,7 @@ private:
     const uint8_t ch;
     double idlingValue;
     bool idling = true;
+    double targetMax = APPS_TARGET_MAX;
     double restrictedMaxValue = APPS_RESTRICTED_MAX;
     bool restricted = false;
 };
