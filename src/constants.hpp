@@ -99,8 +99,8 @@
 
 #define MOTOR_CONTROLL_CYCLE_TIME 1 // ms
 
-#define KP 1.5
-#define KI 2.0
+#define KP 2.0
+#define KI 0.0
 #define KD 0.0
 
 #define MOTOR_DIRECTION 1
@@ -127,9 +127,10 @@
 #define APPS_2_RAW_MAX 31798
 
 #define APPS_MIN 0
-#define APPS_MAX 95
+#define APPS_MAX 100
 #define APPS_IDLING 15
 #define APPS_MARGIN 20
+#define APPS_TARGET_MAX 95
 #define APPS_RESTRICTED_MAX 60
 
 #define ITTR_RAW_MAX APPS_1_RAW_MAX
