@@ -205,6 +205,7 @@ void Configurator::calibrate()
         plausibilityCheckFlags.target,
         plausibilityCheckFlags.bps,
         plausibilityCheckFlags.bpsTps);
+    targetSensor.setIttr(useIttrFlag.useIttr);
 }
 
 void Configurator::loadRawValuesFromFlash()
