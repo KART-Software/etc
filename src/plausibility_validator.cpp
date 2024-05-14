@@ -1,16 +1,9 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Bps &bps)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(apps1), bps(bps)
-{
-    initParameters();
-}
-
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor, Bps &bps)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
 {
     initParameters();
-    hasIttr = true;
 }
 
 void PlausibilityValidator::initialize()
@@ -35,15 +28,15 @@ void PlausibilityValidator::initParameters()
 bool PlausibilityValidator::isCurrentlyValid()
 {
     bool isValid = true;
-    isValid &= isAppsPlausible();
-    isValid &= isTpsPlausible();
-    isValid &= isApps1CircuitValid();
-    isValid &= isApps2CircuitValid();
-    isValid &= isTps1CircuitValid();
-    isValid &= isTps2CircuitValid();
-    isValid &= isAppsTpsTargetValid();
-    // isValid &= isBpsCircuitValid();
-    // isValid &= isBpsTpsPlausible();
+    isValid &= isAppsPlausible() || !appsCheckFlag;
+    isValid &= isTpsPlausible() || !tpsCheckFlag;
+    isValid &= isApps1CircuitValid() || !apps1CheckFlag;
+    isValid &= isApps2CircuitValid() || !apps2CheckFlag;
+    isValid &= isTps1CircuitValid() || !tps1CheckFlag;
+    isValid &= isTps2CircuitValid() || !tps2CheckFlag;
+    isValid &= isAppsTpsTargetValid() || !targetCheckFlag;
+    isValid &= isBpsCircuitValid() || !bpsCheckFlag;
+    isValid &= isBpsTpsPlausible() || !bpsTpsCheckFlag;
     isValid |= millis() < PLAUSIBLE_DURATION;
 
     isValidAllTime &= isValid;
@@ -207,9 +200,10 @@ bool PlausibilityValidator::isBpsTpsPlausible()
 
 void PlausibilityValidator::serialLog()
 {
-    if (hasIttr)
+    if (targetSensor.isIttr())
     {
-        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\n",
+        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+                      isValidAllTime ? "OK " : "ERR",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
                       targetSensor.getRawValue(),
@@ -225,7 +219,8 @@ void PlausibilityValidator::serialLog()
     }
     else
     {
-        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\n",
+        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+                      isValidAllTime ? "OK " : "ERR",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
                       tps1.getRawValue(),
@@ -247,6 +242,19 @@ void PlausibilityValidator::startLog()
         serialLog();
         delay(SERIAL_LOG_INTERVAL);
     }
+}
+
+void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps)
+{
+    appsCheckFlag = apps;
+    tpsCheckFlag = tps;
+    apps1CheckFlag = apps1;
+    apps2CheckFlag = apps2;
+    tps1CheckFlag = tps1;
+    tps2CheckFlag = tps2;
+    targetCheckFlag = target;
+    bpsCheckFlag = bps;
+    bpsTpsCheckFlag = bpsTps;
 }
 
 String PlausibilityValidator::toNChars(String value, uint8_t n)

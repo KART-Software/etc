@@ -92,13 +92,12 @@ void Apps::read()
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    double x = constrain(app, getMinValue(), getMaxValue());
+    // double x = constrain(app, getMinValue(), getMaxValue());
+    double x = constrain(app, 0.0, 100.0);
     double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
-    if (idling)
-    {
-        return idlingValue + y * (100.0 - idlingValue) / 100.0;
-    }
-    return y;
+    double min = idling ? idlingValue : getMinValue();
+    double max = restricted ? restrictedMaxValue : targetMax;
+    return min + y * (max - min) / 100.0;
 }
 
 void Apps::setIdlingValue(double val)
@@ -109,6 +108,11 @@ void Apps::setIdlingValue(double val)
 void Apps::setIdling(bool idling)
 {
     this->idling = idling;
+}
+
+void Apps::setRestricted(bool restricted)
+{
+    this->restricted = restricted;
 }
 
 Tps::
@@ -133,6 +137,69 @@ Ittr::
     Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin, double idlingValue)
     : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin, idlingValue)
 {
+}
+
+TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
+    : apps(apps), ittr(ittr)
+{
+}
+
+void TargetSensor::read()
+{
+    if (_isIttr)
+    {
+        ittr.read();
+    }
+    else
+    {
+        apps.read();
+    }
+}
+
+uint16_t TargetSensor::getRawValue()
+{
+    if (_isIttr)
+    {
+        return ittr.getRawValue();
+    }
+    else
+    {
+        return apps.getRawValue();
+    }
+}
+
+double TargetSensor::convertedValue()
+{
+    if (_isIttr)
+    {
+        return ittr.convertedValue();
+    }
+    else
+    {
+        return apps.convertedValue();
+    }
+}
+
+double TargetSensor::convertToTargetTp()
+{
+    if (_isIttr)
+    {
+        return ittr.convertToTargetTp();
+    }
+    else
+    {
+        return apps.convertToTargetTp();
+    }
+}
+
+bool TargetSensor::isIttr()
+{
+    return _isIttr;
+}
+
+void TargetSensor::setIttr(bool isIttr)
+{
+    _isIttr = isIttr;
 }
 
 Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double highPressureThreshold, double margin)

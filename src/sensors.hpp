@@ -28,7 +28,7 @@ protected:
     MovingAverage mvgAvg = MovingAverage(60);
     uint16_t rawValue;
     uint16_t rawMinValue, rawMaxValue;
-    const double maxValue, minValue;
+    const double minValue, maxValue;
     const double margin;
     double intercept, slope;
 };
@@ -41,11 +41,15 @@ public:
     double convertToTargetTp();
     void setIdlingValue(double val);
     void setIdling(bool idling);
+    void setRestricted(bool restricted);
 
 private:
     const uint8_t ch;
     double idlingValue;
     bool idling = true;
+    double targetMax = APPS_TARGET_MAX;
+    double restrictedMaxValue = APPS_RESTRICTED_MAX;
+    bool restricted = false;
 };
 
 class Tps : public Sensor
@@ -78,4 +82,20 @@ private:
     const double highPressureThreshold;
 };
 
+class TargetSensor
+{
+public:
+    TargetSensor(Apps &apps, Ittr &ittr);
+    bool isIttr();
+    void setIttr(bool isIttr);
+    uint16_t getRawValue();
+    double convertedValue();
+    double convertToTargetTp();
+    void read();
+
+private:
+    Apps &apps;
+    Ittr &ittr;
+    bool _isIttr;
+};
 #endif

@@ -100,7 +100,7 @@
 #define MOTOR_CONTROLL_CYCLE_TIME 1 // ms
 
 #define KP 1.5
-#define KI 2.0
+#define KI 0.4
 #define KD 0.0
 
 #define MOTOR_DIRECTION 1
@@ -130,6 +130,8 @@
 #define APPS_MAX 100
 #define APPS_IDLING 15
 #define APPS_MARGIN 20
+#define APPS_TARGET_MAX 95
+#define APPS_RESTRICTED_MAX 60
 
 #define ITTR_RAW_MAX APPS_1_RAW_MAX
 #define ITTR_RAW_MIN APPS_1_RAW_MIN
@@ -161,5 +163,15 @@
 
 #define FUEL_PUMP_PIN 33
 #define DC_MOTOR_RELAY_PIN 32
+
+#define APPS_CHECK_FLAG false
+#define TPS_CHECK_FLAG false
+#define APPS1_CHECK_FLAG false
+#define APPS2_CHECK_FLAG false
+#define TPS1_CHECK_FLAG false
+#define TPS2_CHECK_FLAG false
+#define TARGET_CHECK_FLAG false
+#define BPS_CHECK_FLAG false
+#define BPSTPS_CHECK_FLAG false
 
 #endif
