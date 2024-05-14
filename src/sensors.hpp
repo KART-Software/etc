@@ -41,11 +41,14 @@ public:
     double convertToTargetTp();
     void setIdlingValue(double val);
     void setIdling(bool idling);
+    void setRestricted(bool restricted);
 
 private:
     const uint8_t ch;
     double idlingValue;
     bool idling = true;
+    double restrictedMaxValue = APPS_RESTRICTED_MAX;
+    bool restricted = false;
 };
 
 class Tps : public Sensor

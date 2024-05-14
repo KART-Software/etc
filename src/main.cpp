@@ -14,6 +14,7 @@ TaskHandle_t serialLoggingTask;
 TaskHandle_t calibrationTask;
 
 ToggleSwitch toggleSwitch(BUTTON_3_PIN);
+ToggleSwitch toggleSwitch2(BUTTON_2_PIN);
 Apps apps1(APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
 Apps apps2(APPS_2_RAW_MIN, APPS_2_RAW_MAX, APPS_2_CH);
 Tps tps1(TPS_1_RAW_MIN, TPS_1_RAW_MAX, TPS_1_CH);
@@ -26,13 +27,13 @@ PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, targetSens
 MotorController motorController(targetSensor, tps1);
 Configurator configurator(apps1, apps2, tps1, tps2, ittr, targetSensor, motorController, plausibilityValidator);
 
-
 void setup()
 {
   pinMode(FUEL_PUMP_PIN, OUTPUT);
   digitalWrite(FUEL_PUMP_PIN, HIGH);
   gAdc.begin();
   toggleSwitch.initialize();
+  toggleSwitch2.initialize();
   configurator.initialize();
   plausibilityValidator.initialize();
   configurator.calibrateFromFlash();
@@ -41,6 +42,9 @@ void setup()
   apps1.setIdling(toggleSwitch.isOn());
   apps2.setIdling(toggleSwitch.isOn());
   ittr.setIdling(toggleSwitch.isOn());
+  apps1.setRestricted(toggleSwitch2.isOn());
+  apps2.setRestricted(toggleSwitch2.isOn());
+  ittr.setRestricted(toggleSwitch2.isOn());
   motorController.initialize();
   motorController.setMotorOn();
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
@@ -56,6 +60,7 @@ void loop()
   tps2.read();
   bps.read();
   toggleSwitch.read();
+  toggleSwitch2.read();
 
   if (!plausibilityValidator.isCurrentlyValid())
   {
@@ -71,5 +76,11 @@ void loop()
     apps1.setIdling(toggleSwitch.isOn());
     apps2.setIdling(toggleSwitch.isOn());
     ittr.setIdling(toggleSwitch.isOn());
+  }
+  if (toggleSwitch2.switched())
+  {
+    apps1.setRestricted(toggleSwitch2.isOn());
+    apps2.setRestricted(toggleSwitch2.isOn());
+    ittr.setRestricted(toggleSwitch2.isOn());
   }
 }
