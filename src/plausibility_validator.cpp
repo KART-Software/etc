@@ -202,7 +202,8 @@ void PlausibilityValidator::serialLog()
 {
     if (targetSensor.isIttr())
     {
-        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+                      isValidAllTime ? "OK " : "ERR",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
                       targetSensor.getRawValue(),
@@ -218,7 +219,8 @@ void PlausibilityValidator::serialLog()
     }
     else
     {
-        Serial.printf("APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
+                      isValidAllTime ? "OK " : "ERR",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
                       tps1.getRawValue(),
