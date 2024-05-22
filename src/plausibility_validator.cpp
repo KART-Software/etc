@@ -27,21 +27,28 @@ void PlausibilityValidator::initParameters()
 
 bool PlausibilityValidator::isCurrentlyValid()
 {
-    bool isValid = true;
-    isValid &= isAppsPlausible() || !appsCheckFlag;
-    isValid &= isTpsPlausible() || !tpsCheckFlag;
-    isValid &= isApps1CircuitValid() || !apps1CheckFlag;
-    isValid &= isApps2CircuitValid() || !apps2CheckFlag;
-    isValid &= isTps1CircuitValid() || !tps1CheckFlag;
-    isValid &= isTps2CircuitValid() || !tps2CheckFlag;
-    isValid &= isAppsTpsTargetValid() || !targetCheckFlag;
-    isValid &= isBpsCircuitValid() || !bpsCheckFlag;
-    isValid &= isBpsTpsPlausible() || !bpsTpsCheckFlag;
-    isValid |= millis() < PLAUSIBLE_DURATION;
+    if (millis() < PLAUSIBLE_DURATION)
+    {
+        isValidAllTime = true;
+        return true;
+    }
+    else
+    {
+        bool isValid = true;
+        isValid &= isAppsPlausible() || !appsCheckFlag;
+        isValid &= isTpsPlausible() || !tpsCheckFlag;
+        isValid &= isApps1CircuitValid() || !apps1CheckFlag;
+        isValid &= isApps2CircuitValid() || !apps2CheckFlag;
+        isValid &= isTps1CircuitValid() || !tps1CheckFlag;
+        isValid &= isTps2CircuitValid() || !tps2CheckFlag;
+        isValid &= isAppsTpsTargetValid() || !targetCheckFlag;
+        isValid &= isBpsCircuitValid() || !bpsCheckFlag;
+        isValid &= isBpsTpsPlausible() || !bpsTpsCheckFlag;
 
-    isValidAllTime &= isValid;
+        isValidAllTime &= isValid;
 
-    return isValid;
+        return isValid;
+    }
 }
 
 bool PlausibilityValidator::isValid()
@@ -202,35 +209,53 @@ void PlausibilityValidator::serialLog()
 {
     if (targetSensor.isIttr())
     {
-        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, ITTR: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, ITTR: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
-                      isValidAllTime ? "OK " : "ERR",
+        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
+                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
+                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps1.convertedValue(),
+                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps2.convertedValue(),
+                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
                       targetSensor.getRawValue(),
+                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       tps1.getRawValue(),
                       tps2.getRawValue(),
-                      bps.getRawValue(),
-                      apps1.convertedValue(),
-                      apps2.convertedValue(),
-                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       tps1.convertedValue(),
+                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       tps2.convertedValue(),
+                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      bps.getRawValue(),
+                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       bps.convertedValue());
     }
     else
     {
-        Serial.printf("%s APPS1: %5.2d, APPS2: %5.2d, TPS1: %5.2d, TPS2: %5.2d, BPS: %5.2d, APPS1: %7.2lf, APPS2: %7.2lf, TARGET: %7.2lf, TPS1: %7.2lf, TPS2: %7.2lf, BPS: %8.2lf\r",
-                      isValidAllTime ? "OK " : "ERR",
+        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
+                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
                       apps2.getRawValue(),
+                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps1.convertedValue(),
+                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps2.convertedValue(),
+                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
+                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       tps1.getRawValue(),
                       tps2.getRawValue(),
-                      bps.getRawValue(),
-                      apps1.convertedValue(),
-                      apps2.convertedValue(),
-                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       tps1.convertedValue(),
+                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       tps2.convertedValue(),
+                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      bps.getRawValue(),
+                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       bps.convertedValue());
     }
 }

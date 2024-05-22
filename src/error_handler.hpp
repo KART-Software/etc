@@ -30,6 +30,7 @@ public:
     void clearAll();
     uint8_t errorsLength();
     String errorsToStr();
+    bool raised(int8_t errID);
 
 private:
     void initError(int8_t errID);
