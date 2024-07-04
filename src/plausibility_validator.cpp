@@ -3,25 +3,26 @@
 PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
 {
-    initParameters();
 }
 
 void PlausibilityValidator::initialize()
 {
     Serial.begin(SERIAL_SPEED);
+    initParameters();
 }
 
 void PlausibilityValidator::initParameters()
 {
-    lastAppsPlausibleTime = 0;
-    lastTpsPlausibleTime = 0;
-    lastTps1CircuitValidTime = 0;
-    lastTps2CircuitValidTime = 0;
-    lastApps1CircuitValidTime = 0;
-    lastApps2CircuitValidTime = 0;
-    lastAppsTpsTargetValidTime = 0;
-    lastBpsCircuitValidTime = 0;
-    lastBpsTpsPlausibleTime = 0;
+    unsigned long now = millis();
+    lastAppsPlausibleTime = now;
+    lastTpsPlausibleTime = now;
+    lastTps1CircuitValidTime = now;
+    lastTps2CircuitValidTime = now;
+    lastApps1CircuitValidTime = now;
+    lastApps2CircuitValidTime = now;
+    lastAppsTpsTargetValidTime = now;
+    lastBpsCircuitValidTime = now;
+    lastBpsTpsPlausibleTime = now;
     isValidAllTime = true;
 }
 
