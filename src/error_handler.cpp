@@ -66,3 +66,8 @@ String ErrorHandler::errorsToStr()
     }
     return errStr;
 }
+
+bool ErrorHandler::raised(int8_t errID)
+{
+    return errors[errID].raised;
+}

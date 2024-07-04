@@ -1,54 +1,55 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Bps &bps)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(apps1), bps(bps)
-{
-    initParameters();
-}
-
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Apps &targetSensor, Bps &bps)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps)
     : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
 {
-    initParameters();
-    hasIttr = true;
 }
 
 void PlausibilityValidator::initialize()
 {
     Serial.begin(SERIAL_SPEED);
+    initParameters();
 }
 
 void PlausibilityValidator::initParameters()
 {
-    lastAppsPlausibleTime = 0;
-    lastTpsPlausibleTime = 0;
-    lastTps1CircuitValidTime = 0;
-    lastTps2CircuitValidTime = 0;
-    lastApps1CircuitValidTime = 0;
-    lastApps2CircuitValidTime = 0;
-    lastAppsTpsTargetValidTime = 0;
-    lastBpsCircuitValidTime = 0;
-    lastBpsTpsPlausibleTime = 0;
+    unsigned long now = millis();
+    lastAppsPlausibleTime = now;
+    lastTpsPlausibleTime = now;
+    lastTps1CircuitValidTime = now;
+    lastTps2CircuitValidTime = now;
+    lastApps1CircuitValidTime = now;
+    lastApps2CircuitValidTime = now;
+    lastAppsTpsTargetValidTime = now;
+    lastBpsCircuitValidTime = now;
+    lastBpsTpsPlausibleTime = now;
     isValidAllTime = true;
 }
 
 bool PlausibilityValidator::isCurrentlyValid()
 {
-    bool flag = true;
-    flag *= isAppsPlausible();
-    flag &= isTpsPlausible();
-    flag *= isApps1CircuitValid();
-    flag *= isApps2CircuitValid();
-    flag &= isTps1CircuitValid();
-    flag &= isTps2CircuitValid();
-    flag *= isAppsTpsTargetValid();
-    // flag *= isBpsCircuitValid();
-    // flag *= isBpsTpsPlausible();
-    flag |= millis() < PLAUSIBLE_DURATION;
+    if (millis() < PLAUSIBLE_DURATION)
+    {
+        isValidAllTime = true;
+        return true;
+    }
+    else
+    {
+        bool isValid = true;
+        isValid &= isAppsPlausible() || !appsCheckFlag;
+        isValid &= isTpsPlausible() || !tpsCheckFlag;
+        isValid &= isApps1CircuitValid() || !apps1CheckFlag;
+        isValid &= isApps2CircuitValid() || !apps2CheckFlag;
+        isValid &= isTps1CircuitValid() || !tps1CheckFlag;
+        isValid &= isTps2CircuitValid() || !tps2CheckFlag;
+        isValid &= isAppsTpsTargetValid() || !targetCheckFlag;
+        isValid &= isBpsCircuitValid() || !bpsCheckFlag;
+        isValid &= isBpsTpsPlausible() || !bpsTpsCheckFlag;
 
-    isValidAllTime &= flag;
+        isValidAllTime &= isValid;
 
-    return flag;
+        return isValid;
+    }
 }
 
 bool PlausibilityValidator::isValid()
@@ -207,36 +208,57 @@ bool PlausibilityValidator::isBpsTpsPlausible()
 
 void PlausibilityValidator::serialLog()
 {
-    String logStr;
-    if (hasIttr)
+    if (targetSensor.isIttr())
     {
-        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
-                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
-                 ", ITTR: " + toNChars(String(targetSensor.getRawValue()), 5) +
-                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
-                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
-                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
-                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
-                 ", ITTR: " + toNChars(String(targetSensor.convertedValue()), 7) +
-                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
-                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
+        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
+                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      apps1.getRawValue(),
+                      apps2.getRawValue(),
+                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps1.convertedValue(),
+                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps2.convertedValue(),
+                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
+                      targetSensor.getRawValue(),
+                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      tps1.getRawValue(),
+                      tps2.getRawValue(),
+                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      tps1.convertedValue(),
+                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      tps2.convertedValue(),
+                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      bps.getRawValue(),
+                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      bps.convertedValue());
     }
     else
     {
-        logStr = "APPS1: " + toNChars(String(apps1.getRawValue()), 5) +
-                 ", APPS2: " + toNChars(String(apps2.getRawValue()), 5) +
-                 ", TPS1: " + toNChars(String(tps1.getRawValue()), 5) +
-                 ", TPS2: " + toNChars(String(tps2.getRawValue()), 5) +
-                 ", BPS: " + toNChars(String(bps.getRawValue()), 5) +
-                 ",   APPS1: " + toNChars(String(apps1.convertedValue()), 7) +
-                 ", APPS2: " + toNChars(String(apps2.convertedValue()), 7) +
-                 ", TPS1: " + toNChars(String(tps1.convertedValue()), 7) +
-                 ", TPS2: " + toNChars(String(tps2.convertedValue()), 7) +
-                 ", BPS: " + toNChars(String(bps.convertedValue()), 7);
+        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
+                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      apps1.getRawValue(),
+                      apps2.getRawValue(),
+                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps1.convertedValue(),
+                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      apps2.convertedValue(),
+                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
+                      targetSensor.convertToTargetTp(),
+                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      tps1.getRawValue(),
+                      tps2.getRawValue(),
+                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      tps1.convertedValue(),
+                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      tps2.convertedValue(),
+                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
+                      bps.getRawValue(),
+                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
+                      bps.convertedValue());
     }
-    Serial.println(logStr);
 }
 
 void PlausibilityValidator::startLog()
@@ -246,6 +268,19 @@ void PlausibilityValidator::startLog()
         serialLog();
         delay(SERIAL_LOG_INTERVAL);
     }
+}
+
+void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps)
+{
+    appsCheckFlag = apps;
+    tpsCheckFlag = tps;
+    apps1CheckFlag = apps1;
+    apps2CheckFlag = apps2;
+    tps1CheckFlag = tps1;
+    tps2CheckFlag = tps2;
+    targetCheckFlag = target;
+    bpsCheckFlag = bps;
+    bpsTpsCheckFlag = bpsTps;
 }
 
 String PlausibilityValidator::toNChars(String value, uint8_t n)

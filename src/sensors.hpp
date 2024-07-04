@@ -5,6 +5,7 @@
 
 #include "constants.hpp"
 #include "globals.hpp"
+#include "moving_average.hpp"
 
 class Sensor
 {
@@ -12,6 +13,11 @@ public:
     Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, double maxValue, double margin);
     virtual void read() = 0;
     void setConversion(double minValue, double maxValue);
+    void setConversion();
+    void setRawMin(uint16_t val);
+    void setRawMax(uint16_t val);
+    uint16_t setCurrentValRawMin();
+    uint16_t setCurrentValRawMax();
     double convertedValue();
     bool isInRange();
     double getMaxValue();
@@ -19,9 +25,10 @@ public:
     uint16_t getRawValue();
 
 protected:
+    MovingAverage mvgAvg = MovingAverage(60);
     uint16_t rawValue;
-    const uint16_t rawMinValue, rawMaxValue;
-    const double maxValue, minValue;
+    uint16_t rawMinValue, rawMaxValue;
+    const double minValue, maxValue;
     const double margin;
     double intercept, slope;
 };
@@ -32,12 +39,17 @@ public:
     Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = APPS_MARGIN, double idlingValue = APPS_IDLING);
     void read();
     double convertToTargetTp();
+    void setIdlingValue(double val);
     void setIdling(bool idling);
+    void setRestricted(bool restricted);
 
 private:
     const uint8_t ch;
-    const double idlingValue;
+    double idlingValue;
     bool idling = true;
+    double targetMax = APPS_TARGET_MAX;
+    double restrictedMaxValue = APPS_RESTRICTED_MAX;
+    bool restricted = false;
 };
 
 class Tps : public Sensor
@@ -70,4 +82,20 @@ private:
     const double highPressureThreshold;
 };
 
+class TargetSensor
+{
+public:
+    TargetSensor(Apps &apps, Ittr &ittr);
+    bool isIttr();
+    void setIttr(bool isIttr);
+    uint16_t getRawValue();
+    double convertedValue();
+    double convertToTargetTp();
+    void read();
+
+private:
+    Apps &apps;
+    Ittr &ittr;
+    bool _isIttr;
+};
 #endif

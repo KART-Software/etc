@@ -6,7 +6,39 @@ Sensor::Sensor(uint16_t rawMinValue, uint16_t rawMaxValue, double minValue, doub
     setConversion(minValue, maxValue);
 }
 
+void Sensor::setRawMin(uint16_t val)
+{
+    rawMinValue = val;
+    setConversion();
+}
+
+void Sensor::setRawMax(uint16_t val)
+{
+    rawMaxValue = val;
+    setConversion();
+}
+
+uint16_t Sensor::setCurrentValRawMin()
+{
+    rawMinValue = rawValue;
+    setConversion();
+    return rawMinValue;
+}
+
+uint16_t Sensor::setCurrentValRawMax()
+{
+    rawMaxValue = rawValue;
+    setConversion();
+    return rawMaxValue;
+}
+
 void Sensor::setConversion(double minValue, double maxValue)
+{
+    this->slope = (maxValue - minValue) / (rawMaxValue - rawMinValue);
+    this->intercept = (rawMaxValue * minValue - rawMinValue * maxValue) / (rawMaxValue - rawMinValue);
+}
+
+void Sensor::setConversion()
 {
     this->slope = (maxValue - minValue) / (rawMaxValue - rawMinValue);
     this->intercept = (rawMaxValue * minValue - rawMinValue * maxValue) / (rawMaxValue - rawMinValue);
@@ -14,7 +46,8 @@ void Sensor::setConversion(double minValue, double maxValue)
 
 double Sensor::convertedValue()
 {
-    return rawValue * slope + intercept;
+    double raw = mvgAvg.getAvg();
+    return raw * slope + intercept;
 }
 
 bool Sensor::isInRange()
@@ -53,31 +86,33 @@ Apps::
 void Apps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 double Apps::convertToTargetTp()
 {
     double app = convertedValue();
-    double x = constrain(app, getMinValue(), getMaxValue());
+    // double x = constrain(app, getMinValue(), getMaxValue());
+    double x = constrain(app, 0.0, 100.0);
     double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
-    if (idling)
-    {
-        return idlingValue + y * (100.0 - idlingValue) / 100.0;
-    }
-    return y;
+    double min = idling ? idlingValue : getMinValue();
+    double max = restricted ? restrictedMaxValue : targetMax;
+    return min + y * (max - min) / 100.0;
+}
+
+void Apps::setIdlingValue(double val)
+{
+    idlingValue = val;
 }
 
 void Apps::setIdling(bool idling)
 {
     this->idling = idling;
-    if (idling)
-    {
-        setConversion(idlingValue, maxValue);
-    }
-    else
-    {
-        setConversion(minValue, maxValue);
-    }
+}
+
+void Apps::setRestricted(bool restricted)
+{
+    this->restricted = restricted;
 }
 
 Tps::
@@ -90,6 +125,7 @@ Tps::
 void Tps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 bool Tps::isLargeOpen()
@@ -103,6 +139,69 @@ Ittr::
 {
 }
 
+TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
+    : apps(apps), ittr(ittr)
+{
+}
+
+void TargetSensor::read()
+{
+    if (_isIttr)
+    {
+        ittr.read();
+    }
+    else
+    {
+        apps.read();
+    }
+}
+
+uint16_t TargetSensor::getRawValue()
+{
+    if (_isIttr)
+    {
+        return ittr.getRawValue();
+    }
+    else
+    {
+        return apps.getRawValue();
+    }
+}
+
+double TargetSensor::convertedValue()
+{
+    if (_isIttr)
+    {
+        return ittr.convertedValue();
+    }
+    else
+    {
+        return apps.convertedValue();
+    }
+}
+
+double TargetSensor::convertToTargetTp()
+{
+    if (_isIttr)
+    {
+        return ittr.convertToTargetTp();
+    }
+    else
+    {
+        return apps.convertToTargetTp();
+    }
+}
+
+bool TargetSensor::isIttr()
+{
+    return _isIttr;
+}
+
+void TargetSensor::setIttr(bool isIttr)
+{
+    _isIttr = isIttr;
+}
+
 Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double highPressureThreshold, double margin)
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
       ch(ch), highPressureThreshold(highPressureThreshold)
@@ -112,6 +211,7 @@ Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue
 void Bps::read()
 {
     rawValue = gAdc.value[ch];
+    mvgAvg.add(rawValue);
 }
 
 bool Bps::isHighPressure()
