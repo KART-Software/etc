@@ -72,6 +72,7 @@ private:
     const uint8_t pwmPin = DC_MOTOR_PWM_PIN;
     const uint8_t dirPin = DC_MOTOR_DIR_PIN;
     const uint8_t ch = 0;
+    const uint8_t relayPin = DC_MOTOR_RELAY_PIN;
     void write(uint16_t duty, uint8_t dir);
 #endif
 #ifdef DRV8256P
