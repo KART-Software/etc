@@ -193,7 +193,7 @@ bool PlausibilityValidator::isBpsTpsPlausible()
     unsigned long now = millis();
     double targetTp = targetSensor.convertToTargetTp();
     double tpsValue = tps1.convertedValue();
-    if (!bps.isHighPressure() || tps1.isLargeOpen())
+    if (!bps.isHighPressure() || !tps1.isLargeOpen())
     {
         lastBpsTpsPlausibleTime = now;
         return true;
@@ -210,7 +210,7 @@ void PlausibilityValidator::serialLog()
 {
     if (targetSensor.isIttr())
     {
-        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+        Serial.printf("%s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
                       isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
                       errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
@@ -236,7 +236,7 @@ void PlausibilityValidator::serialLog()
     }
     else
     {
-        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+        Serial.printf("%s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
                       isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
                       errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
