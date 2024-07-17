@@ -120,8 +120,8 @@
 
 #define TPS_MIN 0
 #define TPS_MAX 100
-#define TPS_LARGE_OPEN_THRESHOLD 50
 #define TPS_MARGIN 15
+#define TPS_LARGE_OPEN_THRESHOLD 50
 
 #define APPS_1_RAW_MIN 27070
 #define APPS_2_RAW_MIN 39292
@@ -131,18 +131,16 @@
 
 #define APPS_MIN 0
 #define APPS_MAX 100
-#define APPS_IDLING 15
 #define APPS_MARGIN 20
-#define APPS_TARGET_MAX 95
-#define APPS_RESTRICTED_MAX 60
 
 #define ITTR_RAW_MAX APPS_1_RAW_MAX
 #define ITTR_RAW_MIN APPS_1_RAW_MIN
 
-#define ITTR_MAX 100
-#define ITTR_MIN 0
-#define ITTR_IDLING APPS_IDLING
 #define ITTR_MARGIN 0
+
+#define TARGET_IDLING 15
+#define TARGET_NORMAL_MAX 95
+#define TARGET_RESTRICTED_MAX 60
 
 #define BPS_RAW_MAX 4.5 * 65535 / 5.12 // 4.5V
 #define BPS_RAW_MIN 5000               // 0.5V

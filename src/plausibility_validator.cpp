@@ -1,7 +1,7 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Target &target, Bps &bps)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), target(target), bps(bps)
 {
 }
 
@@ -157,7 +157,7 @@ bool PlausibilityValidator::isTps2CircuitValid()
 bool PlausibilityValidator::isAppsTpsTargetValid()
 {
     unsigned long now = millis();
-    double targetTp = targetSensor.convertToTargetTp();
+    double targetTp = target.getTarget();
     double tpsValue = tps1.convertedValue();
     if (abs(targetTp - tpsValue) < SENSOR_SAME_POSITION_THRESHOLD)
     {
@@ -191,8 +191,6 @@ bool PlausibilityValidator::isBpsCircuitValid()
 bool PlausibilityValidator::isBpsTpsPlausible()
 {
     unsigned long now = millis();
-    double targetTp = targetSensor.convertToTargetTp();
-    double tpsValue = tps1.convertedValue();
     if (!bps.isHighPressure() || !tps1.isLargeOpen())
     {
         lastBpsTpsPlausibleTime = now;
@@ -208,9 +206,10 @@ bool PlausibilityValidator::isBpsTpsPlausible()
 
 void PlausibilityValidator::serialLog()
 {
-    if (targetSensor.isIttr())
+    if (target.isIttr())
     {
-        Serial.printf("%s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+        Serial.printf("%s %s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      target.getModeString(),
                       isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
                       errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
@@ -220,8 +219,8 @@ void PlausibilityValidator::serialLog()
                       errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       apps2.convertedValue(),
                       errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
-                      targetSensor.getRawValue(),
-                      targetSensor.convertToTargetTp(),
+                      target.getSensorRawValue(),
+                      target.getTarget(),
                       errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       tps1.getRawValue(),
                       tps2.getRawValue(),
@@ -236,7 +235,8 @@ void PlausibilityValidator::serialLog()
     }
     else
     {
-        Serial.printf("%s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+        Serial.printf("%s %s %sAPPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
+                      target.getModeString(),
                       isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
                       errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       apps1.getRawValue(),
@@ -246,7 +246,7 @@ void PlausibilityValidator::serialLog()
                       errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
                       apps2.convertedValue(),
                       errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
-                      targetSensor.convertToTargetTp(),
+                      target.getTarget(),
                       errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
                       tps1.getRawValue(),
                       tps2.getRawValue(),

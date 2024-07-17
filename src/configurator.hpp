@@ -79,7 +79,7 @@ public:
 class Configurator
 {
 public:
-    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, TargetSensor &targetSensor, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
     void loadRawValuesFromFlash();
     void loadPlausibilityCheckFlagsFromFlash();
@@ -95,7 +95,7 @@ private:
     Apps &apps1, &apps2;
     Tps &tps1, &tps2;
     Ittr &ittr;
-    TargetSensor &targetSensor;
+    Target &target;
     MotorController &motorController;
     PlausibilityValidator &plausibilityValidator;
     bool rawValuesChanged, plausibilityCheckFlagsChanged, useIttrFlagChanged;

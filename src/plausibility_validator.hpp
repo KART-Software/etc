@@ -18,7 +18,7 @@
 class PlausibilityValidator
 {
 public:
-    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps);
+    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Target &target, Bps &bps);
     void initialize();
     bool isCurrentlyValid();
     bool isValid();
@@ -39,7 +39,7 @@ private:
     ErrorHandler errorHandler = ErrorHandler();
     Apps &apps1, &apps2;
     Tps &tps1, &tps2;
-    TargetSensor &targetSensor;
+    Target &target;
     Bps &bps;
     bool isValidAllTime;
     unsigned long
