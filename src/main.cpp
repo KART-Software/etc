@@ -35,6 +35,7 @@ void setup()
   configurator.calibrateFromFlash();
   xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
 
+  bool motorOnAllowed = true;
   switch (selectSwitch.getStatus())
   {
   case SelectSwitch3Pin::Status::Zero:
@@ -47,17 +48,25 @@ void setup()
     target.setModeRestricted();
     break;
   case SelectSwitch3Pin::Status::Third:
-    target.setModeNormal();
+    target.setModeCalibration();
+    motorOnAllowed = false;
     break;
   default:
     break;
   }
   motorController.initialize();
-  motorController.setMotorOn();
+  if (motorOnAllowed)
+  {
+    motorController.setMotorOn();
+  }
   // delay(10);
   plausibilityValidator.initialize();
   xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
   xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
+  if (!motorOnAllowed)
+  {
+    vTaskSuspend(motorControllTask);
+  }
 }
 
 void loop()
