@@ -93,6 +93,11 @@ public:
     uint16_t getSensorRawValue();
     double getSensorValue();
 
+    bool setManual();
+    bool isManual();
+    double manualPlus();
+    double manualMinus();
+
 private:
     enum class Mode
     {
@@ -106,6 +111,8 @@ private:
     bool _isIttr;
     double idlingValue;
     double minValue, maxValue;
+    double manualTarget;
+    bool _isManual = false;
 
     const double normalMaxValue = TARGET_NORMAL_MAX;
     const double restrictedMaxValue = TARGET_RESTRICTED_MAX;

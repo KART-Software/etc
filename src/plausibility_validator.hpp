@@ -15,10 +15,17 @@
 #define SERIAL_SPEED 115200
 #define SERIAL_LOG_INTERVAL 150
 
+#define RED "\e[48;5;160m"
+#define GRN "\e[48;5;47m"
+#define RED_ "\e[48;5;88m"
+#define GRN_ "\e[48;5;22m"
+#define ERR "\e[48;5;160mERR\e[m"
+#define OK "\e[48;5;47mOK\e[m"
+
 class PlausibilityValidator
 {
 public:
-    PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Target &target, Bps &bps);
+    PlausibilityValidator(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Target &target, Bps &bps);
     void initialize();
     bool isCurrentlyValid();
     bool isValid();
@@ -38,6 +45,7 @@ public:
 private:
     ErrorHandler errorHandler = ErrorHandler();
     Apps &apps1, &apps2;
+    Ittr &ittr;
     Tps &tps1, &tps2;
     Target &target;
     Bps &bps;
@@ -63,7 +71,7 @@ private:
     bool isAppsTpsTargetValid();
     bool isBpsCircuitValid();
     bool isBpsTpsPlausible();
-    String toNChars(String value, uint8_t n);
+    const char *color(bool flag, bool err);
 };
 
 void startLogging(void *plausibilityValidator);

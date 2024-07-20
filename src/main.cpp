@@ -21,7 +21,7 @@ Ittr ittr = Ittr();
 Bps bps = Bps();
 Target target(apps1, ittr);
 
-PlausibilityValidator plausibilityValidator(apps1, apps2, tps1, tps2, target, bps);
+PlausibilityValidator plausibilityValidator(apps1, apps2, ittr, tps1, tps2, target, bps);
 MotorController motorController(target, tps1);
 Configurator configurator(apps1, apps2, tps1, tps2, ittr, target, motorController, plausibilityValidator);
 

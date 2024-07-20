@@ -38,6 +38,10 @@
 
 #define IST_CONTROLLER_SET_KEY 'x'
 
+#define TARGET_SET_MANUAL_KEY 'v'
+#define TARGET_MINUS_KEY 'b'
+#define TARGET_PLUS_KEY 'n'
+
 #define REBOOT_KEY 'z'
 
 struct Config

@@ -334,6 +334,15 @@ void Configurator::calibrate(char c)
         Serial.printf("\033[K---- Use ITTR : %d ----\n", useIttrFlag.useIttr);
         useIttrFlagChanged = true;
         break;
+    case TARGET_SET_MANUAL_KEY:
+        Serial.printf("\033[K---- Manual : %d ----\n", target.setManual());
+        break;
+    case TARGET_MINUS_KEY:
+        target.manualMinus();
+        break;
+    case TARGET_PLUS_KEY:
+        target.manualPlus();
+        break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("\033[K---- Calibration Finish ----");
         finish();

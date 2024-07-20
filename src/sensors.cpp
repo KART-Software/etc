@@ -152,6 +152,10 @@ void Target::setIttr(bool isIttr)
 
 double Target::getTarget()
 {
+    if (_isManual)
+    {
+        return manualTarget;
+    }
     double x;
     if (_isIttr)
     {
@@ -240,4 +244,31 @@ const char *Target::getModeString()
     default:
         return "";
     }
+}
+
+bool Target::setManual()
+{
+    if (!_isManual)
+    {
+        manualTarget = ((int)(getTarget() * 10.0)) * 0.1; // xx.x の値に丸める
+    }
+    _isManual = !_isManual;
+    return _isManual;
+}
+
+bool Target::isManual()
+{
+    return _isManual;
+}
+
+double Target::manualPlus()
+{
+    manualTarget += 0.1;
+    return manualTarget;
+}
+
+double Target::manualMinus()
+{
+    manualTarget -= 0.1;
+    return manualTarget;
 }
