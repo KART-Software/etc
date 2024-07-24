@@ -283,7 +283,7 @@ void Configurator::calibrate(char c)
     case TPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
         plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
-        Serial.printf("\033[K---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+        Serial.printf("\033[K---- TPS Check: %d ----\n", plausibilityCheckFlags.tps);
         plausibilityCheckFlagsChanged = true;
         break;
     case APPS1_CHECK_FLAG_SET_KEY:
