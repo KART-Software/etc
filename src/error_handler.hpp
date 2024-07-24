@@ -29,7 +29,6 @@ public:
     void clear(int8_t errID);
     void clearAll();
     uint8_t errorsLength();
-    String errorsToStr();
     bool raised(int8_t errID);
 
 private:
