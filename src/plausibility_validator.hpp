@@ -17,7 +17,7 @@
 
 #define RED "\e[48;5;160m"
 #define GRN "\e[48;5;47m"
-#define RED_ "\e[48;5;88m"
+#define RED_ "\e[48;5;52m"
 #define GRN_ "\e[48;5;22m"
 #define ERR "\e[48;5;160mERR\e[m"
 #define OK "\e[48;5;47mOK\e[m"
