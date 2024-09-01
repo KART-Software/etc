@@ -165,8 +165,9 @@ double Target::getTarget()
     {
         x = apps.constrainedValue();
     }
-    double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
-    return minValue + y * (maxValue - minValue) / 100.0;                                                           // TODO change
+    // double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
+    double y = 0.0087 * x * x + 0.13 * x;
+    return minValue + y * (maxValue - minValue) / 100.0; // TODO change
 }
 
 void Target::setModeCalibration()
