@@ -36,10 +36,9 @@
 #define ITTR_CH 2          // IST Throttle Position Target Receiver (ITTR)
 #define BPS_CH 3           // Brake Pressure Sensor
 #define MOTOR_CURRENT_CH 4 // Connected to motor driver's CS PIN.The voltage is about 20 mV/A plus a 50 mV offset.
-#define ADC_CHANNELS        \
-    {                       \
-        0, 1, 2, 3, 4, 6, 7 \
-    } // Sorted Channels
+#define ADC_CHANNELS \
+    {                \
+        0, 1, 2, 3, 4, 6, 7} // Sorted Channels
 #endif
 
 ////////////////////
@@ -139,7 +138,7 @@
 #define ITTR_MARGIN 0
 
 #define TARGET_IDLING 15
-#define TARGET_NORMAL_MAX 95
+#define TARGET_NORMAL_MAX 100
 #define TARGET_RESTRICTED_MAX 60
 
 #define BPS_RAW_MAX 4.5 * 65535 / 5.12 // 4.5V
