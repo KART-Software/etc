@@ -36,20 +36,12 @@ protected:
 class Apps : public Sensor
 {
 public:
-    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = APPS_MARGIN, double idlingValue = APPS_IDLING);
+    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = APPS_MARGIN);
     void read();
-    double convertToTargetTp();
-    void setIdlingValue(double val);
-    void setIdling(bool idling);
-    void setRestricted(bool restricted);
+    double constrainedValue();
 
 private:
     const uint8_t ch;
-    double idlingValue;
-    bool idling = true;
-    double targetMax = APPS_TARGET_MAX;
-    double restrictedMaxValue = APPS_RESTRICTED_MAX;
-    bool restricted = false;
 };
 
 class Tps : public Sensor
@@ -67,7 +59,7 @@ private:
 class Ittr : public Apps
 {
 public:
-    Ittr(uint16_t rawMinValue = ITTR_RAW_MIN, uint16_t rawMaxValue = ITTR_RAW_MAX, uint8_t ch = ITTR_CH, double minValue = ITTR_MIN, double maxValue = ITTR_MAX, double margin = ITTR_MARGIN, double idlingValue = ITTR_IDLING);
+    Ittr(uint16_t rawMinValue = ITTR_RAW_MIN, uint16_t rawMaxValue = ITTR_RAW_MAX, uint8_t ch = ITTR_CH, double minValue = APPS_MIN, double maxValue = APPS_MAX, double margin = ITTR_MARGIN);
 };
 
 class Bps : public Sensor
@@ -82,20 +74,49 @@ private:
     const double highPressureThreshold;
 };
 
-class TargetSensor
+class Target
 {
 public:
-    TargetSensor(Apps &apps, Ittr &ittr);
+    Target(Apps &apps, Ittr &ittr);
+    double getTarget();
+    void setModeCalibration();
+    void setModeNormal();
+    void setModeRestricted();
     bool isIttr();
     void setIttr(bool isIttr);
-    uint16_t getRawValue();
-    double convertedValue();
-    double convertToTargetTp();
+    void setIdlingValue(double val);
+    const char *getModeString();
+    // void setNormalMaxValue(double val);
+    // void setRestrictedMaxValue(double val);
+
     void read();
+    uint16_t getSensorRawValue();
+    double getSensorValue();
+
+    bool setManual();
+    bool isManual();
+    double manualPlus();
+    double manualMinus();
 
 private:
+    enum class Mode
+    {
+        Calibration,
+        Normal,
+        Restricted
+    };
+    Mode mode;
     Apps &apps;
     Ittr &ittr;
     bool _isIttr;
+    double idlingValue;
+    double minValue, maxValue;
+    double manualTarget;
+    bool _isManual = false;
+
+    const double normalMaxValue = TARGET_NORMAL_MAX;
+    const double restrictedMaxValue = TARGET_RESTRICTED_MAX;
+    double tpsMinValue = TPS_MIN;
+    double tpsMaxValue = TPS_MAX;
 };
 #endif

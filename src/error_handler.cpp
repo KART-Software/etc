@@ -50,23 +50,6 @@ uint8_t ErrorHandler::errorsLength()
     return sizeof(errors) / sizeof(Error);
 }
 
-String ErrorHandler::errorsToStr()
-{
-    String errStr = "";
-    for (int i = 0; i < MAX_ERR_LEN; i++)
-    {
-        if (errors[i].raised)
-        {
-            errStr += String(i);
-            if (i != MAX_ERR_LEN - 1)
-            {
-                errStr += ", ";
-            }
-        }
-    }
-    return errStr;
-}
-
 bool ErrorHandler::raised(int8_t errID)
 {
     return errors[errID].raised;

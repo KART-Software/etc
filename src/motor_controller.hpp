@@ -8,7 +8,7 @@
 class MotorController
 {
 public:
-    MotorController(TargetSensor &targetSensor, Tps &tps);
+    MotorController(Target &target, Tps &tps);
     void initialize();
     void cycle();
     void start();
@@ -19,7 +19,7 @@ public:
 private:
     DcMotor dcMotor = DcMotor();
     PID pid = PID();
-    TargetSensor &targetSensor;
+    Target &target;
     Tps &tps;
     const unsigned long cycleTime = MOTOR_CONTROLL_CYCLE_TIME;
     double output;

@@ -76,11 +76,10 @@ uint16_t Sensor::getRawValue()
 }
 
 Apps::
-    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin, double idlingValue)
+    Apps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
     : Sensor(rawMinValue, rawMaxValue, minValue, maxValue, margin),
-      ch(ch), idlingValue(idlingValue)
+      ch(ch)
 {
-    setIdling(true);
 }
 
 void Apps::read()
@@ -89,30 +88,9 @@ void Apps::read()
     mvgAvg.add(rawValue);
 }
 
-double Apps::convertToTargetTp()
+double Apps::constrainedValue()
 {
-    double app = convertedValue();
-    // double x = constrain(app, getMinValue(), getMaxValue());
-    double x = constrain(app, 0.0, 100.0);
-    double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
-    double min = idling ? idlingValue : getMinValue();
-    double max = restricted ? restrictedMaxValue : targetMax;
-    return min + y * (max - min) / 100.0;
-}
-
-void Apps::setIdlingValue(double val)
-{
-    idlingValue = val;
-}
-
-void Apps::setIdling(bool idling)
-{
-    this->idling = idling;
-}
-
-void Apps::setRestricted(bool restricted)
-{
-    this->restricted = restricted;
+    return constrain(convertedValue(), minValue, maxValue);
 }
 
 Tps::
@@ -134,72 +112,9 @@ bool Tps::isLargeOpen()
 }
 
 Ittr::
-    Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin, double idlingValue)
-    : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin, idlingValue)
+    Ittr(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double margin)
+    : Apps(rawMinValue, rawMaxValue, ch, minValue, maxValue, margin)
 {
-}
-
-TargetSensor::TargetSensor(Apps &apps, Ittr &ittr)
-    : apps(apps), ittr(ittr)
-{
-}
-
-void TargetSensor::read()
-{
-    if (_isIttr)
-    {
-        ittr.read();
-    }
-    else
-    {
-        apps.read();
-    }
-}
-
-uint16_t TargetSensor::getRawValue()
-{
-    if (_isIttr)
-    {
-        return ittr.getRawValue();
-    }
-    else
-    {
-        return apps.getRawValue();
-    }
-}
-
-double TargetSensor::convertedValue()
-{
-    if (_isIttr)
-    {
-        return ittr.convertedValue();
-    }
-    else
-    {
-        return apps.convertedValue();
-    }
-}
-
-double TargetSensor::convertToTargetTp()
-{
-    if (_isIttr)
-    {
-        return ittr.convertToTargetTp();
-    }
-    else
-    {
-        return apps.convertToTargetTp();
-    }
-}
-
-bool TargetSensor::isIttr()
-{
-    return _isIttr;
-}
-
-void TargetSensor::setIttr(bool isIttr)
-{
-    _isIttr = isIttr;
 }
 
 Bps::Bps(uint16_t rawMinValue, uint16_t rawMaxValue, uint8_t ch, double minValue, double maxValue, double highPressureThreshold, double margin)
@@ -217,4 +132,144 @@ void Bps::read()
 bool Bps::isHighPressure()
 {
     return convertedValue() > highPressureThreshold;
+}
+
+Target::Target(Apps &apps, Ittr &ittr)
+    : apps(apps), ittr(ittr)
+{
+    setModeNormal();
+}
+
+bool Target::isIttr()
+{
+    return _isIttr;
+}
+
+void Target::setIttr(bool isIttr)
+{
+    _isIttr = isIttr;
+}
+
+double Target::getTarget()
+{
+    if (_isManual)
+    {
+        return manualTarget;
+    }
+    double x;
+    if (_isIttr)
+    {
+        x = ittr.constrainedValue();
+    }
+    else
+    {
+        x = apps.constrainedValue();
+    }
+    // double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
+    double y = 0.0087 * x * x + 0.13 * x;
+    return minValue + y * (maxValue - minValue) / 100.0; // TODO change
+}
+
+void Target::setModeCalibration()
+{
+    mode = Mode::Calibration;
+    minValue = tpsMinValue;
+    maxValue = tpsMaxValue;
+}
+
+void Target::setModeNormal()
+{
+    mode = Mode::Normal;
+    minValue = idlingValue;
+    maxValue = normalMaxValue;
+}
+
+void Target::setModeRestricted()
+{
+    mode = Mode::Restricted;
+    minValue = idlingValue;
+    maxValue = restrictedMaxValue;
+}
+
+void Target::setIdlingValue(double val)
+{
+    idlingValue = val;
+}
+
+void Target::read()
+{
+    if (_isIttr)
+    {
+        ittr.read();
+    }
+    else
+    {
+        apps.read();
+    }
+}
+
+uint16_t Target::getSensorRawValue()
+{
+    if (_isIttr)
+    {
+        return ittr.getRawValue();
+    }
+    else
+    {
+        return apps.getRawValue();
+    }
+}
+
+double Target::getSensorValue()
+{
+    if (_isIttr)
+    {
+        return ittr.convertedValue();
+    }
+    else
+    {
+        return apps.convertedValue();
+    }
+}
+
+const char *Target::getModeString()
+{
+    switch (mode)
+    {
+    case Target::Mode::Calibration:
+        return "Calibration";
+    case Target::Mode::Normal:
+        return "Normal";
+    case Target::Mode::Restricted:
+        return "Restricted";
+    default:
+        return "";
+    }
+}
+
+bool Target::setManual()
+{
+    if (!_isManual)
+    {
+        manualTarget = ((int)(getTarget() * 10.0)) * 0.1; // xx.x の値に丸める
+    }
+    _isManual = !_isManual;
+    return _isManual;
+}
+
+bool Target::isManual()
+{
+    return _isManual;
+}
+
+double Target::manualPlus()
+{
+    manualTarget += 0.1;
+    return manualTarget;
+}
+
+double Target::manualMinus()
+{
+    manualTarget -= 0.1;
+    return manualTarget;
 }

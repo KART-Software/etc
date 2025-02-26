@@ -1,7 +1,7 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, TargetSensor &targetSensor, Bps &bps)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), targetSensor(targetSensor), bps(bps)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Target &target, Bps &bps)
+    : apps1(apps1), apps2(apps2), ittr(ittr), tps1(tps1), tps2(tps2), target(target), bps(bps)
 {
 }
 
@@ -157,7 +157,7 @@ bool PlausibilityValidator::isTps2CircuitValid()
 bool PlausibilityValidator::isAppsTpsTargetValid()
 {
     unsigned long now = millis();
-    double targetTp = targetSensor.convertToTargetTp();
+    double targetTp = target.getTarget();
     double tpsValue = tps1.convertedValue();
     if (abs(targetTp - tpsValue) < SENSOR_SAME_POSITION_THRESHOLD)
     {
@@ -191,9 +191,7 @@ bool PlausibilityValidator::isBpsCircuitValid()
 bool PlausibilityValidator::isBpsTpsPlausible()
 {
     unsigned long now = millis();
-    double targetTp = targetSensor.convertToTargetTp();
-    double tpsValue = tps1.convertedValue();
-    if (!bps.isHighPressure() || tps1.isLargeOpen())
+    if (!bps.isHighPressure() || !tps1.isLargeOpen())
     {
         lastBpsTpsPlausibleTime = now;
         return true;
@@ -208,56 +206,51 @@ bool PlausibilityValidator::isBpsTpsPlausible()
 
 void PlausibilityValidator::serialLog()
 {
-    if (targetSensor.isIttr())
+    Serial.printf("%s %s %sAPPS\e[m: %5.2d %5.2d %s%7.2lf%%\e[m %s%7.2lf%%\e[m, ITTR: %5.2d %7.2lf%%, %sTARGET\e[m:%s: %7.2lf%% %sTPS\e[m: %5.2d %5.2d %s%7.2lf%%\e[m %s%7.2lf%%\e[m, %sBPS\e[m: %5.2d %s%7.2lfpsi\e[m\r",
+                  target.getModeString(),
+                  isValidAllTime ? OK : ERR,
+                  color(appsCheckFlag, errorHandler.raised(ERR_APPS_IMPLAUSIBLE)),
+                  apps1.getRawValue(),
+                  apps2.getRawValue(),
+                  color(apps1CheckFlag, errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE)),
+                  apps1.convertedValue(),
+                  color(apps2CheckFlag, errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE)),
+                  apps2.convertedValue(),
+                  ittr.getRawValue(),
+                  ittr.convertedValue(),
+                  color(targetCheckFlag, errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE)),
+                  target.isManual() ? "M" : (target.isIttr() ? "I" : "A"),
+                  target.getTarget(),
+                  color(tpsCheckFlag, errorHandler.raised(ERR_TPS_IMPLAUSIBLE)),
+                  tps1.getRawValue(),
+                  tps2.getRawValue(),
+                  color(tps1CheckFlag, errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE)),
+                  tps1.convertedValue(),
+                  color(tps2CheckFlag, errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE)),
+                  tps2.convertedValue(),
+                  color(bpsTpsCheckFlag, errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE)),
+                  bps.getRawValue(),
+                  color(bpsCheckFlag, errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE)),
+                  bps.convertedValue());
+}
+
+const char *PlausibilityValidator::color(bool flag, bool err)
+{
+    if (flag && err)
     {
-        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sITTR\e[0m: %5.2d %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
-                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
-                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      apps1.getRawValue(),
-                      apps2.getRawValue(),
-                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      apps1.convertedValue(),
-                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      apps2.convertedValue(),
-                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
-                      targetSensor.getRawValue(),
-                      targetSensor.convertToTargetTp(),
-                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      tps1.getRawValue(),
-                      tps2.getRawValue(),
-                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      tps1.convertedValue(),
-                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      tps2.convertedValue(),
-                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      bps.getRawValue(),
-                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      bps.convertedValue());
+        return RED;
+    }
+    else if (flag && !err)
+    {
+        return GRN;
+    }
+    else if (!flag && err)
+    {
+        return RED_;
     }
     else
     {
-        Serial.printf("%s %sAPPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sTARGET\e[0m: %7.2lf%%, %sTPS1\e[0m: %5.2d %5.2d %s%7.2lf%%\e[0m %s%7.2lf%%\e[0m, %sBPS\e[0m: %5.2d %s%8.2lfpsi\e[0m\r",
-                      isValidAllTime ? "\e[42mOK\e[0m " : "\e[41mERR\e[0m",
-                      errorHandler.raised(ERR_APPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      apps1.getRawValue(),
-                      apps2.getRawValue(),
-                      errorHandler.raised(ERR_APPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      apps1.convertedValue(),
-                      errorHandler.raised(ERR_APPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      apps2.convertedValue(),
-                      errorHandler.raised(ERR_APPS_TPS_TARGET_FAILURE) ? "\e[41m" : "",
-                      targetSensor.convertToTargetTp(),
-                      errorHandler.raised(ERR_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      tps1.getRawValue(),
-                      tps2.getRawValue(),
-                      errorHandler.raised(ERR_TPS_1_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      tps1.convertedValue(),
-                      errorHandler.raised(ERR_TPS_2_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      tps2.convertedValue(),
-                      errorHandler.raised(ERR_BPS_TPS_IMPLAUSIBLE) ? "\e[41m" : "",
-                      bps.getRawValue(),
-                      errorHandler.raised(ERR_BPS_CIRCUIT_FAILURE) ? "\e[41m" : "",
-                      bps.convertedValue());
+        return GRN_;
     }
 }
 
@@ -281,16 +274,6 @@ void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool 
     targetCheckFlag = target;
     bpsCheckFlag = bps;
     bpsTpsCheckFlag = bpsTps;
-}
-
-String PlausibilityValidator::toNChars(String value, uint8_t n)
-{
-    int spaces = n - value.length();
-    for (int i = 0; i < spaces; i++)
-    {
-        value = " " + value;
-    }
-    return value;
 }
 
 void startLogging(void *plausibilityValidator)

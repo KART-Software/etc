@@ -48,7 +48,7 @@ void RawSensorValues::loadFromConstants()
     tps1Max = TPS_1_RAW_MAX;
     tps2Min = TPS_2_RAW_MIN;
     tps2Max = TPS_2_RAW_MAX;
-    idling = APPS_IDLING;
+    idling = TARGET_IDLING;
 }
 
 const char *RawSensorValues::toJsonStr()
@@ -166,8 +166,8 @@ const char *UseIttrFlag::toJsonStr()
     return jsonStr;
 }
 
-Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, TargetSensor &targetSensor, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), targetSensor(targetSensor), motorController(motorController), plausibilityValidator(plausibilityValidator)
+Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), target(target), motorController(motorController), plausibilityValidator(plausibilityValidator)
 {
 }
 
@@ -185,12 +185,7 @@ void Configurator::calibrate()
     apps2.setRawMax(rawValues.apps2Max);
     ittr.setRawMin(rawValues.ittrMin);
     ittr.setRawMax(rawValues.ittrMax);
-    apps1.setIdlingValue(rawValues.idling);
-    apps1.setIdlingValue(rawValues.idling);
-    apps2.setIdlingValue(rawValues.idling);
-    apps2.setIdlingValue(rawValues.idling);
-    ittr.setIdlingValue(rawValues.idling);
-    ittr.setIdlingValue(rawValues.idling);
+    target.setIdlingValue(rawValues.idling);
     tps1.setRawMin(rawValues.tps1Min);
     tps1.setRawMax(rawValues.tps1Max);
     tps2.setRawMin(rawValues.tps2Min);
@@ -205,7 +200,7 @@ void Configurator::calibrate()
         plausibilityCheckFlags.target,
         plausibilityCheckFlags.bps,
         plausibilityCheckFlags.bpsTps);
-    targetSensor.setIttr(useIttrFlag.useIttr);
+    target.setIttr(useIttrFlag.useIttr);
 }
 
 void Configurator::loadRawValuesFromFlash()
@@ -288,7 +283,7 @@ void Configurator::calibrate(char c)
     case TPS_CHECK_FLAG_SET_KEY:
         plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
         plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
-        Serial.printf("\033[K---- TPPS Check: %d ----\n", plausibilityCheckFlags.tps);
+        Serial.printf("\033[K---- TPS Check: %d ----\n", plausibilityCheckFlags.tps);
         plausibilityCheckFlagsChanged = true;
         break;
     case APPS1_CHECK_FLAG_SET_KEY:
@@ -335,9 +330,18 @@ void Configurator::calibrate(char c)
         break;
     case IST_CONTROLLER_SET_KEY:
         useIttrFlag.useIttr = !useIttrFlag.useIttr;
-        targetSensor.setIttr(useIttrFlag.useIttr);
+        target.setIttr(useIttrFlag.useIttr);
         Serial.printf("\033[K---- Use ITTR : %d ----\n", useIttrFlag.useIttr);
         useIttrFlagChanged = true;
+        break;
+    case TARGET_SET_MANUAL_KEY:
+        Serial.printf("\033[K---- Manual : %d ----\n", target.setManual());
+        break;
+    case TARGET_MINUS_KEY:
+        target.manualMinus();
+        break;
+    case TARGET_PLUS_KEY:
+        target.manualPlus();
         break;
     case CALIBRATION_FINISH_KEY:
         Serial.println("\033[K---- Calibration Finish ----");
@@ -380,12 +384,7 @@ void Configurator::setTpsMax()
 void Configurator::setIdling()
 {
     rawValues.idling = tps1.convertedValue();
-    apps1.setIdlingValue(rawValues.idling);
-    apps1.setIdlingValue(rawValues.idling);
-    apps2.setIdlingValue(rawValues.idling);
-    apps2.setIdlingValue(rawValues.idling);
-    ittr.setIdlingValue(rawValues.idling);
-    ittr.setIdlingValue(rawValues.idling);
+    target.setIdlingValue(rawValues.idling);
 }
 
 void Configurator::start()

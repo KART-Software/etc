@@ -120,6 +120,8 @@ void DcMotor::ledcDetach()
 void DcMotor::initialize()
 {
     ledcSetup(ch, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
+    pinMode(relayPin, OUTPUT);
+    digitalWrite(relayPin, LOW);
     pinMode(dirPin, OUTPUT);
     pinMode(slpPin, OUTPUT);
     digitalWrite(slpPin, LOW);
@@ -139,6 +141,7 @@ void DcMotor::write(uint16_t duty, uint8_t forward)
 void DcMotor::on()
 {
     ledcAttach();
+    digitalWrite(relayPin, HIGH);
     digitalWrite(slpPin, HIGH);
     _isOn = true;
 }
@@ -146,6 +149,7 @@ void DcMotor::on()
 void DcMotor::off()
 {
     write(0, LOW);
+    digitalWrite(relayPin, LOW);
     digitalWrite(slpPin, LOW);
     ledcDetach();
     _isOn = false;
