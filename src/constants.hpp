@@ -71,10 +71,10 @@
 #endif
 
 #ifdef G2_18V17
-#define DC_MOTOR_SLP_PIN 4
-#define DC_MOTOR_PWM_PIN 16
-#define DC_MOTOR_DIR_PIN 17
-#define DC_MOTOR_FLT_PIN 2
+#define DC_MOTOR_SLP_PIN 21
+#define DC_MOTOR_PWM_PIN 14
+#define DC_MOTOR_DIR_PIN 13
+#define DC_MOTOR_FLT_PIN 47
 #define PWM_LEDC_CHANNEL 0
 #define MOTOR_DIRECTION -1
 #endif
@@ -153,16 +153,16 @@
 /// Button Settings ///
 ///////////////////////
 
-#define BUTTON_1_PIN 13
-#define BUTTON_2_PIN 12
-#define BUTTON_3_PIN 14
+#define BUTTON_1_PIN 3
+#define BUTTON_2_PIN 46
+#define BUTTON_3_PIN 9
 
 /////////////////////////////////
 /// Other Output Pin Settings ///
 /////////////////////////////////
 
-#define FUEL_PUMP_PIN 32
-#define DC_MOTOR_RELAY_PIN 33
+#define SHUTDOWN_SIGNAL_PIN 8
+#define DC_MOTOR_RELAY_PIN 11
 
 #define APPS_CHECK_FLAG false
 #define TPS_CHECK_FLAG false

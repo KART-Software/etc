@@ -1,10 +1,17 @@
 #include "toggle_switch.hpp"
 
-ToggleSwitch::ToggleSwitch(uint8_t pin) : pin(pin) {}
+ToggleSwitch::ToggleSwitch(uint8_t pin, uint8_t onState) : pin(pin), onState(onState) {}
 
 void ToggleSwitch::initialize()
 {
-    pinMode(pin, INPUT_PULLUP);
+    if (onState == LOW)
+    {
+        pinMode(pin, INPUT_PULLUP);
+    }
+    else
+    {
+        pinMode(pin, INPUT);
+    };
     state = digitalRead(pin);
     lastState = state;
     _isOn = state == onState;
@@ -52,7 +59,7 @@ bool ToggleSwitch::switchedToOff()
     return _switched && !_isOn;
 }
 
-SelectSwitch3Pin::SelectSwitch3Pin(uint8_t pin1, uint8_t pin2, uint8_t pin3) : toggleSwitch1(pin1), toggleSwitch2(pin2), toggleSwitch3(pin3)
+SelectSwitch3Pin::SelectSwitch3Pin(uint8_t pin1, uint8_t pin2, uint8_t pin3) : toggleSwitch1(pin1, LOW), toggleSwitch2(pin2, LOW), toggleSwitch3(pin3, LOW)
 {
 }
 

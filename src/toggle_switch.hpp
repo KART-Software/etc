@@ -5,10 +5,10 @@
 
 #define SWITCH_DURATION 100 // ms
 
-class ToggleSwitch // プルアップピン（通常HIGHでGNDと繋がってLOWになる）を使う想定のスイッチのクラス
+class ToggleSwitch // LOWならプルアップピン（通常HIGHでGNDと繋がってLOWになる）を使う想定のスイッチのクラス
 {
 public:
-    ToggleSwitch(uint8_t pin);
+    ToggleSwitch(uint8_t pin, uint8_t onState);
     void initialize();
     void read();
     bool isOn();
@@ -19,7 +19,7 @@ public:
 private:
     const uint8_t pin;
     const uint32_t duration = SWITCH_DURATION;
-    const uint8_t onState = LOW;
+    const uint8_t onState;
     bool _isOn;
     bool _switched;
     uint8_t state = !onState;     // current button state

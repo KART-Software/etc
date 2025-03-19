@@ -12,6 +12,7 @@ TaskHandle_t motorControllTask;
 TaskHandle_t serialLoggingTask;
 TaskHandle_t calibrationTask;
 
+ToggleSwitch shutdownSwitch(SHUTDOWN_SIGNAL_PIN, HIGH); // Shutdown回路の開閉に応じて切り替わる
 SelectSwitch3Pin selectSwitch;
 Apps apps1(APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
 Apps apps2(APPS_2_RAW_MIN, APPS_2_RAW_MAX, APPS_2_CH);
@@ -27,8 +28,7 @@ Configurator configurator(apps1, apps2, tps1, tps2, ittr, target, motorControlle
 
 void setup()
 {
-  pinMode(FUEL_PUMP_PIN, OUTPUT);
-  digitalWrite(FUEL_PUMP_PIN, HIGH);
+  shutdownSwitch.initialize();
   gAdc.begin();
   selectSwitch.initialize();
   configurator.initialize();
@@ -54,6 +54,7 @@ void setup()
   default:
     break;
   }
+  motorOnAllowed = motorOnAllowed && shutdownSwitch.isOn();
   motorController.initialize();
   if (motorOnAllowed)
   {
@@ -79,6 +80,7 @@ void loop()
   tps2.read();
   bps.read();
   selectSwitch.read();
+  shutdownSwitch.read();
 
   if (!plausibilityValidator.isCurrentlyValid())
   {
@@ -86,7 +88,6 @@ void loop()
     {
       motorController.setMotorOff();
       vTaskSuspend(motorControllTask);
-      digitalWrite(FUEL_PUMP_PIN, LOW);
     }
   }
   if (selectSwitch.changed())
@@ -108,5 +109,14 @@ void loop()
     default:
       break;
     }
+  };
+  if (shutdownSwitch.switchedToOff())
+  {
+    motorController.setMotorOff();
+    vTaskSuspend(motorControllTask);
+  };
+  if (shutdownSwitch.switchedToOn())
+  {
+    ESP.restart();
   }
 }
