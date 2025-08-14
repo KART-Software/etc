@@ -20,7 +20,7 @@
 #ifdef ADS8688
 // https://www.ti.com/jp/lit/ds/symlink/ads8688.pdf?ts=1690504622401&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fja-jp%252FADS8688
 
-#define SPI_BUS VSPI
+#define SPI_BUS HSPI
 #define SPI_MODE SPI_MODE1
 #define SPI_BIT_ORDER MSBFIRST
 #define SPI_FREQUENCY 5000000
