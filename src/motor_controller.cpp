@@ -19,15 +19,6 @@ void MotorController::cycle()
     dcMotor.write(output);
 }
 
-void MotorController::start()
-{
-    while (true)
-    {
-        cycle();
-        delay(cycleTime);
-    }
-}
-
 void MotorController::setMotorOn()
 {
     dcMotor.on();
@@ -41,11 +32,4 @@ void MotorController::setMotorOff()
 bool MotorController::isOn()
 {
     return dcMotor.isOn();
-}
-
-void startMotor(void *motorController)
-{
-    MotorController *controller;
-    controller = (MotorController *)motorController;
-    controller->start();
 }

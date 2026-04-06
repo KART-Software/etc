@@ -30,7 +30,6 @@ public:
     bool isCurrentlyValid();
     bool isValid();
     void serialLog();
-    void startLog();
     void setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps);
     bool appsCheckFlag = false,
          tpsCheckFlag = false,
@@ -73,7 +72,5 @@ private:
     bool isBpsTpsPlausible();
     const char *color(bool flag, bool err);
 };
-
-void startLogging(void *plausibilityValidator);
 
 #endif

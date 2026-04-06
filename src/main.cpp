@@ -8,9 +8,7 @@
 #include "toggle_switch.hpp"
 #include "configurator.hpp"
 
-TaskHandle_t motorControllTask;
-TaskHandle_t serialLoggingTask;
-TaskHandle_t calibrationTask;
+IntervalTimer motorControlTimer;
 
 SelectSwitch3Pin selectSwitch;
 Apps apps1(APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
@@ -25,6 +23,13 @@ PlausibilityValidator plausibilityValidator(apps1, apps2, ittr, tps1, tps2, targ
 MotorController motorController(target, tps1);
 Configurator configurator(apps1, apps2, tps1, tps2, ittr, target, motorController, plausibilityValidator);
 
+volatile bool motorTimerRunning = false;
+
+void motorControlISR()
+{
+  motorController.cycle();
+}
+
 void setup()
 {
   pinMode(FUEL_PUMP_PIN, OUTPUT);
@@ -33,7 +38,6 @@ void setup()
   selectSwitch.initialize();
   configurator.initialize();
   configurator.calibrateFromFlash();
-  xTaskCreatePinnedToCore(startWatingCalibration, "CalibrationTask", 8192, (void *)&configurator, 3, &calibrationTask, 0);
 
   bool motorOnAllowed = true;
   switch (selectSwitch.getStatus())
@@ -58,16 +62,13 @@ void setup()
   if (motorOnAllowed)
   {
     motorController.setMotorOn();
+    motorControlTimer.begin(motorControlISR, MOTOR_CONTROLL_CYCLE_TIME * 1000); // ms -> us
+    motorTimerRunning = true;
   }
-  // delay(10);
   plausibilityValidator.initialize();
-  xTaskCreatePinnedToCore(startLogging, "SerialLoggingTask", 8192, (void *)&plausibilityValidator, 2, &serialLoggingTask, 0);
-  xTaskCreatePinnedToCore(startMotor, "MotorConstrollTask", 8192, (void *)&motorController, 1, &motorControllTask, 1);
-  if (!motorOnAllowed)
-  {
-    vTaskSuspend(motorControllTask);
-  }
 }
+
+unsigned long lastLogTime = 0;
 
 void loop()
 {
@@ -85,7 +86,11 @@ void loop()
     if (motorController.isOn())
     {
       motorController.setMotorOff();
-      vTaskSuspend(motorControllTask);
+      if (motorTimerRunning)
+      {
+        motorControlTimer.end();
+        motorTimerRunning = false;
+      }
       digitalWrite(FUEL_PUMP_PIN, LOW);
     }
   }
@@ -109,4 +114,15 @@ void loop()
       break;
     }
   }
+
+  // Serial logging (was a separate FreeRTOS task)
+  unsigned long now = millis();
+  if (now - lastLogTime >= SERIAL_LOG_INTERVAL)
+  {
+    lastLogTime = now;
+    plausibilityValidator.serialLog();
+  }
+
+  // Calibration polling (was a separate FreeRTOS task)
+  configurator.pollSerial();
 }

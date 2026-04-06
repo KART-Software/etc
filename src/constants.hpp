@@ -52,48 +52,40 @@
 // #define TB67H450
 
 #ifdef HILITAND
-#define DC_MOTOR_ENABLE_PIN 5 // TODO CHANGE
-#define DC_MOTOR_PWM_1_PIN 33
-#define DC_MOTOR_PWM_2_PIN 32
-#define PWM_1_LEDC_CHANNEL 0
-#define PWM_2_LEDC_CHANNEL 1
+#define DC_MOTOR_ENABLE_PIN 5 // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_PWM_1_PIN 33 // TODO: Teensy 4.1 の PWM 対応ピンに変更
+#define DC_MOTOR_PWM_2_PIN 32 // TODO: Teensy 4.1 の PWM 対応ピンに変更
 #define MOTOR_DIRECTION 1
 #endif
 
 #ifdef VNH5019
-#define DC_MOTOR_IN_A_PIN 17
-#define DC_MOTOR_IN_B_PIN 2
-#define DC_MOTOR_EN_A_PIN 16
-#define DC_MOTOR_EN_B_PIN 0
-#define DC_MOTOR_PWM_PIN 4
-#define PWM_LEDC_CHANNEL 0
+#define DC_MOTOR_IN_A_PIN 17 // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_IN_B_PIN 2  // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_EN_A_PIN 16 // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_EN_B_PIN 0  // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_PWM_PIN 4   // TODO: Teensy 4.1 の PWM 対応ピンに変更
 #define MOTOR_DIRECTION 1
 #endif
 
 #ifdef G2_18V17
-#define DC_MOTOR_SLP_PIN 4
-#define DC_MOTOR_PWM_PIN 16
-#define DC_MOTOR_DIR_PIN 17
-#define DC_MOTOR_FLT_PIN 2
-#define PWM_LEDC_CHANNEL 0
+#define DC_MOTOR_SLP_PIN 4  // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_PWM_PIN 16 // TODO: Teensy 4.1 の PWM 対応ピンに変更
+#define DC_MOTOR_DIR_PIN 17 // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_FLT_PIN 2  // TODO: Teensy 4.1 のピン番号に変更
 #define MOTOR_DIRECTION -1
 #endif
 
 #ifdef DRV8256P
-#define DC_MOTOR_PWM_1_PIN 17
-#define DC_MOTOR_PWM_2_PIN 16
-#define DC_MOTOR_FLT_PIN 4 // TODO CHANGE
-#define DC_MOTOR_SLP_PIN 2
-#define PWM_1_LEDC_CHANNEL 0
-#define PWM_2_LEDC_CHANNEL 1
+#define DC_MOTOR_PWM_1_PIN 17 // TODO: Teensy 4.1 の PWM 対応ピンに変更
+#define DC_MOTOR_PWM_2_PIN 16 // TODO: Teensy 4.1 の PWM 対応ピンに変更
+#define DC_MOTOR_FLT_PIN 4    // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_SLP_PIN 2    // TODO: Teensy 4.1 のピン番号に変更
 #define MOTOR_DIRECTION 1
 #endif
 
 #ifdef TB67H450
-#define DC_MOTOR_IN_1_PIN 16
-#define DC_MOTOR_IN_2_PIN 17
-#define PWM_1_LEDC_CHANNEL 0
-#define PWM_2_LEDC_CHANNEL 1
+#define DC_MOTOR_IN_1_PIN 16 // TODO: Teensy 4.1 の PWM 対応ピンに変更
+#define DC_MOTOR_IN_2_PIN 17 // TODO: Teensy 4.1 の PWM 対応ピンに変更
 #define MOTOR_DIRECTION 1
 #endif
 
@@ -153,16 +145,16 @@
 /// Button Settings ///
 ///////////////////////
 
-#define BUTTON_1_PIN 13
-#define BUTTON_2_PIN 12
-#define BUTTON_3_PIN 14
+#define BUTTON_1_PIN 13 // TODO: Teensy 4.1 のピン番号に変更
+#define BUTTON_2_PIN 12 // TODO: Teensy 4.1 のピン番号に変更
+#define BUTTON_3_PIN 14 // TODO: Teensy 4.1 のピン番号に変更
 
 /////////////////////////////////
 /// Other Output Pin Settings ///
 /////////////////////////////////
 
-#define FUEL_PUMP_PIN 32
-#define DC_MOTOR_RELAY_PIN 33
+#define FUEL_PUMP_PIN 32      // TODO: Teensy 4.1 のピン番号に変更
+#define DC_MOTOR_RELAY_PIN 33 // TODO: Teensy 4.1 のピン番号に変更
 
 #define APPS_CHECK_FLAG false
 #define TPS_CHECK_FLAG false

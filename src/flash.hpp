@@ -1,11 +1,9 @@
 #ifndef _FLASH_H_
 #define _FLASH_H_
 
-#include <FS.h>
-#include <FFat.h>
+#include <LittleFS.h>
 
-#define FORMAT_FFAT_IF_FAILED true
-#define BEGIN_FFAT_LIMIT_TIMES 5
+#define BEGIN_FS_LIMIT_TIMES 5
 
 class Flash
 {
@@ -15,6 +13,7 @@ public:
     const char *read(const char *fileName);
 
 private:
+    LittleFS_Program fs;
 };
 
 #endif

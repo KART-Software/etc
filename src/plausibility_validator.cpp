@@ -254,15 +254,6 @@ const char *PlausibilityValidator::color(bool flag, bool err)
     }
 }
 
-void PlausibilityValidator::startLog()
-{
-    while (true)
-    {
-        serialLog();
-        delay(SERIAL_LOG_INTERVAL);
-    }
-}
-
 void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps)
 {
     appsCheckFlag = apps;
@@ -274,11 +265,4 @@ void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool 
     targetCheckFlag = target;
     bpsCheckFlag = bps;
     bpsTpsCheckFlag = bpsTps;
-}
-
-void startLogging(void *plausibilityValidator)
-{
-    PlausibilityValidator *validator;
-    validator = (PlausibilityValidator *)plausibilityValidator;
-    validator->startLog();
 }

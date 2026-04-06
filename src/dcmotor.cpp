@@ -6,10 +6,9 @@ DcMotor::DcMotor() {}
 
 void DcMotor::initialize()
 {
-    ledcSetup(ch1, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
-    ledcSetup(ch2, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     pinMode(enablePin, OUTPUT);
     digitalWrite(enablePin, LOW);
+    pwmSetUp();
 }
 
 void DcMotor::write(double value)
@@ -30,13 +29,14 @@ void DcMotor::write(double value)
 
 void DcMotor::write(uint16_t duty1, uint16_t duty2)
 {
-    ledcWrite(ch1, duty1);
-    ledcWrite(ch2, duty2);
+    if (!_isOn)
+        return;
+    analogWrite(pwmPin1, duty1);
+    analogWrite(pwmPin2, duty2);
 }
 
 void DcMotor::on()
 {
-    ledcAttach();
     digitalWrite(enablePin, HIGH);
     _isOn = true;
 }
@@ -45,20 +45,18 @@ void DcMotor::off()
 {
     write(0, 0);
     digitalWrite(enablePin, LOW);
-    ledcDetach();
     _isOn = false;
 }
 
-void DcMotor::ledcAttach()
+void DcMotor::pwmSetUp()
 {
-    ledcAttachPin(pwmPin1, ch1);
-    ledcAttachPin(pwmPin2, ch2);
-}
-
-void DcMotor::ledcDetach()
-{
-    ledcDetachPin(pwmPin1);
-    ledcDetachPin(pwmPin2);
+    pinMode(pwmPin1, OUTPUT);
+    digitalWrite(pwmPin1, LOW);
+    pinMode(pwmPin2, OUTPUT);
+    digitalWrite(pwmPin2, LOW);
+    analogWriteFrequency(pwmPin1, PWM_FREQUENCY);
+    analogWriteFrequency(pwmPin2, PWM_FREQUENCY);
+    analogWriteResolution(PWM_RESOLUTION);
 }
 
 #endif
@@ -66,11 +64,11 @@ void DcMotor::ledcDetach()
 #ifdef VNH5019
 void DcMotor::initialize()
 {
-    ledcSetup(ch, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     pinMode(inAPin, OUTPUT);
     pinMode(inBPin, OUTPUT);
     digitalWrite(inAPin, LOW);
     digitalWrite(inBPin, LOW);
+    pwmSetUp();
 }
 
 void DcMotor::write(double value)
@@ -87,44 +85,43 @@ void DcMotor::write(double value)
 
 void DcMotor::write(uint16_t duty, uint8_t inAState, uint8_t inBState)
 {
-    ledcWrite(ch, duty);
+    if (!_isOn)
+        return;
+    analogWrite(pwmPin, duty);
     digitalWrite(inAPin, inAState);
     digitalWrite(inBPin, inBState);
 }
 
 void DcMotor::on()
 {
-    ledcAttach();
     _isOn = true;
 }
 
 void DcMotor::off()
 {
     write(0, LOW, LOW);
-    ledcDetach();
     _isOn = false;
 }
 
-void DcMotor::ledcAttach()
+void DcMotor::pwmSetUp()
 {
-    ledcAttachPin(pwmPin, ch);
+    pinMode(pwmPin, OUTPUT);
+    digitalWrite(pwmPin, LOW);
+    analogWriteFrequency(pwmPin, PWM_FREQUENCY);
+    analogWriteResolution(PWM_RESOLUTION);
 }
 
-void DcMotor::ledcDetach()
-{
-    ledcDetachPin(pwmPin);
-}
 #endif
 
 #ifdef G2_18V17
 void DcMotor::initialize()
 {
-    ledcSetup(ch, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     pinMode(relayPin, OUTPUT);
     digitalWrite(relayPin, LOW);
     pinMode(dirPin, OUTPUT);
     pinMode(slpPin, OUTPUT);
     digitalWrite(slpPin, LOW);
+    pwmSetUp();
 }
 
 void DcMotor::write(double value)
@@ -134,13 +131,14 @@ void DcMotor::write(double value)
 
 void DcMotor::write(uint16_t duty, uint8_t forward)
 {
-    ledcWrite(ch, duty);
+    if (!_isOn)
+        return;
+    analogWrite(pwmPin, duty);
     digitalWrite(dirPin, forward);
 }
 
 void DcMotor::on()
 {
-    ledcAttach();
     digitalWrite(relayPin, HIGH);
     digitalWrite(slpPin, HIGH);
     _isOn = true;
@@ -151,19 +149,17 @@ void DcMotor::off()
     write(0, LOW);
     digitalWrite(relayPin, LOW);
     digitalWrite(slpPin, LOW);
-    ledcDetach();
     _isOn = false;
 }
 
-void DcMotor::ledcAttach()
+void DcMotor::pwmSetUp()
 {
-    ledcAttachPin(pwmPin, ch);
+    pinMode(pwmPin, OUTPUT);
+    digitalWrite(pwmPin, LOW);
+    analogWriteFrequency(pwmPin, PWM_FREQUENCY);
+    analogWriteResolution(PWM_RESOLUTION);
 }
 
-void DcMotor::ledcDetach()
-{
-    ledcDetachPin(pwmPin);
-}
 #endif
 
 bool DcMotor::isOn()
@@ -180,12 +176,11 @@ double DcMotor::min(double a, double b)
 
 void DcMotor::initialize()
 {
-    ledcSetup(ch1, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
-    ledcSetup(ch2, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     pinMode(relayPin, OUTPUT);
     digitalWrite(relayPin, LOW);
     pinMode(slpPin, OUTPUT);
     digitalWrite(slpPin, LOW);
+    pwmSetUp();
 }
 
 void DcMotor::write(double value)
@@ -206,13 +201,14 @@ void DcMotor::write(double value)
 
 void DcMotor::write(uint16_t duty1, uint16_t duty2)
 {
-    ledcWrite(ch1, duty1);
-    ledcWrite(ch2, duty2);
+    if (!_isOn)
+        return;
+    analogWrite(pwmPin1, duty1);
+    analogWrite(pwmPin2, duty2);
 }
 
 void DcMotor::on()
 {
-    ledcAttach();
     digitalWrite(relayPin, HIGH);
     digitalWrite(slpPin, HIGH);
     _isOn = true;
@@ -223,20 +219,18 @@ void DcMotor::off()
     write(0, 0);
     digitalWrite(relayPin, LOW);
     digitalWrite(slpPin, LOW);
-    ledcDetach();
     _isOn = false;
 }
 
-void DcMotor::ledcAttach()
+void DcMotor::pwmSetUp()
 {
-    ledcAttachPin(pwmPin1, ch1);
-    ledcAttachPin(pwmPin2, ch2);
-}
-
-void DcMotor::ledcDetach()
-{
-    ledcDetachPin(pwmPin1);
-    ledcDetachPin(pwmPin2);
+    pinMode(pwmPin1, OUTPUT);
+    digitalWrite(pwmPin1, LOW);
+    pinMode(pwmPin2, OUTPUT);
+    digitalWrite(pwmPin2, LOW);
+    analogWriteFrequency(pwmPin1, PWM_FREQUENCY);
+    analogWriteFrequency(pwmPin2, PWM_FREQUENCY);
+    analogWriteResolution(PWM_RESOLUTION);
 }
 
 #endif
@@ -244,10 +238,9 @@ void DcMotor::ledcDetach()
 #ifdef TB67H450
 void DcMotor::initialize()
 {
-    ledcSetup(ch1, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
-    ledcSetup(ch2, PWM_LEDC_FREQUENCY, PWM_LEDC_RESOLUTION);
     pinMode(relayPin, OUTPUT);
     digitalWrite(relayPin, LOW);
+    pwmSetUp();
 }
 
 void DcMotor::write(double value)
@@ -268,13 +261,14 @@ void DcMotor::write(double value)
 
 void DcMotor::write(uint16_t duty1, uint16_t duty2)
 {
-    ledcWrite(ch1, duty1);
-    ledcWrite(ch2, duty2);
+    if (!_isOn)
+        return;
+    analogWrite(pwmPin1, duty1);
+    analogWrite(pwmPin2, duty2);
 }
 
 void DcMotor::on()
 {
-    ledcAttach();
     digitalWrite(relayPin, HIGH);
     _isOn = true;
 }
@@ -283,20 +277,18 @@ void DcMotor::off()
 {
     write(0, 0);
     digitalWrite(relayPin, LOW);
-    ledcDetach();
     _isOn = false;
 }
 
-void DcMotor::ledcAttach()
+void DcMotor::pwmSetUp()
 {
-    ledcAttachPin(pwmPin1, ch1);
-    ledcAttachPin(pwmPin2, ch2);
-}
-
-void DcMotor::ledcDetach()
-{
-    ledcDetachPin(pwmPin1);
-    ledcDetachPin(pwmPin2);
+    pinMode(pwmPin1, OUTPUT);
+    digitalWrite(pwmPin1, LOW);
+    pinMode(pwmPin2, OUTPUT);
+    digitalWrite(pwmPin2, LOW);
+    analogWriteFrequency(pwmPin1, PWM_FREQUENCY);
+    analogWriteFrequency(pwmPin2, PWM_FREQUENCY);
+    analogWriteResolution(PWM_RESOLUTION);
 }
 
 #endif

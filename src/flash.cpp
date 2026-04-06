@@ -2,20 +2,20 @@
 
 bool Flash::initialize()
 {
-    for (int i = 0; i < BEGIN_FFAT_LIMIT_TIMES; i++)
+    for (int i = 0; i < BEGIN_FS_LIMIT_TIMES; i++)
     {
-        if (FFat.begin(FORMAT_FFAT_IF_FAILED))
+        if (fs.begin(256 * 1024))
         {
             return true;
         }
     }
-    Serial.println("\033[KFFat begin failed.");
+    Serial.println("\033[KLittleFS begin failed.");
     return false;
 }
 
 void Flash::write(const char *fileName, const char *jsonStr)
 {
-    File file = FFat.open(fileName, FILE_WRITE);
+    File file = fs.open(fileName, FILE_WRITE);
     file.print(jsonStr);
     file.close();
     Serial.printf("\033[K---- Saved to %s ----\n", fileName);
@@ -24,7 +24,7 @@ void Flash::write(const char *fileName, const char *jsonStr)
 
 const char *Flash::read(const char *fileName)
 {
-    File file = FFat.open(fileName);
+    File file = fs.open(fileName);
     if (!file || file.isDirectory())
     {
         return "";

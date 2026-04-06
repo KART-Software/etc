@@ -349,7 +349,7 @@ void Configurator::calibrate(char c)
         break;
     case REBOOT_KEY:
         Serial.println("\033[K---- Reboot ----");
-        ESP.restart();
+        SCB_AIRCR = 0x05FA0004; // Teensy software reset
     default:
         break;
     }
@@ -387,50 +387,31 @@ void Configurator::setIdling()
     target.setIdlingValue(rawValues.idling);
 }
 
-void Configurator::start()
+void Configurator::pollSerial()
 {
-    rawValuesChanged = false;
-    plausibilityCheckFlagsChanged = false;
-    useIttrFlagChanged = false;
-    while (true)
+    if (!Serial.available())
     {
-        if (Serial.available())
-        {
-            char c = Serial.read();
-            while (Serial.available())
-            {
-                Serial.read();
-            }
-            calibrate(c);
-        }
-        delay(CALIBRATE_INTERVAL);
+        return;
     }
-}
-
-void Configurator::startWaiting()
-{
-    while (true)
+    char c = Serial.read();
+    while (Serial.available())
     {
-        if (Serial.available())
+        Serial.read();
+    }
+    if (!calibrating)
+    {
+        if (c == CALIBRATION_START_KEY)
         {
-            if (Serial.read() == CALIBRATION_START_KEY)
-            {
-                while (Serial.available())
-                {
-                    Serial.read();
-                }
-                Serial.println("\033[K---- Calibration Start ----");
-                start();
-            }
-            else
-            {
-                while (Serial.available())
-                {
-                    Serial.read();
-                }
-            }
+            Serial.println("\033[K---- Calibration Start ----");
+            calibrating = true;
+            rawValuesChanged = false;
+            plausibilityCheckFlagsChanged = false;
+            useIttrFlagChanged = false;
         }
-        delay(WAIT_INTERVAL);
+    }
+    else
+    {
+        calibrate(c);
     }
 }
 
@@ -451,12 +432,5 @@ void Configurator::finish()
     rawValuesChanged = false;
     plausibilityCheckFlagsChanged = false;
     useIttrFlagChanged = false;
-    startWaiting();
-}
-
-void startWatingCalibration(void *configurator)
-{
-    Configurator *configurator_;
-    configurator_ = (Configurator *)configurator;
-    configurator_->startWaiting();
+    calibrating = false;
 }

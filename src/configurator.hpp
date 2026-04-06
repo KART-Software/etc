@@ -89,7 +89,7 @@ public:
     void loadPlausibilityCheckFlagsFromFlash();
     void loadUseIttrFlagFromFlash();
     void calibrateFromFlash();
-    void startWaiting();
+    void pollSerial();
 
 private:
     Flash flash;
@@ -110,9 +110,8 @@ private:
     void setIdling();
     void calibrate();
     void calibrate(char c);
-    void start();
     void finish();
+    bool calibrating = false;
 };
 
-void startWatingCalibration(void *configurator);
 #endif
