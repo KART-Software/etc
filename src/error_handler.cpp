@@ -13,11 +13,11 @@ ErrorHandler::
               {ERR_APPS_TPS_TARGET_FAILURE, false},
               {ERR_BPS_CIRCUIT_FAILURE, false},
               {ERR_BPS_TPS_IMPLAUSIBLE, false},
-          }){};
+          }) {};
 
 void ErrorHandler::raise(int8_t errID)
 {
-    for (int i; i < errorsLength(); i++)
+    for (int i = 0; i < errorsLength(); i++)
     {
         if (errors[i].ID == errID)
         {
@@ -28,7 +28,7 @@ void ErrorHandler::raise(int8_t errID)
 
 void ErrorHandler::clear(int8_t errID)
 {
-    for (int i; i < errorsLength(); i++)
+    for (int i = 0; i < errorsLength(); i++)
     {
         if (errors[i].ID == errID)
         {
@@ -39,7 +39,7 @@ void ErrorHandler::clear(int8_t errID)
 
 void ErrorHandler::clearAll()
 {
-    for (int i; i < errorsLength(); i++)
+    for (int i = 0; i < errorsLength(); i++)
     {
         errors[i].raised = false;
     }

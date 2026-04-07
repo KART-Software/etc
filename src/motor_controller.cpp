@@ -11,8 +11,6 @@ void MotorController::initialize()
 
 void MotorController::cycle()
 {
-    target.read();
-    tps.read();
     double target_ = target.getTarget();
     double tp = tps.convertedValue();
     output = pid.compute(target_, tp);

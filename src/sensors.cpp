@@ -137,7 +137,6 @@ bool Bps::isHighPressure()
 Target::Target(Apps &apps, Ittr &ittr)
     : apps(apps), ittr(ittr)
 {
-    setModeNormal();
 }
 
 bool Target::isIttr()

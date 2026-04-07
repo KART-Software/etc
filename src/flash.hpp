@@ -9,8 +9,8 @@ class Flash
 {
 public:
     bool initialize();
-    void write(const char *fileName, const char *jsonStr);
-    const char *read(const char *fileName);
+    void write(const char *fileName, const String &jsonStr);
+    String read(const char *fileName);
 
 private:
     LittleFS_Program fs;

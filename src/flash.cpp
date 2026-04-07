@@ -13,7 +13,7 @@ bool Flash::initialize()
     return false;
 }
 
-void Flash::write(const char *fileName, const char *jsonStr)
+void Flash::write(const char *fileName, const String &jsonStr)
 {
     File file = fs.open(fileName, FILE_WRITE);
     file.print(jsonStr);
@@ -22,21 +22,15 @@ void Flash::write(const char *fileName, const char *jsonStr)
     Serial.println(jsonStr);
 }
 
-const char *Flash::read(const char *fileName)
+String Flash::read(const char *fileName)
 {
     File file = fs.open(fileName);
     if (!file || file.isDirectory())
     {
-        return "";
+        return String();
     }
-    int len = file.available();
-    char *jsonStr = new char[len + 1];
-    if (len)
-    {
-        file.readBytes(jsonStr, len);
-    }
+    String jsonStr = file.readString();
     file.close();
-    jsonStr[len] = '\0';
     Serial.printf("\033[K---- Loaded from %s ----\n", fileName);
     Serial.println(jsonStr);
     return jsonStr;

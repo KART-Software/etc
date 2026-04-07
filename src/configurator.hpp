@@ -49,7 +49,7 @@ struct Config
 public:
     virtual bool loadFromJsonStr(const char *jsonStr);
     virtual void loadFromConstants();
-    virtual const char *toJsonStr();
+    virtual String serialize();
 };
 
 struct RawSensorValues : Config
@@ -59,7 +59,7 @@ public:
     double idling;
     bool loadFromJsonStr(const char *jsonStr);
     void loadFromConstants();
-    const char *toJsonStr();
+    String serialize();
 };
 
 struct PlausibilityCheckFlags : Config
@@ -68,7 +68,7 @@ public:
     bool apps, tps, apps1, apps2, tps1, tps2, target, bps, bpsTps;
     bool loadFromJsonStr(const char *jsonStr);
     void loadFromConstants();
-    const char *toJsonStr();
+    String serialize();
 };
 
 struct UseIttrFlag : Config
@@ -77,7 +77,7 @@ public:
     bool useIttr;
     bool loadFromJsonStr(const char *jsonStr);
     void loadFromConstants();
-    const char *toJsonStr();
+    String serialize();
 };
 
 class Configurator

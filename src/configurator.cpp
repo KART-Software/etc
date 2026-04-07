@@ -51,7 +51,7 @@ void RawSensorValues::loadFromConstants()
     idling = TARGET_IDLING;
 }
 
-const char *RawSensorValues::toJsonStr()
+String RawSensorValues::serialize()
 {
     StaticJsonDocument<RAW_SENSOR_VALUES_JSON_SIZE> json;
     json["apps1Min"] = apps1Min;
@@ -65,9 +65,9 @@ const char *RawSensorValues::toJsonStr()
     json["tps2Min"] = tps2Min;
     json["tps2Max"] = tps2Max;
     json["idling"] = idling;
-    char *jsonStr = new char[RAW_SENSOR_VALUES_JSON_SIZE];
-    serializeJson(json, jsonStr, RAW_SENSOR_VALUES_JSON_SIZE);
-    return jsonStr;
+    String out;
+    serializeJson(json, out);
+    return out;
 }
 
 bool PlausibilityCheckFlags::loadFromJsonStr(const char *jsonStr)
@@ -115,7 +115,7 @@ void PlausibilityCheckFlags::loadFromConstants()
     bpsTps = BPSTPS_CHECK_FLAG;
 }
 
-const char *PlausibilityCheckFlags::toJsonStr()
+String PlausibilityCheckFlags::serialize()
 {
     StaticJsonDocument<PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE> json;
     json["apps"] = apps;
@@ -127,9 +127,9 @@ const char *PlausibilityCheckFlags::toJsonStr()
     json["target"] = target;
     json["bps"] = bps;
     json["bpsTps"] = bpsTps;
-    char *jsonStr = new char[PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE];
-    serializeJson(json, jsonStr, PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE);
-    return jsonStr;
+    String out;
+    serializeJson(json, out);
+    return out;
 }
 
 bool UseIttrFlag::loadFromJsonStr(const char *jsonStr)
@@ -157,13 +157,13 @@ void UseIttrFlag::loadFromConstants()
 #endif
 }
 
-const char *UseIttrFlag::toJsonStr()
+String UseIttrFlag::serialize()
 {
     StaticJsonDocument<USE_ITTR_FLAG_JSON_SIZE> json;
     json["useIttr"] = useIttr;
-    char *jsonStr = new char[USE_ITTR_FLAG_JSON_SIZE];
-    serializeJson(json, jsonStr, USE_ITTR_FLAG_JSON_SIZE);
-    return jsonStr;
+    String out;
+    serializeJson(json, out);
+    return out;
 }
 
 Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
@@ -205,8 +205,8 @@ void Configurator::calibrate()
 
 void Configurator::loadRawValuesFromFlash()
 {
-    const char *jsonStr = flash.read(SENSOR_VALUES_FILE_NAME);
-    if (!rawValues.loadFromJsonStr(jsonStr))
+    String jsonStr = flash.read(SENSOR_VALUES_FILE_NAME);
+    if (!rawValues.loadFromJsonStr(jsonStr.c_str()))
     {
         // False のときは Constants から読み込む。
         rawValues.loadFromConstants();
@@ -215,8 +215,8 @@ void Configurator::loadRawValuesFromFlash()
 
 void Configurator::loadPlausibilityCheckFlagsFromFlash()
 {
-    const char *jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
-    if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr))
+    String jsonStr = flash.read(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME);
+    if (!plausibilityCheckFlags.loadFromJsonStr(jsonStr.c_str()))
     {
         // False のときは Constants から読み込む。
         plausibilityCheckFlags.loadFromConstants();
@@ -225,8 +225,8 @@ void Configurator::loadPlausibilityCheckFlagsFromFlash()
 
 void Configurator::loadUseIttrFlagFromFlash()
 {
-    const char *jsonStr = flash.read(USE_ITTR_FLAG_FILE_NAME);
-    if (!useIttrFlag.loadFromJsonStr(jsonStr))
+    String jsonStr = flash.read(USE_ITTR_FLAG_FILE_NAME);
+    if (!useIttrFlag.loadFromJsonStr(jsonStr.c_str()))
     {
         // False のときは Constants から読み込む。
         useIttrFlag.loadFromConstants();
@@ -419,15 +419,15 @@ void Configurator::finish()
 {
     if (rawValuesChanged)
     {
-        flash.write(SENSOR_VALUES_FILE_NAME, rawValues.toJsonStr());
+        flash.write(SENSOR_VALUES_FILE_NAME, rawValues.serialize());
     }
     if (plausibilityCheckFlagsChanged)
     {
-        flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.toJsonStr());
+        flash.write(PLAUSIBILITY_CHECK_FLAGS_FILE_NAME, plausibilityCheckFlags.serialize());
     }
     if (useIttrFlagChanged)
     {
-        flash.write(USE_ITTR_FLAG_FILE_NAME, useIttrFlag.toJsonStr());
+        flash.write(USE_ITTR_FLAG_FILE_NAME, useIttrFlag.serialize());
     }
     rawValuesChanged = false;
     plausibilityCheckFlagsChanged = false;
