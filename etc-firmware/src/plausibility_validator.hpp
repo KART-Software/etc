@@ -13,14 +13,6 @@
 #define PLAUSIBLE_DURATION 500
 
 #define SERIAL_SPEED 115200
-#define SERIAL_LOG_INTERVAL 150
-
-#define RED "\e[48;5;160m"
-#define GRN "\e[48;5;47m"
-#define RED_ "\e[48;5;52m"
-#define GRN_ "\e[48;5;22m"
-#define ERR "\e[48;5;160mERR\e[m"
-#define OK "\e[48;5;47mOK\e[m"
 
 class PlausibilityValidator
 {
@@ -29,8 +21,8 @@ public:
     void initialize();
     bool isCurrentlyValid();
     bool isValid();
-    void serialLog();
     void setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps);
+    ErrorHandler &getErrorHandler() { return errorHandler; }
     bool appsCheckFlag = false,
          tpsCheckFlag = false,
          apps1CheckFlag = false,
@@ -70,7 +62,6 @@ private:
     bool isAppsTpsTargetValid();
     bool isBpsCircuitValid();
     bool isBpsTpsPlausible();
-    const char *color(bool flag, bool err);
 };
 
 #endif

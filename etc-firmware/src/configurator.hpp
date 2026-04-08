@@ -6,6 +6,7 @@
 #include <ArduinoJson.h>
 #include "flash.hpp"
 #include "plausibility_validator.hpp"
+#include "serial_protocol.hpp"
 
 #define SENSOR_VALUES_FILE_NAME "/sensor_values.txt"
 #define PLAUSIBILITY_CHECK_FLAGS_FILE_NAME "/plausibility_check_flags.txt"
@@ -13,36 +14,6 @@
 #define RAW_SENSOR_VALUES_JSON_SIZE 300
 #define PLAUSIBILITY_CHECK_FLAGS_JSON_SIZE 300
 #define USE_ITTR_FLAG_JSON_SIZE 50
-
-#define WAIT_INTERVAL 1000
-#define CALIBRATE_INTERVAL 100
-
-#define CALIBRATION_START_KEY 's'
-#define CALIBRATION_FINISH_KEY 'f'
-#define MOTOR_OFF_KEY 'm'
-#define APPS_MIN_CALIBRATE_KEY '1'
-#define APPS_MAX_CALIBRATE_KEY '2'
-#define TPS_MIN_CALIBRATE_KEY '3'
-#define TPS_MAX_CALIBRATE_KEY '4'
-#define IDLING_CALIBRATE_KEY '5'
-
-#define APPS_CHECK_FLAG_SET_KEY 'q'
-#define TPS_CHECK_FLAG_SET_KEY 'w'
-#define APPS1_CHECK_FLAG_SET_KEY 'e'
-#define APPS2_CHECK_FLAG_SET_KEY 'r'
-#define TPS1_CHECK_FLAG_SET_KEY 't'
-#define TPS2_CHECK_FLAG_SET_KEY 'y'
-#define TARGET_CHECK_FLAG_SET_KEY 'u'
-#define BPS_CHECK_FLAG_SET_KEY 'i'
-#define BPSTPS_CHECK_FLAG_SET_KEY 'o'
-
-#define IST_CONTROLLER_SET_KEY 'x'
-
-#define TARGET_SET_MANUAL_KEY 'v'
-#define TARGET_MINUS_KEY 'b'
-#define TARGET_PLUS_KEY 'n'
-
-#define REBOOT_KEY 'z'
 
 struct Config
 {
@@ -85,11 +56,19 @@ class Configurator
 public:
     Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
-    void loadRawValuesFromFlash();
-    void loadPlausibilityCheckFlagsFromFlash();
-    void loadUseIttrFlagFromFlash();
     void calibrateFromFlash();
-    void pollSerial();
+    void getConfigJson(JsonObject &out);
+
+    void startCalibration();
+    void finishCalibration();
+    void setAppsMin();
+    void setAppsMax();
+    void setTpsMin();
+    void setTpsMax();
+    void setIdling();
+    bool setPlausibilityFlag(const char *key, bool val);
+    void setIttrFlag(bool val);
+    bool importConfig(const char *jsonStr);
 
 private:
     Flash flash;
@@ -102,15 +81,12 @@ private:
     Target &target;
     MotorController &motorController;
     PlausibilityValidator &plausibilityValidator;
-    bool rawValuesChanged, plausibilityCheckFlagsChanged, useIttrFlagChanged;
-    void setAppsMin();
-    void setAppsMax();
-    void setTpsMin();
-    void setTpsMax();
-    void setIdling();
+    bool rawValuesChanged = false, plausibilityCheckFlagsChanged = false, useIttrFlagChanged = false;
+    void loadRawValuesFromFlash();
+    void loadPlausibilityCheckFlagsFromFlash();
+    void loadUseIttrFlagFromFlash();
     void calibrate();
-    void calibrate(char c);
-    void finish();
+    void save();
     bool calibrating = false;
 };
 

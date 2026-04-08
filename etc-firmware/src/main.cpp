@@ -7,6 +7,9 @@
 #include "motor_controller.hpp"
 #include "toggle_switch.hpp"
 #include "configurator.hpp"
+#include "serial_protocol.hpp"
+#include "commands/command_router.hpp"
+#include "commands/command_controller.hpp"
 
 IntervalTimer motorControlTimer;
 
@@ -22,6 +25,8 @@ Target target(apps1, ittr);
 PlausibilityValidator plausibilityValidator(apps1, apps2, ittr, tps1, tps2, target, bps);
 MotorController motorController(target, tps1);
 Configurator configurator(apps1, apps2, tps1, tps2, ittr, target, motorController, plausibilityValidator);
+CommandRouter commandRouter;
+CommandController commandController(configurator, motorController, target);
 
 volatile bool motorTimerRunning = false;
 
@@ -66,6 +71,8 @@ void setup()
     motorTimerRunning = true;
   }
   plausibilityValidator.initialize();
+
+  commandController.registerCommands(commandRouter);
 }
 
 unsigned long lastLogTime = 0;
@@ -115,14 +122,17 @@ void loop()
     }
   }
 
-  // Serial logging (was a separate FreeRTOS task)
+  // Send sensor data via JSON protocol (50Hz)
   unsigned long now = millis();
-  if (now - lastLogTime >= SERIAL_LOG_INTERVAL)
+  if (now - lastLogTime >= SENSOR_SEND_INTERVAL)
   {
     lastLogTime = now;
-    plausibilityValidator.serialLog();
+    SerialProtocol::sendSensorData(
+        apps1, apps2, ittr, tps1, tps2, bps,
+        target, plausibilityValidator.isValid(),
+        plausibilityValidator.getErrorHandler());
   }
 
-  // Calibration polling (was a separate FreeRTOS task)
-  configurator.pollSerial();
+  // Command polling
+  commandRouter.poll();
 }

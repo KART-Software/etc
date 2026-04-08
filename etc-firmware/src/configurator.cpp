@@ -241,118 +241,93 @@ void Configurator::calibrateFromFlash()
     calibrate();
 }
 
-void Configurator::calibrate(char c)
+void Configurator::startCalibration()
 {
-    switch (c)
+    calibrating = true;
+    rawValuesChanged = false;
+    plausibilityCheckFlagsChanged = false;
+    useIttrFlagChanged = false;
+}
+
+void Configurator::finishCalibration()
+{
+    save();
+}
+
+bool Configurator::setPlausibilityFlag(const char *key, bool val)
+{
+    bool found = true;
+    if (strcmp(key, "apps") == 0)
     {
-    case MOTOR_OFF_KEY:
-        motorController.setMotorOff();
-        Serial.println("\033[K---- Motor Off ----");
-        break;
-    case APPS_MIN_CALIBRATE_KEY:
-        setAppsMin();
-        Serial.println("\033[K---- APPS Min Set ----");
-        rawValuesChanged = true;
-        break;
-    case APPS_MAX_CALIBRATE_KEY:
-        setAppsMax();
-        Serial.println("\033[K---- APPS Max Set ----");
-        rawValuesChanged = true;
-        break;
-    case TPS_MIN_CALIBRATE_KEY:
-        setTpsMin();
-        Serial.println("\033[K---- TPS Min Set ----");
-        rawValuesChanged = true;
-        break;
-    case TPS_MAX_CALIBRATE_KEY:
-        setTpsMax();
-        Serial.println("\033[K---- TPS Max Set ----");
-        rawValuesChanged = true;
-        break;
-    case IDLING_CALIBRATE_KEY:
-        setIdling();
-        Serial.println("\033[K---- Idling Set ----");
-        rawValuesChanged = true;
-        break;
-    case APPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps = !plausibilityCheckFlags.apps;
-        plausibilityValidator.appsCheckFlag = plausibilityCheckFlags.apps;
-        Serial.printf("\033[K---- APPS Check: %d ----\n", plausibilityCheckFlags.apps);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case TPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.tps = !plausibilityCheckFlags.tps;
-        plausibilityValidator.tpsCheckFlag = plausibilityCheckFlags.tps;
-        Serial.printf("\033[K---- TPS Check: %d ----\n", plausibilityCheckFlags.tps);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case APPS1_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps1 = !plausibilityCheckFlags.apps1;
-        plausibilityValidator.apps1CheckFlag = plausibilityCheckFlags.apps1;
-        Serial.printf("\033[K---- APPS1 Check: %d ----\n", plausibilityCheckFlags.apps1);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case APPS2_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.apps2 = !plausibilityCheckFlags.apps2;
-        plausibilityValidator.apps2CheckFlag = plausibilityCheckFlags.apps2;
-        Serial.printf("\033[K---- APPS2 Check: %d ----\n", plausibilityCheckFlags.apps2);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case TPS1_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.tps1 = !plausibilityCheckFlags.tps1;
-        plausibilityValidator.tps1CheckFlag = plausibilityCheckFlags.tps1;
-        Serial.printf("\033[K---- TPS1 Check: %d ----\n", plausibilityCheckFlags.tps1);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case TPS2_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.tps2 = !plausibilityCheckFlags.tps2;
-        plausibilityValidator.tps2CheckFlag = plausibilityCheckFlags.tps2;
-        Serial.printf("\033[K---- TPS2 Check: %d ----\n", plausibilityCheckFlags.tps2);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case TARGET_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.target = !plausibilityCheckFlags.target;
-        plausibilityValidator.targetCheckFlag = plausibilityCheckFlags.target;
-        Serial.printf("\033[K---- TARGET Check: %d ----\n", plausibilityCheckFlags.target);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case BPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.bps = !plausibilityCheckFlags.bps;
-        plausibilityValidator.bpsCheckFlag = plausibilityCheckFlags.bps;
-        Serial.printf("\033[K---- BPS Check: %d ----\n", plausibilityCheckFlags.bps);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case BPSTPS_CHECK_FLAG_SET_KEY:
-        plausibilityCheckFlags.bpsTps = !plausibilityCheckFlags.bpsTps;
-        plausibilityValidator.bpsTpsCheckFlag = plausibilityCheckFlags.bpsTps;
-        Serial.printf("\033[K---- BPSTPS Check: %d ----\n", plausibilityCheckFlags.bpsTps);
-        plausibilityCheckFlagsChanged = true;
-        break;
-    case IST_CONTROLLER_SET_KEY:
-        useIttrFlag.useIttr = !useIttrFlag.useIttr;
-        target.setIttr(useIttrFlag.useIttr);
-        Serial.printf("\033[K---- Use ITTR : %d ----\n", useIttrFlag.useIttr);
-        useIttrFlagChanged = true;
-        break;
-    case TARGET_SET_MANUAL_KEY:
-        Serial.printf("\033[K---- Manual : %d ----\n", target.setManual());
-        break;
-    case TARGET_MINUS_KEY:
-        target.manualMinus();
-        break;
-    case TARGET_PLUS_KEY:
-        target.manualPlus();
-        break;
-    case CALIBRATION_FINISH_KEY:
-        Serial.println("\033[K---- Calibration Finish ----");
-        finish();
-        break;
-    case REBOOT_KEY:
-        Serial.println("\033[K---- Reboot ----");
-        SCB_AIRCR = 0x05FA0004; // Teensy software reset
-    default:
-        break;
+        plausibilityCheckFlags.apps = val;
+        plausibilityValidator.appsCheckFlag = val;
     }
+    else if (strcmp(key, "tps") == 0)
+    {
+        plausibilityCheckFlags.tps = val;
+        plausibilityValidator.tpsCheckFlag = val;
+    }
+    else if (strcmp(key, "apps1") == 0)
+    {
+        plausibilityCheckFlags.apps1 = val;
+        plausibilityValidator.apps1CheckFlag = val;
+    }
+    else if (strcmp(key, "apps2") == 0)
+    {
+        plausibilityCheckFlags.apps2 = val;
+        plausibilityValidator.apps2CheckFlag = val;
+    }
+    else if (strcmp(key, "tps1") == 0)
+    {
+        plausibilityCheckFlags.tps1 = val;
+        plausibilityValidator.tps1CheckFlag = val;
+    }
+    else if (strcmp(key, "tps2") == 0)
+    {
+        plausibilityCheckFlags.tps2 = val;
+        plausibilityValidator.tps2CheckFlag = val;
+    }
+    else if (strcmp(key, "target") == 0)
+    {
+        plausibilityCheckFlags.target = val;
+        plausibilityValidator.targetCheckFlag = val;
+    }
+    else if (strcmp(key, "bps") == 0)
+    {
+        plausibilityCheckFlags.bps = val;
+        plausibilityValidator.bpsCheckFlag = val;
+    }
+    else if (strcmp(key, "bpsTps") == 0)
+    {
+        plausibilityCheckFlags.bpsTps = val;
+        plausibilityValidator.bpsTpsCheckFlag = val;
+    }
+    else
+    {
+        found = false;
+    }
+    if (found)
+        plausibilityCheckFlagsChanged = true;
+    return found;
+}
+
+void Configurator::setIttrFlag(bool val)
+{
+    useIttrFlag.useIttr = val;
+    target.setIttr(val);
+    useIttrFlagChanged = true;
+}
+
+bool Configurator::importConfig(const char *jsonStr)
+{
+    if (!rawValues.loadFromJsonStr(jsonStr))
+    {
+        return false;
+    }
+    calibrate();
+    rawValuesChanged = true;
+    save();
+    return true;
 }
 
 void Configurator::setAppsMin()
@@ -360,6 +335,7 @@ void Configurator::setAppsMin()
     rawValues.apps1Min = apps1.setCurrentValRawMin();
     rawValues.apps2Min = apps2.setCurrentValRawMin();
     rawValues.ittrMin = ittr.setCurrentValRawMin();
+    rawValuesChanged = true;
 }
 
 void Configurator::setAppsMax()
@@ -367,55 +343,31 @@ void Configurator::setAppsMax()
     rawValues.apps1Max = apps1.setCurrentValRawMax();
     rawValues.apps2Max = apps2.setCurrentValRawMax();
     rawValues.ittrMax = ittr.setCurrentValRawMax();
+    rawValuesChanged = true;
 }
 
 void Configurator::setTpsMin()
 {
     rawValues.tps1Min = tps1.setCurrentValRawMin();
     rawValues.tps2Min = tps2.setCurrentValRawMin();
+    rawValuesChanged = true;
 }
 
 void Configurator::setTpsMax()
 {
     rawValues.tps1Max = tps1.setCurrentValRawMax();
     rawValues.tps2Max = tps2.setCurrentValRawMax();
+    rawValuesChanged = true;
 }
 
 void Configurator::setIdling()
 {
     rawValues.idling = tps1.convertedValue();
     target.setIdlingValue(rawValues.idling);
+    rawValuesChanged = true;
 }
 
-void Configurator::pollSerial()
-{
-    if (!Serial.available())
-    {
-        return;
-    }
-    char c = Serial.read();
-    while (Serial.available())
-    {
-        Serial.read();
-    }
-    if (!calibrating)
-    {
-        if (c == CALIBRATION_START_KEY)
-        {
-            Serial.println("\033[K---- Calibration Start ----");
-            calibrating = true;
-            rawValuesChanged = false;
-            plausibilityCheckFlagsChanged = false;
-            useIttrFlagChanged = false;
-        }
-    }
-    else
-    {
-        calibrate(c);
-    }
-}
-
-void Configurator::finish()
+void Configurator::save()
 {
     if (rawValuesChanged)
     {
@@ -433,4 +385,34 @@ void Configurator::finish()
     plausibilityCheckFlagsChanged = false;
     useIttrFlagChanged = false;
     calibrating = false;
+}
+
+void Configurator::getConfigJson(JsonObject &out)
+{
+    JsonObject sv = out.createNestedObject("sensorValues");
+    sv["apps1Min"] = rawValues.apps1Min;
+    sv["apps1Max"] = rawValues.apps1Max;
+    sv["apps2Min"] = rawValues.apps2Min;
+    sv["apps2Max"] = rawValues.apps2Max;
+    sv["ittrMin"] = rawValues.ittrMin;
+    sv["ittrMax"] = rawValues.ittrMax;
+    sv["tps1Min"] = rawValues.tps1Min;
+    sv["tps1Max"] = rawValues.tps1Max;
+    sv["tps2Min"] = rawValues.tps2Min;
+    sv["tps2Max"] = rawValues.tps2Max;
+    sv["idling"] = rawValues.idling;
+
+    JsonObject pf = out.createNestedObject("plausibilityFlags");
+    pf["apps"] = plausibilityCheckFlags.apps;
+    pf["tps"] = plausibilityCheckFlags.tps;
+    pf["apps1"] = plausibilityCheckFlags.apps1;
+    pf["apps2"] = plausibilityCheckFlags.apps2;
+    pf["tps1"] = plausibilityCheckFlags.tps1;
+    pf["tps2"] = plausibilityCheckFlags.tps2;
+    pf["target"] = plausibilityCheckFlags.target;
+    pf["bps"] = plausibilityCheckFlags.bps;
+    pf["bpsTps"] = plausibilityCheckFlags.bpsTps;
+
+    out["useIttr"] = useIttrFlag.useIttr;
+    out["calibrating"] = calibrating;
 }
