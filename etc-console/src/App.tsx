@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from "preact/hooks";
 import { serial } from "./serial";
+import { mockSerial } from "./mock-serial";
 import { protocol } from "./protocol";
+import type { Transport } from "./transport";
 import type { SensorData, DeviceConfig } from "./types";
 import { SensorMonitor } from "./components/SensorMonitor";
 import { ErrorStatus } from "./components/ErrorStatus";
@@ -11,8 +13,10 @@ import { ConfigPanel } from "./components/ConfigPanel";
 import { DebugLog, type LogEntry } from "./components/DebugLog";
 
 const MAX_LOG_ENTRIES = 100;
+const isMock = new URLSearchParams(window.location.search).has("mock");
 
 export function App() {
+  const transportRef = useRef<Transport>(isMock ? mockSerial : serial);
   const [connected, setConnected] = useState(false);
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
   const [config, setConfig] = useState<DeviceConfig | null>(null);
@@ -30,20 +34,23 @@ export function App() {
 
   // Wire protocol callbacks once
   useEffect(() => {
+    const t = transportRef.current;
+    protocol.setTransport(t);
     protocol.setOnSensorData((data) => setSensorData(data));
     protocol.setOnDebugLog((msg, ts) => addLog(msg, ts));
-    serial.setOnLineReceived((line) => protocol.handleLine(line));
-    serial.setOnDisconnect(() => {
+    t.setOnLineReceived((line) => protocol.handleLine(line));
+    t.setOnDisconnect(() => {
       setConnected(false);
       addLog("Disconnected");
     });
+    if (isMock) addLog("Mock mode enabled");
   }, [addLog]);
 
-  const webSerialAvailable = "serial" in navigator;
+  const webSerialAvailable = isMock || "serial" in navigator;
 
   async function handleConnect() {
     try {
-      await serial.connect();
+      await transportRef.current.connect();
       setConnected(true);
       addLog("Connected");
       setTimeout(async () => {
@@ -61,7 +68,7 @@ export function App() {
   }
 
   async function handleDisconnect() {
-    await serial.disconnect();
+    await transportRef.current.disconnect();
     setConnected(false);
     addLog("Disconnected");
   }

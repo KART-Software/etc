@@ -1,3 +1,5 @@
+import type { Transport } from "./transport";
+
 const BAUD_RATE = 115200;
 
 let port: SerialPort | null = null;
@@ -77,7 +79,7 @@ function isConnected(): boolean {
   return port !== null;
 }
 
-export const serial = {
+export const serial: Transport = {
   connect,
   disconnect,
   send,

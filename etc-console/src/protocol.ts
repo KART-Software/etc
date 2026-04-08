@@ -4,11 +4,12 @@ import type {
   ResponseMessage,
   Message,
 } from "./types";
-import { serial } from "./serial";
+import type { Transport } from "./transport";
 
 const RESPONSE_TIMEOUT = 3000;
 
 let commandId = 0;
+let transport: Transport | null = null;
 const pending = new Map<
   number,
   {
@@ -68,7 +69,7 @@ function sendCommand(
     }, RESPONSE_TIMEOUT);
 
     pending.set(id, { resolve, reject, timer });
-    serial.send(JSON.stringify(message));
+    transport?.send(JSON.stringify(message));
   });
 }
 
@@ -80,5 +81,8 @@ export const protocol = {
   },
   setOnDebugLog(fn: (msg: string, ts: number) => void) {
     onDebugLog = fn;
+  },
+  setTransport(t: Transport) {
+    transport = t;
   },
 };
