@@ -1,0 +1,28 @@
+{
+  "name": "etc-console",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "preact": "^10.29.1",
+    "uplot": "^1.6.32"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.5",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.7"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "zimmerframe@1.1.4": "patches/zimmerframe@1.1.4.patch"
+    }
+  }
+}

@@ -1,0 +1,198 @@
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --border: #0f3460;
+  --text: #e0e0e0;
+  --text-dim: #8888aa;
+  --accent: #0ea5e9;
+  --ok: #22c55e;
+  --err: #ef4444;
+  --warn: #f59e0b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 { font-size: 1.2rem; font-weight: 600; }
+
+.connection-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-badge {
+  font-size: 0.85rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+.status-badge.disconnected { background: var(--err); color: white; }
+.status-badge.connected { background: var(--ok); color: white; }
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+section h2 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--accent);
+}
+
+/* Buttons */
+button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+button:hover:not(:disabled) { background: var(--border); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.danger { border-color: var(--err); color: var(--err); }
+button.danger:hover:not(:disabled) { background: var(--err); color: white; }
+
+/* Sensor Grid */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.sensor-group {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.sensor-group h3 {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sensor-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 0;
+}
+.sensor-row .label { font-size: 0.8rem; color: var(--text-dim); min-width: 40px; }
+.sensor-row .raw { font-family: monospace; font-size: 0.8rem; color: var(--text-dim); min-width: 50px; }
+.sensor-row .val { font-family: monospace; font-size: 1.1rem; font-weight: 600; min-width: 60px; text-align: right; }
+.sensor-row .unit { font-size: 0.75rem; color: var(--text-dim); }
+.sensor-row .mode { font-size: 0.85rem; padding: 1px 6px; background: var(--border); border-radius: 3px; }
+
+.status-indicator {
+  font-weight: 600;
+  padding: 2px 12px;
+  border-radius: 4px;
+}
+.status-indicator.ok { background: var(--ok); color: white; }
+.status-indicator.err { background: var(--err); color: white; }
+
+/* Error Grid */
+.error-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+}
+
+.error-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg);
+}
+
+.led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex-shrink: 0;
+}
+.led.error { background: var(--err); }
+
+/* Controls */
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Flag Grid */
+.flag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flag-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.flag-item input[type="checkbox"] { accent-color: var(--accent); }
+
+/* Chart */
+.chart-wrap { width: 100%; }
+
+/* Debug Log */
+.log-output {
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 8px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 1px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.log-ts { color: var(--text-dim); margin-right: 8px; }
