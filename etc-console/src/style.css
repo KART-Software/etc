@@ -48,12 +48,43 @@ header h1 { font-size: 1.2rem; font-weight: 600; }
 .status-badge.connected { background: var(--ok); color: white; }
 
 main {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 16px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "sensors  errors"
+    "chart    chart"
+    "corr     corr"
+    "cal      flags"
+    "config   config"
+    "log      log";
   gap: 16px;
+}
+
+.area-sensors { grid-area: sensors; }
+.area-errors  { grid-area: errors; }
+.area-chart   { grid-area: chart; }
+.area-corr    { grid-area: corr; }
+.area-cal     { grid-area: cal; }
+.area-flags   { grid-area: flags; display: flex; flex-direction: column; gap: 16px; }
+.area-config  { grid-area: config; }
+.area-log     { grid-area: log; }
+
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "sensors"
+      "errors"
+      "chart"
+      "corr"
+      "cal"
+      "flags"
+      "config"
+      "log";
+  }
 }
 
 section {
@@ -177,6 +208,48 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
 .flag-item input[type="checkbox"] { accent-color: var(--accent); }
 
 /* Chart */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chart-header h2 { margin-bottom: 0; }
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.chart-btn {
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.chart-btn:hover { background: var(--border); color: var(--text); }
+.chart-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.chart-input {
+  width: 56px;
+  padding: 3px 6px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
+}
+.chart-input::-webkit-inner-spin-button { opacity: 1; }
+.chart-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
 .chart-wrap { width: 100%; }
 
 /* Debug Log */
@@ -196,3 +269,31 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
 }
 
 .log-ts { color: var(--text-dim); margin-right: 8px; }
+
+/* ── Correlation Charts ── */
+.correlation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.correlation-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.correlation-item h3 {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .correlation-grid {
+    grid-template-columns: 1fr;
+  }
+}

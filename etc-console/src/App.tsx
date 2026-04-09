@@ -7,6 +7,7 @@ import type { SensorData, DeviceConfig } from "./types";
 import { SensorMonitor } from "./components/SensorMonitor";
 import { ErrorStatus } from "./components/ErrorStatus";
 import { SensorChart } from "./components/SensorChart";
+import { CorrelationCharts } from "./components/CorrelationCharts";
 import { Calibration } from "./components/Calibration";
 import { PlausibilityFlags } from "./components/PlausibilityFlags";
 import { ConfigPanel } from "./components/ConfigPanel";
@@ -19,6 +20,8 @@ export function App() {
   const transportRef = useRef<Transport>(isMock ? mockSerial : serial);
   const [connected, setConnected] = useState(false);
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
+  const [timeRange, setTimeRange] = useState<[number, number] | null>(null);
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [config, setConfig] = useState<DeviceConfig | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const logRef = useRef(logs);
@@ -87,17 +90,20 @@ export function App() {
       </header>
 
       <main>
-        <SensorMonitor data={sensorData} />
-        <ErrorStatus errors={sensorData?.err ?? []} />
-        <SensorChart data={sensorData} />
-        <Calibration addLog={addLog} />
-        <PlausibilityFlags
-          flags={config?.plausibilityFlags ?? {}}
-          useIttr={config?.useIttr ?? false}
-          addLog={addLog}
-        />
-        <ConfigPanel config={config} onConfigLoaded={setConfig} addLog={addLog} />
-        <DebugLog entries={logs} />
+        <div class="area-sensors"><SensorMonitor data={sensorData} /></div>
+        <div class="area-errors"><ErrorStatus errors={sensorData?.err ?? []} /></div>
+        <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
+        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} /></div>
+        <div class="area-cal"><Calibration addLog={addLog} /></div>
+        <div class="area-flags">
+          <PlausibilityFlags
+            flags={config?.plausibilityFlags ?? {}}
+            useIttr={config?.useIttr ?? false}
+            addLog={addLog}
+          />
+          <ConfigPanel config={config} onConfigLoaded={setConfig} addLog={addLog} />
+        </div>
+        <div class="area-log"><DebugLog entries={logs} /></div>
         {!webSerialAvailable && (
           <section>
             <p style={{ color: "var(--err)" }}>Web Serial API is not available. Use Chrome or Edge.</p>
