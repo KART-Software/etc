@@ -5,6 +5,7 @@ const BAUD_RATE = 115200;
 let port: SerialPort | null = null;
 let reader: ReadableStreamDefaultReader<string> | null = null;
 let writer: WritableStreamDefaultWriter<Uint8Array> | null = null;
+let abortController: AbortController | null = null;
 let buffer = "";
 
 let onLineReceived: ((line: string) => void) | null = null;
@@ -16,9 +17,10 @@ async function connect(): Promise<void> {
 
   writer = port.writable!.getWriter();
 
+  abortController = new AbortController();
   const decoder = new TextDecoderStream();
   (port.readable as unknown as ReadableStream)
-    .pipeTo(decoder.writable)
+    .pipeTo(decoder.writable, { signal: abortController.signal })
     .catch(() => {});
   reader = decoder.readable.getReader();
 
@@ -59,20 +61,34 @@ async function disconnect(): Promise<void> {
 }
 
 async function cleanup(): Promise<void> {
-  try {
-    reader?.cancel();
-    reader?.releaseLock();
-  } catch {}
-  try {
-    writer?.releaseLock();
-  } catch {}
-  try {
-    await port?.close();
-  } catch {}
+  const r = reader;
+  const w = writer;
+  const p = port;
+  const ac = abortController;
   reader = null;
   writer = null;
   port = null;
+  abortController = null;
   buffer = "";
+
+  try {
+    ac?.abort();
+  } catch {}
+  try {
+    await r?.cancel();
+  } catch {}
+  try {
+    r?.releaseLock();
+  } catch {}
+  try {
+    await w?.close();
+  } catch {}
+  try {
+    w?.releaseLock();
+  } catch {}
+  try {
+    await p?.close();
+  } catch {}
 }
 
 function isConnected(): boolean {

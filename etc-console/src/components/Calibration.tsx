@@ -13,9 +13,9 @@ export function Calibration({ addLog }: Props) {
     <section>
       <h2>Calibration</h2>
       <div class="controls-row">
-        <button onClick={() => cmd("cal_start", addLog)}>Start Calibration</button>
-        <button onClick={() => cmd("cal_finish", addLog)}>Finish &amp; Save</button>
         <button class="danger" onClick={() => cmd("motor_off", addLog)}>Motor OFF</button>
+        <button onClick={() => cmd("save", addLog)}>Save</button>
+        <button onClick={() => cmd("revert", addLog)}>Revert</button>
       </div>
       <div class="controls-row">
         <button onClick={() => cmd("set_apps_min", addLog)}>Set APPS Min</button>
@@ -26,8 +26,8 @@ export function Calibration({ addLog }: Props) {
       </div>
       <div class="controls-row">
         <button onClick={() => cmd("set_manual", addLog)}>Toggle Manual</button>
-        <button onClick={() => cmd("manual_minus", addLog)}>Manual -</button>
-        <button onClick={() => cmd("manual_plus", addLog)}>Manual +</button>
+        <button onClick={() => cmd("manual_adjust", addLog, { amount: -0.1 })}>Manual -</button>
+        <button onClick={() => cmd("manual_adjust", addLog, { amount: 0.1 })}>Manual +</button>
         <button class="danger" onClick={() => cmd("reboot", addLog)}>Reboot</button>
       </div>
     </section>

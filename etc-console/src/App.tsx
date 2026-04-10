@@ -12,6 +12,8 @@ import { Calibration } from "./components/Calibration";
 import { PlausibilityFlags } from "./components/PlausibilityFlags";
 import { ConfigPanel } from "./components/ConfigPanel";
 import { DebugLog, type LogEntry } from "./components/DebugLog";
+import { BarGauges } from "./components/BarGauges";
+import { RawBarGauges } from "./components/RawBarGauges";
 
 const MAX_LOG_ENTRIES = 100;
 const isMock = new URLSearchParams(window.location.search).has("mock");
@@ -92,6 +94,8 @@ export function App() {
       <main>
         <div class="area-sensors"><SensorMonitor data={sensorData} /></div>
         <div class="area-errors"><ErrorStatus errors={sensorData?.err ?? []} /></div>
+        <div class="area-bars"><BarGauges data={sensorData} /></div>
+        <div class="area-raw"><RawBarGauges data={sensorData} config={config} /></div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
         <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} /></div>
         <div class="area-cal"><Calibration addLog={addLog} /></div>

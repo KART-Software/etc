@@ -50,5 +50,4 @@ export interface DeviceConfig {
   };
   plausibilityFlags: Record<string, boolean>;
   useIttr: boolean;
-  calibrating: boolean;
 }

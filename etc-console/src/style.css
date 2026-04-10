@@ -55,6 +55,7 @@ main {
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
     "sensors  errors"
+    "bars     raw"
     "chart    chart"
     "corr     corr"
     "cal      flags"
@@ -65,6 +66,8 @@ main {
 
 .area-sensors { grid-area: sensors; }
 .area-errors  { grid-area: errors; }
+.area-bars    { grid-area: bars; }
+.area-raw     { grid-area: raw; }
 .area-chart   { grid-area: chart; }
 .area-corr    { grid-area: corr; }
 .area-cal     { grid-area: cal; }
@@ -78,6 +81,8 @@ main {
     grid-template-areas:
       "sensors"
       "errors"
+      "bars"
+      "raw"
       "chart"
       "corr"
       "cal"
@@ -296,4 +301,67 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
   .correlation-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Bar Gauges ── */
+.bar-gauges-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bar-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bar-value {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.bar-track {
+  height: 14px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.1s ease-out;
+}
+
+.raw-bar-track {
+  position: relative;
+  overflow: visible;
+}
+
+.bar-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  border-radius: 1px;
+}
+
+.bar-marker-min {
+  background: var(--warn);
+}
+
+.bar-marker-max {
+  background: var(--err);
 }

@@ -10,7 +10,6 @@ let onDisconnect: (() => void) | null = null;
 
 // Simulated device state
 let t0 = 0;
-let calibrating = false;
 let manualMode = false;
 const flags: Record<string, boolean> = {
   apps: true,
@@ -104,51 +103,46 @@ function handleCommand(text: string) {
           sensorValues,
           plausibilityFlags: { ...flags },
           useIttr,
-          calibrating,
         };
         emit(JSON.stringify({ t: "r", id, ok: true, data: cfg }));
         break;
       }
-      case "set_flag": {
-        const key = data?.key as string;
-        const val = data?.val as boolean;
-        if (key in flags) {
-          flags[key] = val;
-          emit(JSON.stringify({ t: "r", id, ok: true }));
-        } else {
-          emit(JSON.stringify({ t: "r", id, ok: false }));
+      case "set_plausibility_check_flags": {
+        for (const key of Object.keys(flags)) {
+          if (key in (data ?? {})) {
+            flags[key] = (data as Record<string, boolean>)[key];
+          }
         }
+        emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
       }
       case "set_ittr":
         useIttr = (data?.val as boolean) ?? false;
         emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
-      case "cal_start":
-        calibrating = true;
-        emit(JSON.stringify({ t: "r", id, ok: true }));
-        emit(
-          JSON.stringify({
-            t: "d",
-            ts: Date.now() - t0,
-            msg: "Calibration started",
-          }),
-        );
-        break;
-      case "cal_finish":
-        calibrating = false;
-        emit(JSON.stringify({ t: "r", id, ok: true }));
-        emit(
-          JSON.stringify({
-            t: "d",
-            ts: Date.now() - t0,
-            msg: "Calibration finished & saved",
-          }),
-        );
-        break;
       case "set_manual":
         manualMode = !manualMode;
         emit(JSON.stringify({ t: "r", id, ok: true }));
+        break;
+      case "save":
+        emit(JSON.stringify({ t: "r", id, ok: true }));
+        emit(
+          JSON.stringify({
+            t: "d",
+            ts: Date.now() - t0,
+            msg: "Config saved",
+          }),
+        );
+        break;
+      case "revert":
+        emit(JSON.stringify({ t: "r", id, ok: true }));
+        emit(
+          JSON.stringify({
+            t: "d",
+            ts: Date.now() - t0,
+            msg: "Config reverted",
+          }),
+        );
         break;
       case "set_config":
         emit(JSON.stringify({ t: "r", id, ok: true }));

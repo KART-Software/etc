@@ -14,7 +14,8 @@ const FLAG_LABELS: Record<string, string> = {
 
 export function PlausibilityFlags({ flags, useIttr, addLog }: Props) {
   function onFlagChange(key: string, checked: boolean) {
-    protocol.sendCommand("set_flag", { key, val: checked })
+    const updated = { ...flags, [key]: checked };
+    protocol.sendCommand("set_plausibility_check_flags", updated)
       .catch((err: Error) => addLog("Flag error: " + err.message));
   }
 
