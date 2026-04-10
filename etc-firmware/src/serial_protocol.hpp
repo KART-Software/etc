@@ -6,6 +6,7 @@
 #include "sensors.hpp"
 #include "error_handler.hpp"
 
+#define SERIAL_SPEED 115200
 #define SENSOR_MSG_JSON_SIZE 512
 #define DEBUG_MSG_JSON_SIZE 256
 #define RESPONSE_MSG_JSON_SIZE 512
@@ -15,11 +16,11 @@
 class SerialProtocol
 {
 public:
+    static void initialize();
+
     // Send sensor data message
-    static void sendSensorData(
-        Apps &apps1, Apps &apps2, Ittr &ittr,
-        Tps &tps1, Tps &tps2, Bps &bps,
-        Target &target, bool isValid, ErrorHandler &errorHandler);
+    static void sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Bps &bps, Target &target,
+                               bool isValid, ErrorHandler &errorHandler);
 
     // Send debug log message
     static void sendDebug(const char *msg);

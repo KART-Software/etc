@@ -32,107 +32,107 @@ volatile bool motorTimerRunning = false;
 
 void motorControlISR()
 {
-  motorController.cycle();
+    motorController.cycle();
 }
 
 void setup()
 {
-  pinMode(FUEL_PUMP_PIN, OUTPUT);
-  digitalWrite(FUEL_PUMP_PIN, HIGH);
-  gAdc.begin();
-  selectSwitch.initialize();
-  configurator.initialize();
-  configurator.calibrateFromFlash();
+    SerialProtocol::initialize();
 
-  bool motorOnAllowed = true;
-  switch (selectSwitch.getStatus())
-  {
-  case SelectSwitch3Pin::Status::Zero:
-    target.setModeCalibration();
-    break;
-  case SelectSwitch3Pin::Status::First:
-    target.setModeNormal();
-    break;
-  case SelectSwitch3Pin::Status::Second:
-    target.setModeRestricted();
-    break;
-  case SelectSwitch3Pin::Status::Third:
-    target.setModeCalibration();
-    motorOnAllowed = false;
-    break;
-  default:
-    break;
-  }
-  motorController.initialize();
-  if (motorOnAllowed)
-  {
-    motorController.setMotorOn();
-    motorControlTimer.begin(motorControlISR, MOTOR_CONTROLL_CYCLE_TIME * 1000); // ms -> us
-    motorTimerRunning = true;
-  }
-  plausibilityValidator.initialize();
+    pinMode(FUEL_PUMP_PIN, OUTPUT);
+    digitalWrite(FUEL_PUMP_PIN, HIGH);
+    gAdc.begin();
+    selectSwitch.initialize();
+    configurator.initialize();
+    configurator.calibrateFromFlash();
 
-  commandController.registerCommands(commandRouter);
+    bool motorOnAllowed = true;
+    switch (selectSwitch.getStatus())
+    {
+    case SelectSwitch3Pin::Status::Zero:
+        target.setModeCalibration();
+        break;
+    case SelectSwitch3Pin::Status::First:
+        target.setModeNormal();
+        break;
+    case SelectSwitch3Pin::Status::Second:
+        target.setModeRestricted();
+        break;
+    case SelectSwitch3Pin::Status::Third:
+        target.setModeCalibration();
+        motorOnAllowed = false;
+        break;
+    default:
+        break;
+    }
+    motorController.initialize();
+    if (motorOnAllowed)
+    {
+        motorController.setMotorOn();
+        motorControlTimer.begin(motorControlISR, MOTOR_CONTROLL_CYCLE_TIME * 1000); // ms -> us
+        motorTimerRunning = true;
+    }
+    plausibilityValidator.initialize();
+
+    commandController.registerCommands(commandRouter);
 }
 
 unsigned long lastLogTime = 0;
 
 void loop()
 {
-  gAdc.read();
-  apps1.read();
-  apps2.read();
-  ittr.read();
-  tps1.read();
-  tps2.read();
-  bps.read();
-  selectSwitch.read();
+    gAdc.read();
+    apps1.read();
+    apps2.read();
+    ittr.read();
+    tps1.read();
+    tps2.read();
+    bps.read();
+    selectSwitch.read();
 
-  if (!plausibilityValidator.isCurrentlyValid())
-  {
-    if (motorController.isOn())
+    if (!plausibilityValidator.isCurrentlyValid())
     {
-      motorController.setMotorOff();
-      if (motorTimerRunning)
-      {
-        motorControlTimer.end();
-        motorTimerRunning = false;
-      }
-      digitalWrite(FUEL_PUMP_PIN, LOW);
+        if (motorController.isOn())
+        {
+            motorController.setMotorOff();
+            if (motorTimerRunning)
+            {
+                motorControlTimer.end();
+                motorTimerRunning = false;
+            }
+            digitalWrite(FUEL_PUMP_PIN, LOW);
+        }
     }
-  }
-  if (selectSwitch.changed())
-  {
-    switch (selectSwitch.getStatus())
+    if (selectSwitch.changed())
     {
-    case SelectSwitch3Pin::Status::Zero:
-      target.setModeCalibration();
-      break;
-    case SelectSwitch3Pin::Status::First:
-      target.setModeNormal();
-      break;
-    case SelectSwitch3Pin::Status::Second:
-      target.setModeRestricted();
-      break;
-    case SelectSwitch3Pin::Status::Third:
-      target.setModeNormal();
-      break;
-    default:
-      break;
+        switch (selectSwitch.getStatus())
+        {
+        case SelectSwitch3Pin::Status::Zero:
+            target.setModeCalibration();
+            break;
+        case SelectSwitch3Pin::Status::First:
+            target.setModeNormal();
+            break;
+        case SelectSwitch3Pin::Status::Second:
+            target.setModeRestricted();
+            break;
+        case SelectSwitch3Pin::Status::Third:
+            target.setModeNormal();
+            break;
+        default:
+            break;
+        }
     }
-  }
 
-  // Send sensor data via JSON protocol (50Hz)
-  unsigned long now = millis();
-  if (now - lastLogTime >= SENSOR_SEND_INTERVAL)
-  {
-    lastLogTime = now;
-    SerialProtocol::sendSensorData(
-        apps1, apps2, ittr, tps1, tps2, bps,
-        target, plausibilityValidator.isValid(),
-        plausibilityValidator.getErrorHandler());
-  }
+    // Send sensor data via JSON protocol (50Hz)
+    unsigned long now = millis();
+    if (now - lastLogTime >= SENSOR_SEND_INTERVAL)
+    {
+        lastLogTime = now;
+        SerialProtocol::sendSensorData(apps1, apps2, ittr, tps1, tps2, bps, target, plausibilityValidator.isValid(),
+                                       plausibilityValidator.getErrorHandler());
+    }
 
-  // Command polling
-  commandRouter.poll();
+    // Command polling
+    commandRouter.poll();
 }

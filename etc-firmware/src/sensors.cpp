@@ -261,14 +261,8 @@ bool Target::isManual()
     return _isManual;
 }
 
-double Target::manualPlus()
+double Target::manualAdjust(double amount)
 {
-    manualTarget += 0.1;
-    return manualTarget;
-}
-
-double Target::manualMinus()
-{
-    manualTarget -= 0.1;
+    manualTarget += amount;
     return manualTarget;
 }

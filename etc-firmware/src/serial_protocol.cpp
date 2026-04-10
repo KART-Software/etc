@@ -1,9 +1,16 @@
 #include "serial_protocol.hpp"
 
-void SerialProtocol::sendSensorData(
-    Apps &apps1, Apps &apps2, Ittr &ittr,
-    Tps &tps1, Tps &tps2, Bps &bps,
-    Target &target, bool isValid, ErrorHandler &errorHandler)
+void SerialProtocol::initialize()
+{
+    Serial.begin(SERIAL_SPEED);
+    while (!Serial && millis() < 3000)
+    {
+        // USB Serial 接続待ち（最大3秒）
+    }
+}
+
+void SerialProtocol::sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Bps &bps,
+                                    Target &target, bool isValid, ErrorHandler &errorHandler)
 {
     StaticJsonDocument<SENSOR_MSG_JSON_SIZE> doc;
     doc["t"] = "s";

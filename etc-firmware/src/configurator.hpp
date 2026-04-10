@@ -54,23 +54,22 @@ public:
 class Configurator
 {
 public:
-    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator);
+    Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target,
+                 MotorController &motorController, PlausibilityValidator &plausibilityValidator);
     void initialize();
     void calibrateFromFlash();
     void getConfigJson(JsonObject &out);
 
-    void startCalibration();
-    void finishCalibration();
     void setAppsMin();
     void setAppsMax();
     void setTpsMin();
     void setTpsMax();
     void setIdling();
-    bool setPlausibilityFlag(const char *key, bool val);
+    void setPlausibilityFlags(const PlausibilityCheckFlags &flags);
     void setIttrFlag(bool val);
     bool importConfig(const char *jsonStr);
-
-private:
+    void save();
+    void revert();
     Flash flash;
     RawSensorValues rawValues;
     PlausibilityCheckFlags plausibilityCheckFlags;
@@ -86,8 +85,6 @@ private:
     void loadPlausibilityCheckFlagsFromFlash();
     void loadUseIttrFlagFromFlash();
     void calibrate();
-    void save();
-    bool calibrating = false;
 };
 
 #endif

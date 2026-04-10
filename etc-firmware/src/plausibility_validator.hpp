@@ -12,8 +12,6 @@
 #define SENSOR_SAME_POSITION_THRESHOLD 10.0
 #define PLAUSIBLE_DURATION 500
 
-#define SERIAL_SPEED 115200
-
 class PlausibilityValidator
 {
 public:
@@ -21,16 +19,14 @@ public:
     void initialize();
     bool isCurrentlyValid();
     bool isValid();
-    void setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps);
-    ErrorHandler &getErrorHandler() { return errorHandler; }
-    bool appsCheckFlag = false,
-         tpsCheckFlag = false,
-         apps1CheckFlag = false,
-         apps2CheckFlag = false,
-         tps1CheckFlag = false,
-         tps2CheckFlag = false,
-         targetCheckFlag = false,
-         bpsCheckFlag = false,
+    void setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps,
+                       bool bpsTps);
+    ErrorHandler &getErrorHandler()
+    {
+        return errorHandler;
+    }
+    bool appsCheckFlag = false, tpsCheckFlag = false, apps1CheckFlag = false, apps2CheckFlag = false,
+         tps1CheckFlag = false, tps2CheckFlag = false, targetCheckFlag = false, bpsCheckFlag = false,
          bpsTpsCheckFlag = false;
 
 private:
@@ -41,15 +37,8 @@ private:
     Target &target;
     Bps &bps;
     bool isValidAllTime;
-    unsigned long
-        lastTpsPlausibleTime,
-        lastAppsPlausibleTime,
-        lastTps1CircuitValidTime,
-        lastTps2CircuitValidTime,
-        lastApps1CircuitValidTime,
-        lastApps2CircuitValidTime,
-        lastAppsTpsTargetValidTime,
-        lastBpsCircuitValidTime,
+    unsigned long lastTpsPlausibleTime, lastAppsPlausibleTime, lastTps1CircuitValidTime, lastTps2CircuitValidTime,
+        lastApps1CircuitValidTime, lastApps2CircuitValidTime, lastAppsTpsTargetValidTime, lastBpsCircuitValidTime,
         lastBpsTpsPlausibleTime;
 
     void initParameters();

@@ -166,8 +166,10 @@ String UseIttrFlag::serialize()
     return out;
 }
 
-Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target, MotorController &motorController, PlausibilityValidator &plausibilityValidator)
-    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), target(target), motorController(motorController), plausibilityValidator(plausibilityValidator)
+Configurator::Configurator(Apps &apps1, Apps &apps2, Tps &tps1, Tps &tps2, Ittr &ittr, Target &target,
+                           MotorController &motorController, PlausibilityValidator &plausibilityValidator)
+    : apps1(apps1), apps2(apps2), tps1(tps1), tps2(tps2), ittr(ittr), target(target), motorController(motorController),
+      plausibilityValidator(plausibilityValidator)
 {
 }
 
@@ -191,15 +193,9 @@ void Configurator::calibrate()
     tps2.setRawMin(rawValues.tps2Min);
     tps2.setRawMax(rawValues.tps2Max);
     plausibilityValidator.setCheckFlags(
-        plausibilityCheckFlags.apps,
-        plausibilityCheckFlags.tps,
-        plausibilityCheckFlags.apps1,
-        plausibilityCheckFlags.apps2,
-        plausibilityCheckFlags.tps1,
-        plausibilityCheckFlags.tps2,
-        plausibilityCheckFlags.target,
-        plausibilityCheckFlags.bps,
-        plausibilityCheckFlags.bpsTps);
+        plausibilityCheckFlags.apps, plausibilityCheckFlags.tps, plausibilityCheckFlags.apps1,
+        plausibilityCheckFlags.apps2, plausibilityCheckFlags.tps1, plausibilityCheckFlags.tps2,
+        plausibilityCheckFlags.target, plausibilityCheckFlags.bps, plausibilityCheckFlags.bpsTps);
     target.setIttr(useIttrFlag.useIttr);
 }
 
@@ -241,74 +237,12 @@ void Configurator::calibrateFromFlash()
     calibrate();
 }
 
-void Configurator::startCalibration()
+void Configurator::setPlausibilityFlags(const PlausibilityCheckFlags &flags)
 {
-    calibrating = true;
-    rawValuesChanged = false;
-    plausibilityCheckFlagsChanged = false;
-    useIttrFlagChanged = false;
-}
-
-void Configurator::finishCalibration()
-{
-    save();
-}
-
-bool Configurator::setPlausibilityFlag(const char *key, bool val)
-{
-    bool found = true;
-    if (strcmp(key, "apps") == 0)
-    {
-        plausibilityCheckFlags.apps = val;
-        plausibilityValidator.appsCheckFlag = val;
-    }
-    else if (strcmp(key, "tps") == 0)
-    {
-        plausibilityCheckFlags.tps = val;
-        plausibilityValidator.tpsCheckFlag = val;
-    }
-    else if (strcmp(key, "apps1") == 0)
-    {
-        plausibilityCheckFlags.apps1 = val;
-        plausibilityValidator.apps1CheckFlag = val;
-    }
-    else if (strcmp(key, "apps2") == 0)
-    {
-        plausibilityCheckFlags.apps2 = val;
-        plausibilityValidator.apps2CheckFlag = val;
-    }
-    else if (strcmp(key, "tps1") == 0)
-    {
-        plausibilityCheckFlags.tps1 = val;
-        plausibilityValidator.tps1CheckFlag = val;
-    }
-    else if (strcmp(key, "tps2") == 0)
-    {
-        plausibilityCheckFlags.tps2 = val;
-        plausibilityValidator.tps2CheckFlag = val;
-    }
-    else if (strcmp(key, "target") == 0)
-    {
-        plausibilityCheckFlags.target = val;
-        plausibilityValidator.targetCheckFlag = val;
-    }
-    else if (strcmp(key, "bps") == 0)
-    {
-        plausibilityCheckFlags.bps = val;
-        plausibilityValidator.bpsCheckFlag = val;
-    }
-    else if (strcmp(key, "bpsTps") == 0)
-    {
-        plausibilityCheckFlags.bpsTps = val;
-        plausibilityValidator.bpsTpsCheckFlag = val;
-    }
-    else
-    {
-        found = false;
-    }
-    if (found)
-        plausibilityCheckFlagsChanged = true;
-    return found;
+    plausibilityCheckFlags = flags;
+    plausibilityValidator.setCheckFlags(flags.apps, flags.tps, flags.apps1, flags.apps2, flags.tps1, flags.tps2,
+                                        flags.target, flags.bps, flags.bpsTps);
+    plausibilityCheckFlagsChanged = true;
 }
 
 void Configurator::setIttrFlag(bool val)
@@ -384,7 +318,14 @@ void Configurator::save()
     rawValuesChanged = false;
     plausibilityCheckFlagsChanged = false;
     useIttrFlagChanged = false;
-    calibrating = false;
+}
+
+void Configurator::revert()
+{
+    calibrateFromFlash();
+    rawValuesChanged = false;
+    plausibilityCheckFlagsChanged = false;
+    useIttrFlagChanged = false;
 }
 
 void Configurator::getConfigJson(JsonObject &out)
@@ -414,5 +355,4 @@ void Configurator::getConfigJson(JsonObject &out)
     pf["bpsTps"] = plausibilityCheckFlags.bpsTps;
 
     out["useIttr"] = useIttrFlag.useIttr;
-    out["calibrating"] = calibrating;
 }

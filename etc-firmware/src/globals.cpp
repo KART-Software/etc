@@ -1,3 +1,3 @@
 #include "globals.hpp"
 
-Adc gAdc = Adc();
+Adc gAdc(ADC_CS_PIN);

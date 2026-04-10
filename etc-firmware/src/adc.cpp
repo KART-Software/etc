@@ -1,103 +1,60 @@
 #include "adc.hpp"
 
-#ifdef MCP3208
+Adc::Adc(uint8_t csPin, SPIClass &spi) : csPin(csPin), spi(spi) {}
 
-template <typename CsPin>
-_adc<CsPin>::_adc() {}
-
-template <typename CsPin>
-void _adc<CsPin>::begin()
+void Adc::begin()
 {
     spi.begin();
-    CsPin::init();
-}
-
-template <typename CsPin>
-void _adc<CsPin>::read()
-{
-    for (uint8_t i = 0; i < numCh; i++)
-    {
-        uint32_t command = (uint32_t(SPI_BASE_BITS) | i) << SPI_NUM_SHIFTS;
-        spi.beginTransaction(spiSettings);
-        CsPin::set();
-        uint32_t readVal = 0;
-        readVal |= (uint32_t)spi.transfer((command >> 16) & 0xFF) << 16;
-        readVal |= (uint32_t)spi.transfer((command >> 8) & 0xFF) << 8;
-        readVal |= (uint32_t)spi.transfer(command & 0xFF);
-        CsPin::clear();
-        spi.endTransaction();
-        value[i] = readVal & 0xFFF;
-    }
-}
-
-#endif // MCP3208
-
-#ifdef ADS8688
-
-template <typename CsPin>
-_adc<CsPin>::_adc() {}
-
-template <typename CsPin>
-void _adc<CsPin>::begin()
-{
-    spi.begin();
-    CsPin::init();
+    *(portConfigRegister(csPin)) = 3;
     setReadRanges();
     setReadChannels();
     setReadModeAutoSeq();
 }
 
-template <typename CsPin>
-void _adc<CsPin>::spiTransfer(uint32_t txData, uint32_t *rxData, uint8_t numBytes)
+void Adc::writeRegister(uint8_t addr, uint8_t value)
 {
     spi.beginTransaction(spiSettings);
-    CsPin::set();
-    uint32_t rx = 0;
-    if (numBytes == 4)
-    {
-        rx = spi.transfer32(txData);
-    }
-    else
-    {
-        for (uint8_t i = numBytes; i > 0; i--)
-        {
-            rx |= (uint32_t)spi.transfer((txData >> ((i - 1) * 8)) & 0xFF) << ((i - 1) * 8);
-        }
-    }
-    CsPin::clear();
+    IMXRT_LPSPI4_S.TCR = (IMXRT_LPSPI4_S.TCR & 0xFFFFF000) | LPSPI_TCR_FRAMESZ(23);
+    uint32_t data = ((uint32_t)((addr << 1) | 0x01) << 16) | ((uint32_t)value << 8);
+    IMXRT_LPSPI4_S.TDR = data;
+    while (IMXRT_LPSPI4_S.RSR & LPSPI_RSR_RXEMPTY) {}
+    (void)IMXRT_LPSPI4_S.RDR;
     spi.endTransaction();
-    if (rxData)
-    {
-        *rxData = rx;
-    }
+    delayMicroseconds(2);
 }
 
-template <typename CsPin>
-void _adc<CsPin>::read()
+uint32_t Adc::transferCommand32(uint16_t cmd)
+{
+    spi.beginTransaction(spiSettings);
+    IMXRT_LPSPI4_S.TCR = (IMXRT_LPSPI4_S.TCR & 0xFFFFF000) | LPSPI_TCR_FRAMESZ(31);
+    IMXRT_LPSPI4_S.TDR = (uint32_t)cmd << 16;
+    while (IMXRT_LPSPI4_S.RSR & LPSPI_RSR_RXEMPTY) {}
+    uint32_t result = IMXRT_LPSPI4_S.RDR;
+    spi.endTransaction();
+    delayMicroseconds(2);
+    return result;
+}
+
+void Adc::read()
 {
     uint32_t readVal;
     for (int i = 0; i < ADC_NUM_CH - 1; i++)
     {
-        spiTransfer(NO_OP << 16, &readVal, 4);
-        value[chs[i]] = readVal >> 1; // なぜか 2ビット目から17ビット目までがデータになっている（？）ので、">> 1" をつけて、16ビットにキャストしたときにちょうどになるようにしている。
+        readVal = transferCommand32(NO_OP);
+        value[chs[i]] = static_cast<uint16_t>(readVal);
     }
-    spiTransfer(AUTO_RST << 16, &readVal, 4);
-    value[chs[ADC_NUM_CH - 1]] = readVal >> 1;
+    readVal = transferCommand32(AUTO_RST);
+    value[chs[ADC_NUM_CH - 1]] = static_cast<uint16_t>(readVal);
 }
 
-template <typename CsPin>
-void _adc<CsPin>::setReadChannels()
+void Adc::setReadChannels()
 {
     uint8_t enableChannelBits = createChannelSelectBits();
-    uint32_t powerDownReg = createWriteProgramRegister(CH_POWER_DOWN_ADDR, ~enableChannelBits);
-    uint32_t autoSeqReg = createWriteProgramRegister(AUTO_SEQ_EN_ADDR, enableChannelBits);
-
-    spiTransfer(powerDownReg, nullptr, 3);
-    spiTransfer(autoSeqReg, nullptr, 3);
+    writeRegister(CH_POWER_DOWN_ADDR, ~enableChannelBits);
+    writeRegister(AUTO_SEQ_EN_ADDR, enableChannelBits);
 }
 
-template <typename CsPin>
-uint32_t _adc<CsPin>::createChannelSelectBits()
+uint32_t Adc::createChannelSelectBits()
 {
     uint8_t bits = 0;
     bits |= 1 << APPS_1_CH;
@@ -110,33 +67,15 @@ uint32_t _adc<CsPin>::createChannelSelectBits()
     return bits;
 }
 
-template <typename CsPin>
-void _adc<CsPin>::setReadRanges()
+void Adc::setReadRanges()
 {
     for (uint32_t i = 0; i < 8; i++)
     {
-        uint32_t reg = createWriteProgramRegister(RANGE_SELECT_ADDR_0 + i, RANGE_4);
-        spiTransfer(reg, nullptr, 3);
+        writeRegister(RANGE_SELECT_ADDR_0 + i, RANGE_4);
     }
 }
 
-template <typename CsPin>
-uint32_t _adc<CsPin>::createWriteProgramRegister(uint8_t addr /* 7 bits */, uint8_t data)
+void Adc::setReadModeAutoSeq()
 {
-    uint32_t reg = addr & 0b1111111;
-    reg = (reg << 1) | 1;
-    reg = (reg << 8) | data;
-    reg = reg << 8;
-    return reg;
+    transferCommand32(AUTO_RST);
 }
-
-template <typename CsPin>
-void _adc<CsPin>::setReadModeAutoSeq()
-{
-    spiTransfer(AUTO_RST << 16, nullptr, 4);
-}
-
-#endif // ADS8688
-
-// 明示的インスタンス化
-template class _adc<SPI_CS_PIN>;

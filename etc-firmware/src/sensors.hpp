@@ -95,8 +95,7 @@ public:
 
     bool setManual();
     bool isManual();
-    double manualPlus();
-    double manualMinus();
+    double manualAdjust(double amount);
 
 private:
     enum class Mode

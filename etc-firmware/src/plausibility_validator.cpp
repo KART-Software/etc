@@ -1,13 +1,13 @@
 #include "plausibility_validator.hpp"
 
-PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Target &target, Bps &bps)
+PlausibilityValidator::PlausibilityValidator(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Target &target,
+                                             Bps &bps)
     : apps1(apps1), apps2(apps2), ittr(ittr), tps1(tps1), tps2(tps2), target(target), bps(bps)
 {
 }
 
 void PlausibilityValidator::initialize()
 {
-    Serial.begin(SERIAL_SPEED);
     initParameters();
 }
 
@@ -204,7 +204,8 @@ bool PlausibilityValidator::isBpsTpsPlausible()
     return true;
 }
 
-void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2, bool target, bool bps, bool bpsTps)
+void PlausibilityValidator::setCheckFlags(bool apps, bool tps, bool apps1, bool apps2, bool tps1, bool tps2,
+                                          bool target, bool bps, bool bpsTps)
 {
     appsCheckFlag = apps;
     tpsCheckFlag = tps;

@@ -4,24 +4,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "constants.hpp"
-#include "fast_pin.hpp"
 
-#define SPI_CS_PIN FastPin<10, true> // Teensy 4.1 SPI0 の CS ピン (Active LOW)
-#define SPI_BUS SPI
-
-#ifdef MCP3208
-
-#define SPI_MODE_ADC SPI_MODE0
-#define SPI_BIT_ORDER MSBFIRST
-#define SPI_FREQUENCY 2000000
-
-#define SPI_BASE_BITS 0b0000011000
-#define SPI_NUM_SHIFTS 14
-
-#endif // MCP3208
-
-#ifdef ADS8688
-// https://www.ti.com/jp/lit/ds/symlink/ads8688.pdf?ts=1690504622401&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fja-jp%252FADS8688
+// https://www.ti.com/jp/lit/ds/symlink/ads8688.pdf
 
 #define SPI_MODE_ADC SPI_MODE1
 #define SPI_BIT_ORDER MSBFIRST
@@ -52,33 +36,26 @@
 #define RANGE_4 0b0110 // 0 ~ 1.25 x VREF
                        // VREF = 4.096V
 
-#endif
-
-template <typename CsPin>
-class _adc
+class Adc
 {
 public:
-    _adc();
+    Adc(uint8_t csPin, SPIClass &spi = SPI);
     void begin();
     void read();
     uint16_t value[8];
 
 private:
-    SPIClass &spi = SPI_BUS;
+    SPIClass &spi;
+    uint8_t csPin;
     SPISettings spiSettings = SPISettings(SPI_FREQUENCY, SPI_BIT_ORDER, SPI_MODE_ADC);
     const uint8_t numCh = ADC_NUM_CH;
-#ifdef ADS8688
     const uint8_t chs[ADC_NUM_CH] = ADC_CHANNELS;
     void setReadChannels();
     void setReadModeAutoSeq();
     void setReadRanges();
     uint32_t createChannelSelectBits();
-    uint32_t createReadProgramRegister(uint8_t addr /* 7 bits */);
-    uint32_t createWriteProgramRegister(uint8_t addr /* 7 bits */, uint8_t data);
-    void spiTransfer(uint32_t txData, uint32_t *rxData, uint8_t numBytes);
-#endif
+    void writeRegister(uint8_t addr, uint8_t value);
+    uint32_t transferCommand32(uint16_t cmd);
 };
-
-using Adc = _adc<SPI_CS_PIN>;
 
 #endif // _ADC_H_

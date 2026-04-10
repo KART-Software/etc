@@ -21,23 +21,6 @@ public:
 
 private:
     CommandContainer container;
-
-    static void onCalStart(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onCalFinish(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onMotorOff(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetAppsMin(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetAppsMax(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetTpsMin(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetTpsMax(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetIdling(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetFlag(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetIttr(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetManual(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onManualPlus(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onManualMinus(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onGetConfig(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onSetConfig(void *ctx, JsonDocument &doc, uint32_t id);
-    static void onReboot(void *ctx, JsonDocument &doc, uint32_t id);
 };
 
 #endif

@@ -13,21 +13,7 @@
 /// ADC Settings ///
 ////////////////////
 
-/// MCP3208 or ADS8688 ///
-// #define MCP3208
-#define ADS8688
-
-#ifdef MCP3208
-#define ADC_NUM_CH 6
-#define APPS_1_CH 4
-#define APPS_2_CH 5
-#define TPS_1_CH 2
-#define TPS_2_CH 3
-#define ITTR_CH 0 // IST Throttle Position Target Receiver (ITTR)
-#define BPS_CH 1  // Brake Pressure Sensor
-#endif
-
-#ifdef ADS8688
+#define ADC_CS_PIN 10
 #define ADC_NUM_CH 7
 #define APPS_1_CH 0
 #define APPS_2_CH 1
@@ -39,7 +25,6 @@
 #define ADC_CHANNELS \
     {                \
         0, 1, 2, 3, 4, 6, 7} // Sorted Channels
-#endif
 
 ////////////////////
 /// PWM Settings ///
@@ -145,9 +130,9 @@
 /// Button Settings ///
 ///////////////////////
 
-#define BUTTON_1_PIN 13 // TODO: Teensy 4.1 のピン番号に変更
-#define BUTTON_2_PIN 12 // TODO: Teensy 4.1 のピン番号に変更
-#define BUTTON_3_PIN 14 // TODO: Teensy 4.1 のピン番号に変更
+#define BUTTON_1_PIN 24
+#define BUTTON_2_PIN 25
+#define BUTTON_3_PIN 26
 
 /////////////////////////////////
 /// Other Output Pin Settings ///

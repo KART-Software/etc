@@ -1,4 +1,5 @@
 #include "flash.hpp"
+#include "serial_protocol.hpp"
 
 bool Flash::initialize()
 {
@@ -9,7 +10,7 @@ bool Flash::initialize()
             return true;
         }
     }
-    Serial.println("\033[KLittleFS begin failed.");
+    SerialProtocol::sendDebug("LittleFS begin failed.");
     return false;
 }
 
@@ -18,8 +19,9 @@ void Flash::write(const char *fileName, const String &jsonStr)
     File file = fs.open(fileName, FILE_WRITE);
     file.print(jsonStr);
     file.close();
-    Serial.printf("\033[K---- Saved to %s ----\n", fileName);
-    Serial.println(jsonStr);
+    char buf[128];
+    snprintf(buf, sizeof(buf), "Saved to %s", fileName);
+    SerialProtocol::sendDebug(buf);
 }
 
 String Flash::read(const char *fileName)
@@ -31,7 +33,8 @@ String Flash::read(const char *fileName)
     }
     String jsonStr = file.readString();
     file.close();
-    Serial.printf("\033[K---- Loaded from %s ----\n", fileName);
-    Serial.println(jsonStr);
+    char buf[128];
+    snprintf(buf, sizeof(buf), "Loaded from %s", fileName);
+    SerialProtocol::sendDebug(buf);
     return jsonStr;
 }
