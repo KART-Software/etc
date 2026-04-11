@@ -77,7 +77,9 @@ function sensorTick() {
     br: Math.round(bpsVal * 100),
     b: +bpsVal.toFixed(2),
     tgt: +tgt.toFixed(2),
-    m: manualMode ? "MAN" : "NRM",
+    m: "Normal",
+    manual: manualMode,
+    tgt_ittr: false,
     v: true,
     err: [] as number[],
   };

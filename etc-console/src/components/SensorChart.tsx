@@ -3,12 +3,12 @@ import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
 import type { SensorData } from "../types";
 
-const SERIES_KEYS = ["a1", "a2", "t1", "t2", "tgt"] as const;
-const SERIES_COLORS = ["#0ea5e9", "#38bdf8", "#22c55e", "#4ade80", "#f59e0b"];
-const SERIES_LABELS = ["APPS1", "APPS2", "TPS1", "TPS2", "Target"];
+const SERIES_KEYS = ["a1", "a2", "i", "t1", "t2", "tgt"] as const;
+const SERIES_COLORS = ["#0ea5e9", "#38bdf8", "#f59e0b", "#22c55e", "#4ade80", "#a78bfa"];
+const SERIES_LABELS = ["APPS1", "APPS2", "ITTR", "TPS1", "TPS2", "Target"];
 
 // Unlimited buffer — no dropping
-const buf: number[][] = [[], [], [], [], [], []];
+const buf: number[][] = [[], [], [], [], [], [], []];
 
 function pushData(data: SensorData) {
   buf[0].push(data.ts / 1000);

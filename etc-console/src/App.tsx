@@ -8,8 +8,6 @@ import { SensorMonitor } from "./components/SensorMonitor";
 import { ErrorStatus } from "./components/ErrorStatus";
 import { SensorChart } from "./components/SensorChart";
 import { CorrelationCharts } from "./components/CorrelationCharts";
-import { Calibration } from "./components/Calibration";
-import { PlausibilityFlags } from "./components/PlausibilityFlags";
 import { ConfigPanel } from "./components/ConfigPanel";
 import { DebugLog, type LogEntry } from "./components/DebugLog";
 import { BarGauges } from "./components/BarGauges";
@@ -25,6 +23,7 @@ export function App() {
   const [timeRange, setTimeRange] = useState<[number, number] | null>(null);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [config, setConfig] = useState<DeviceConfig | null>(null);
+  const [dirty, setDirty] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const logRef = useRef(logs);
   logRef.current = logs;
@@ -43,6 +42,11 @@ export function App() {
     protocol.setTransport(t);
     protocol.setOnSensorData((data) => setSensorData(data));
     protocol.setOnDebugLog((msg, ts) => addLog(msg, ts));
+    if (import.meta.env.DEV) {
+      protocol.setOnSerialLog((dir, line) => {
+        console.log(`[Serial ${dir.toUpperCase()}]`, line);
+      });
+    }
     t.setOnLineReceived((line) => protocol.handleLine(line));
     t.setOnDisconnect(() => {
       setConnected(false);
@@ -78,10 +82,34 @@ export function App() {
     addLog("Disconnected");
   }
 
+  function handleSave() {
+    protocol.sendCommand("save")
+      .then((resp) => {
+        setDirty(false);
+        if (resp.ok && resp.data) setConfig(resp.data as unknown as DeviceConfig);
+        addLog("Config saved");
+      })
+      .catch((err: Error) => addLog("Save error: " + err.message));
+  }
+
+  function handleRevert() {
+    protocol.sendCommand("revert")
+      .then((resp) => {
+        setDirty(false);
+        if (resp.ok && resp.data) setConfig(resp.data as unknown as DeviceConfig);
+        addLog("Config reverted");
+      })
+      .catch((err: Error) => addLog("Revert error: " + err.message));
+  }
+
   return (
-    <>
+    <div id="app-root">
       <header>
         <h1>ETC Console</h1>
+        <div class="header-actions">
+          <button class="danger" disabled={!connected} onClick={() => protocol.sendCommand("motor_off").catch((err: Error) => addLog("Command error: " + err.message))}>Motor OFF</button>
+          <button class="danger" disabled={!connected} onClick={() => protocol.sendCommand("reboot").catch((err: Error) => addLog("Command error: " + err.message))}>Reboot</button>
+        </div>
         <div class="connection-controls">
           <button onClick={handleConnect} disabled={connected || !webSerialAvailable}>Connect</button>
           <button onClick={handleDisconnect} disabled={!connected}>Disconnect</button>
@@ -90,21 +118,26 @@ export function App() {
           </span>
         </div>
       </header>
+      {dirty && (
+        <div class="action-bar">
+          <span class="action-bar-label">Unsaved changes</span>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={handleRevert}>Revert</button>
+        </div>
+      )}
 
       <main>
         <div class="area-sensors"><SensorMonitor data={sensorData} /></div>
-        <div class="area-errors"><ErrorStatus errors={sensorData?.err ?? []} /></div>
-        <div class="area-bars"><BarGauges data={sensorData} /></div>
-        <div class="area-raw"><RawBarGauges data={sensorData} config={config} /></div>
+        <div class="area-errors"><ErrorStatus errors={sensorData?.err ?? []} flags={config?.plausibilityFlags ?? {}} addLog={addLog} onFlagsUpdate={(pf) => {
+          setConfig((prev) => prev ? { ...prev, plausibilityFlags: pf } : prev);
+        }} onDirty={() => setDirty(true)} /></div>
+        <div class="area-bars"><BarGauges data={sensorData} addLog={addLog} onDirty={() => setDirty(true)} /></div>
+        <div class="area-raw"><RawBarGauges data={sensorData} config={config} addLog={addLog} onConfigUpdate={(partial) => {
+          setConfig((prev) => prev ? { ...prev, sensorValues: { ...prev.sensorValues, ...partial } } : prev);
+        }} onDirty={() => setDirty(true)} /></div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
         <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} /></div>
-        <div class="area-cal"><Calibration addLog={addLog} /></div>
-        <div class="area-flags">
-          <PlausibilityFlags
-            flags={config?.plausibilityFlags ?? {}}
-            useIttr={config?.useIttr ?? false}
-            addLog={addLog}
-          />
+        <div class="area-config">
           <ConfigPanel config={config} onConfigLoaded={setConfig} addLog={addLog} />
         </div>
         <div class="area-log"><DebugLog entries={logs} /></div>
@@ -114,6 +147,6 @@ export function App() {
           </section>
         )}
       </main>
-    </>
+    </div>
   );
 }

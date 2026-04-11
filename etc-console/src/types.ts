@@ -15,6 +15,8 @@ export interface SensorData {
   b: number;
   tgt: number;
   m: string;
+  manual: boolean;
+  tgt_ittr: boolean;
   v: boolean;
   err: number[];
 }

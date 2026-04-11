@@ -30,17 +30,8 @@ export function SensorMonitor({ data }: Props) {
           <SensorRow label="APPS2" raw={data?.a2r} val={data?.a2} unit="%" />
         </div>
         <div class="sensor-group">
-          <h3>TPS</h3>
-          <SensorRow label="TPS1" raw={data?.t1r} val={data?.t1} unit="%" />
-          <SensorRow label="TPS2" raw={data?.t2r} val={data?.t2} unit="%" />
-        </div>
-        <div class="sensor-group">
           <h3>ITTR</h3>
           <SensorRow label="ITTR" raw={data?.ir} val={data?.i} unit="%" />
-        </div>
-        <div class="sensor-group">
-          <h3>BPS</h3>
-          <SensorRow label="BPS" raw={data?.br} val={data?.b} unit="psi" />
         </div>
         <div class="sensor-group">
           <h3>Target</h3>
@@ -48,8 +39,16 @@ export function SensorMonitor({ data }: Props) {
             <span class="label">Target</span>
             <span class="val">{fmt(data?.tgt)}</span>
             <span class="unit">%</span>
-            <span class="mode">{data?.m ?? "-"}</span>
           </div>
+        </div>
+        <div class="sensor-group">
+          <h3>TPS</h3>
+          <SensorRow label="TPS1" raw={data?.t1r} val={data?.t1} unit="%" />
+          <SensorRow label="TPS2" raw={data?.t2r} val={data?.t2} unit="%" />
+        </div>
+        <div class="sensor-group">
+          <h3>BPS</h3>
+          <SensorRow label="BPS" raw={data?.br} val={data?.b} unit="psi" />
         </div>
         <div class="sensor-group">
           <h3>Status</h3>

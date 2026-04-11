@@ -21,6 +21,7 @@ const pending = new Map<
 
 let onSensorData: ((data: SensorData) => void) | null = null;
 let onDebugLog: ((msg: string, ts: number) => void) | null = null;
+let onSerialLog: ((direction: "rx" | "tx", line: string) => void) | null = null;
 
 function handleLine(line: string): void {
   let msg: Message;
@@ -36,9 +37,11 @@ function handleLine(line: string): void {
       break;
     case "d":
       onDebugLog?.(msg.msg, msg.ts);
+      onSerialLog?.("rx", line);
       break;
     case "r":
       resolvePending(msg);
+      onSerialLog?.("rx", line);
       break;
   }
 }
@@ -69,7 +72,9 @@ function sendCommand(
     }, RESPONSE_TIMEOUT);
 
     pending.set(id, { resolve, reject, timer });
-    transport?.send(JSON.stringify(message));
+    const json = JSON.stringify(message);
+    onSerialLog?.("tx", json);
+    transport?.send(json);
   });
 }
 
@@ -81,6 +86,9 @@ export const protocol = {
   },
   setOnDebugLog(fn: (msg: string, ts: number) => void) {
     onDebugLog = fn;
+  },
+  setOnSerialLog(fn: (direction: "rx" | "tx", line: string) => void) {
+    onSerialLog = fn;
   },
   setTransport(t: Transport) {
     transport = t;
