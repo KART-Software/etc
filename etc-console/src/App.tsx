@@ -13,6 +13,7 @@ import { DebugLog, type LogEntry } from "./components/DebugLog";
 import { BarGauges } from "./components/BarGauges";
 import { RawBarGauges } from "./components/RawBarGauges";
 import { PidTuner } from "./components/PidTuner";
+import { TargetBoundTuner } from "./components/TargetBoundTuner";
 import { TargetCurveTuner } from "./components/TargetCurveTuner";
 import { CurvePreview } from "./components/CurvePreview";
 import { ModeKnob } from "./components/ModeKnob";
@@ -28,6 +29,7 @@ export function App() {
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   const [config, setConfig] = useState<DeviceConfig | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [previewCurve, setPreviewCurve] = useState<{ a4: number; a3: number; a2: number; a1: number } | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const logRef = useRef(logs);
   logRef.current = logs;
@@ -151,11 +153,17 @@ export function App() {
             <PidTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onPidUpdate={(pid) => {
               setConfig((prev) => prev ? { ...prev, pid } : prev);
             }} />
+            <TargetBoundTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onBoundUpdate={(bound) => {
+              setConfig((prev) => prev ? { ...prev, sensorValues: { ...prev.sensorValues, ...bound } } : prev);
+            }} />
           </div>
         </div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
-        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} curvePreview={<CurvePreview targetCurve={config?.targetCurve} />} footer={
-          <TargetCurveTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onCurveUpdate={(targetCurve) => {
+        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime}
+          targetCurve={previewCurve ?? config?.targetCurve} mode={sensorData?.m} idling={config?.sensorValues.idling} normalMax={config?.sensorValues.normalMax} restrictedMax={config?.sensorValues.restrictedMax}
+          curvePreview={<CurvePreview targetCurve={previewCurve ?? config?.targetCurve} />} footer={
+          <TargetCurveTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onPreview={setPreviewCurve} onCurveUpdate={(targetCurve) => {
+            setPreviewCurve(null);
             setConfig((prev) => prev ? { ...prev, targetCurve } : prev);
           }} />
         } /></div>

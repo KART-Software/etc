@@ -37,6 +37,8 @@ const sensorValues = {
   tps2Min: 300,
   tps2Max: 3600,
   idling: 5.0,
+  normalMax: 100,
+  restrictedMax: 60,
 };
 const pidGains = { kP: 3.0, kI: 0.4, kD: 0.0 };
 const targetCurve = { a4: 0, a3: 0, a2: 0.0087, a1: 0.13 };
@@ -255,6 +257,27 @@ function handleCommand(text: string) {
             id,
             ok: true,
             data: { idling: sensorValues.idling },
+          }),
+        );
+        break;
+      }
+      case "set_target_bound": {
+        if (data?.idling != null) sensorValues.idling = data.idling as number;
+        if (data?.normalMax != null)
+          sensorValues.normalMax = data.normalMax as number;
+        if (data?.restrictedMax != null)
+          sensorValues.restrictedMax = data.restrictedMax as number;
+        configChanged = true;
+        emit(
+          JSON.stringify({
+            t: "r",
+            id,
+            ok: true,
+            data: {
+              idling: sensorValues.idling,
+              normalMax: sensorValues.normalMax,
+              restrictedMax: sensorValues.restrictedMax,
+            },
           }),
         );
         break;

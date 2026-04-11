@@ -49,6 +49,8 @@ export interface DeviceConfig {
     tps2Min: number;
     tps2Max: number;
     idling: number;
+    normalMax: number;
+    restrictedMax: number;
   };
   plausibilityFlags: Record<string, boolean>;
   useIttr: boolean;

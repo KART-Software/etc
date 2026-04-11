@@ -13,9 +13,10 @@ interface Props {
   addLog: (msg: string) => void;
   onDirty: () => void;
   onCurveUpdate: (curve: TargetCurve) => void;
+  onPreview?: (curve: TargetCurve) => void;
 }
 
-export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Props) {
+export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate, onPreview }: Props) {
   const [a4, setA4] = useState("");
   const [a3, setA3] = useState("");
   const [a2, setA2] = useState("");
@@ -24,6 +25,12 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Pro
 
   // Display scales: UI value = internal value * scale
   const S4 = 1e6, S3 = 1e4, S2 = 100;
+
+  function emitPreview(v4: string, v3: string, v2: string, v1: string) {
+    const vals = [v4, v3, v2, v1].map(parseFloat);
+    if (vals.some(Number.isNaN)) return;
+    onPreview?.({ a4: vals[0] / S4, a3: vals[1] / S3, a2: vals[2] / S2, a1: vals[3] });
+  }
 
   useEffect(() => {
     if (config?.targetCurve) {
@@ -78,19 +85,19 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Pro
         <div class="pid-row">
           <label class="pid-field">
             <span>a4 (×10⁻⁶)</span>
-            <input type="number" step="0.1" value={a4} onInput={(e) => setA4((e.target as HTMLInputElement).value)} />
+            <input type="number" step="0.1" value={a4} onInput={(e) => { const v = (e.target as HTMLInputElement).value; setA4(v); emitPreview(v, a3, a2, a1); }} />
           </label>
           <label class="pid-field">
             <span>a3 (×10⁻⁴)</span>
-            <input type="number" step="0.1" value={a3} onInput={(e) => setA3((e.target as HTMLInputElement).value)} />
+            <input type="number" step="0.1" value={a3} onInput={(e) => { const v = (e.target as HTMLInputElement).value; setA3(v); emitPreview(a4, v, a2, a1); }} />
           </label>
           <label class="pid-field">
             <span>a2 (×10⁻²)</span>
-            <input type="number" step="0.1" value={a2} onInput={(e) => setA2((e.target as HTMLInputElement).value)} />
+            <input type="number" step="0.1" value={a2} onInput={(e) => { const v = (e.target as HTMLInputElement).value; setA2(v); emitPreview(a4, a3, v, a1); }} />
           </label>
           <label class="pid-field">
             <span>a1</span>
-            <input type="number" step="0.01" value={a1} onInput={(e) => setA1((e.target as HTMLInputElement).value)} />
+            <input type="number" step="0.01" value={a1} onInput={(e) => { const v = (e.target as HTMLInputElement).value; setA1(v); emitPreview(a4, a3, a2, v); }} />
           </label>
           <button class="pid-apply" onClick={send}>Apply</button>
         </div>

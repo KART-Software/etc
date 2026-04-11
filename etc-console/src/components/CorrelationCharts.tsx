@@ -103,23 +103,81 @@ const drawPoints: uPlot.Series.PathBuilder = (u, seriesIdx, _idx0, _idx1) => {
   return null;
 };
 
-function createOpts(cfg: XYConfig, size: number): uPlot.Options {
+interface TargetCurve {
+  a4: number;
+  a3: number;
+  a2: number;
+  a1: number;
+}
+
+interface CurveOverlayParams {
+  curve: TargetCurve;
+  mode: string;
+  idling: number;
+  normalMax: number;
+  restrictedMax: number;
+}
+
+function curveMinMax(p: CurveOverlayParams): [number, number] {
+  switch (p.mode) {
+    case "Normal":   return [p.idling, p.normalMax];
+    case "Restrict": return [p.idling, p.restrictedMax];
+    case "Calib":    return [0, 100];
+    default:         return [0, 100];
+  }
+}
+
+function createOpts(cfg: XYConfig, size: number, overlayRef?: { current: CurveOverlayParams | null }): uPlot.Options {
+  const hooks: uPlot.Options["hooks"] = {
+    drawClear: [
+      (u: uPlot) => {
+        u.series.forEach((s, i) => {
+          if (i > 0) (s as any)._paths = null;
+        });
+      },
+    ],
+  };
+
+  if (overlayRef) {
+    hooks.drawSeries = [
+      (u: uPlot, seriesIdx: number) => {
+        if (seriesIdx !== 1) return;
+        const p = overlayRef.current;
+        if (!p) return;
+        const { curve } = p;
+        const [minV, maxV] = curveMinMax(p);
+        const ctx = u.ctx;
+        const xScale = u.scales.x;
+        const yScale = u.scales.y;
+        if (!xScale || !yScale) return;
+
+        ctx.save();
+        ctx.beginPath();
+        const N = 101;
+        for (let i = 0; i < N; i++) {
+          const x = i;
+          const poly = ((((curve.a4 * x + curve.a3) * x + curve.a2) * x + curve.a1) * x);
+          const y = minV + poly * (maxV - minV) / 100;
+          const px = u.valToPos(x, "x", true);
+          const py = u.valToPos(y, "y", true);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = "#a78bfa";
+        ctx.lineWidth = 2 * devicePixelRatio;
+        ctx.globalAlpha = 0.8;
+        ctx.stroke();
+        ctx.restore();
+      },
+    ];
+  }
+
   return {
     mode: 2,
     width: size,
     height: size,
     legend: { show: false },
-    hooks: {
-      // Critical: force-clear path cache so drawPoints is re-called on every setData()
-      drawClear: [
-        (u: uPlot) => {
-          u.series.forEach((s, i) => {
-            if (i > 0)
-              (s as any)._paths = null;
-          });
-        },
-      ],
-    },
+    hooks,
     scales: {
       x: { time: false, range: [0, 100] as [number, number] },
       y: { range: [0, 100] as [number, number] },
@@ -155,13 +213,29 @@ interface Props {
   onHoverTime?: (ts: number | null) => void;
   curvePreview?: ComponentChildren;
   footer?: ComponentChildren;
+  targetCurve?: TargetCurve;
+  mode?: string;
+  idling?: number;
+  normalMax?: number;
+  restrictedMax?: number;
 }
 
-export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, footer }: Props) {
+export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, footer, targetCurve, mode, idling, normalMax, restrictedMax }: Props) {
   const wrapRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const plotRefs = useRef<(uPlot | null)[]>([null, null]);
   const onHoverTimeRef = useRef(onHoverTime);
   onHoverTimeRef.current = onHoverTime;
+
+  const overlayRef = useRef<CurveOverlayParams | null>(null);
+  if (targetCurve && mode) {
+    overlayRef.current = {
+      curve: targetCurve,
+      mode,
+      idling: idling ?? 0,
+      normalMax: normalMax ?? 100,
+      restrictedMax: restrictedMax ?? 60,
+    };
+  }
 
   useEffect(() => {
     if (!data) return;
@@ -179,7 +253,7 @@ export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, 
         const el = wrapRefs[i].current;
         if (!el) return;
         plotRefs.current[i] = new uPlot(
-          createOpts(cfg, el.clientWidth),
+          createOpts(cfg, el.clientWidth, i === 0 ? overlayRef : undefined),
           bufs[i] as unknown as uPlot.AlignedData,
           el,
         );
