@@ -52,4 +52,5 @@ export interface DeviceConfig {
   };
   plausibilityFlags: Record<string, boolean>;
   useIttr: boolean;
+  pid: { kP: number; kI: number; kD: number };
 }

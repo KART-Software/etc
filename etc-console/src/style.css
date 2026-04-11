@@ -92,7 +92,7 @@ main {
 .area-sensors { grid-area: sensors; }
 .area-errors  { grid-area: errors; }
 .area-bars    { grid-area: bars; }
-.area-raw     { grid-area: raw; }
+.area-raw     { grid-area: raw; display: flex; flex-direction: column; gap: 16px; }
 .area-chart   { grid-area: chart; }
 .area-corr    { grid-area: corr; }
 .area-config  { grid-area: config; }
@@ -548,4 +548,71 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
 
 .bar-marker-max {
   background: var(--err);
+}
+
+/* ── PID Tuner ──────────────────────────── */
+.pid-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pid-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--fg2);
+  text-transform: uppercase;
+}
+
+.pid-field input {
+  width: 90px;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+}
+
+.pid-apply {
+  padding: 6px 16px;
+  align-self: flex-end;
+}
+
+.pid-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pid-header h2 {
+  margin-bottom: 0;
+}
+
+.pid-current {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--fg2);
+}
+
+.pid-chevron {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--fg2);
+  transition: transform 0.2s;
+  transform: rotate(180deg);
+}
+
+.pid-chevron.open {
+  transform: rotate(90deg);
+}
+
+.pid-row {
+  margin-top: 12px;
 }

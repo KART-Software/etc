@@ -105,6 +105,7 @@ function handleCommand(text: string) {
           sensorValues,
           plausibilityFlags: { ...flags },
           useIttr,
+          pid: { kP: 3.0, kI: 0.4, kD: 0.0 },
         };
         emit(JSON.stringify({ t: "r", id, ok: true, data: cfg }));
         break;

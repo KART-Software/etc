@@ -12,6 +12,7 @@ import { ConfigPanel } from "./components/ConfigPanel";
 import { DebugLog, type LogEntry } from "./components/DebugLog";
 import { BarGauges } from "./components/BarGauges";
 import { RawBarGauges } from "./components/RawBarGauges";
+import { PidTuner } from "./components/PidTuner";
 
 const MAX_LOG_ENTRIES = 100;
 const isMock = new URLSearchParams(window.location.search).has("mock");
@@ -134,7 +135,11 @@ export function App() {
         <div class="area-bars"><BarGauges data={sensorData} addLog={addLog} onDirty={() => setDirty(true)} /></div>
         <div class="area-raw"><RawBarGauges data={sensorData} config={config} addLog={addLog} onConfigUpdate={(partial) => {
           setConfig((prev) => prev ? { ...prev, sensorValues: { ...prev.sensorValues, ...partial } } : prev);
-        }} onDirty={() => setDirty(true)} /></div>
+        }} onDirty={() => setDirty(true)} />
+          <PidTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onPidUpdate={(pid) => {
+            setConfig((prev) => prev ? { ...prev, pid } : prev);
+          }} />
+        </div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
         <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} /></div>
         <div class="area-config">
