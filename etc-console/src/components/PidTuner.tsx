@@ -60,7 +60,7 @@ export function PidTuner({ config, addLog, onDirty, onPidUpdate }: Props) {
       <div class="pid-header" onClick={() => setOpen(!open)}>
         <h2>PID Gains</h2>
         {config?.pid && (
-          <span class="pid-current">KP: {config.pid.kP}　KI: {config.pid.kI}　KD: {config.pid.kD}</span>
+          <span class="pid-current">P: {config.pid.kP}　I: {config.pid.kI}　D: {config.pid.kD}</span>
         )}
         <span class={`pid-chevron ${open ? "open" : ""}`}>▶</span>
       </div>

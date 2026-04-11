@@ -7,10 +7,12 @@ const ERROR_LABELS: Record<number, string> = {
   3: "TPS2 Circuit",
   4: "APPS1 Circuit",
   5: "APPS2 Circuit",
-  6: "APPS-TPS Target",
+  6: "Target-TPS Implausible",
   7: "BPS Circuit",
   8: "BPS-TPS Implausible",
 };
+
+const DISPLAY_ORDER = [1, 4, 5, 0, 2, 3, 6, 7, 8];
 
 const ERROR_TO_FLAG: Record<number, string> = {
   0: "tps",
@@ -27,12 +29,13 @@ const ERROR_TO_FLAG: Record<number, string> = {
 interface Props {
   errors: number[];
   flags: Record<string, boolean>;
+  valid?: boolean;
   addLog: (msg: string) => void;
   onFlagsUpdate: (flags: Record<string, boolean>) => void;
   onDirty: () => void;
 }
 
-export function ErrorStatus({ errors, flags, addLog, onFlagsUpdate, onDirty }: Props) {
+export function ErrorStatus({ errors, flags, valid, addLog, onFlagsUpdate, onDirty }: Props) {
   const errSet = new Set(errors);
 
   function onFlagChange(errorId: number, checked: boolean) {
@@ -51,15 +54,17 @@ export function ErrorStatus({ errors, flags, addLog, onFlagsUpdate, onDirty }: P
 
   return (
     <section>
-      <h2>Error Status</h2>
-      <div class="error-grid">
-        {Object.entries(ERROR_LABELS).map(([id, label]) => {
-          const numId = Number(id);
+      <div class={`error-status-badge ${valid == null ? '' : valid ? 'ok' : 'err'}`}>
+        {valid == null ? '-' : valid ? 'OK' : 'ERROR'}
+      </div>
+      <div class="error-list">
+        {DISPLAY_ORDER.map((numId) => {
+          const label = ERROR_LABELS[numId];
           const flagKey = ERROR_TO_FLAG[numId];
           const enabled = flagKey ? (flags[flagKey] ?? false) : true;
           const hasError = errSet.has(numId);
           return (
-            <div class={`error-item${enabled ? "" : " disabled"}`} key={id}>
+            <div class={`error-item${enabled ? "" : " disabled"}`} key={numId}>
               {flagKey && (
                 <input
                   type="checkbox"

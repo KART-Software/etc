@@ -1,5 +1,4 @@
 import type { Transport } from "./transport";
-import type { DeviceConfig } from "./types";
 
 const SENSOR_INTERVAL = 20; // 50Hz
 
@@ -11,6 +10,9 @@ let onDisconnect: (() => void) | null = null;
 // Simulated device state
 let t0 = 0;
 let manualMode = false;
+let manualTarget = 30;
+let configChanged = false;
+const MOCK_MODES = ["Calib", "Normal", "Restrict"] as const;
 const flags: Record<string, boolean> = {
   apps: true,
   tps: true,
@@ -36,6 +38,17 @@ const sensorValues = {
   tps2Max: 3600,
   idling: 5.0,
 };
+const pidGains = { kP: 3.0, kI: 0.4, kD: 0.0 };
+
+function getFullConfig() {
+  return {
+    sensorValues: { ...sensorValues },
+    plausibilityFlags: { ...flags },
+    useIttr,
+    pid: { ...pidGains },
+    configChanged,
+  };
+}
 
 function emit(line: string) {
   onLineReceived?.(line);
@@ -49,7 +62,7 @@ function sensorTick() {
 
   const a1 = Math.max(0, Math.min(100, base + noise()));
   const a2 = Math.max(0, Math.min(100, base + noise() + 0.5));
-  const tgt = manualMode ? 30 : base;
+  const tgt = manualMode ? manualTarget : base;
   const t1 = Math.max(
     0,
     Math.min(100, tgt + noise() * 3 + Math.sin(elapsed * 2) * 2),
@@ -77,9 +90,9 @@ function sensorTick() {
     br: Math.round(bpsVal * 100),
     b: +bpsVal.toFixed(2),
     tgt: +tgt.toFixed(2),
-    m: "Normal",
+    m: MOCK_MODES[Math.floor(elapsed / 3) % MOCK_MODES.length],
     manual: manualMode,
-    tgt_ittr: false,
+    tgt_ittr: useIttr,
     v: true,
     err: [] as number[],
   };
@@ -101,13 +114,17 @@ function handleCommand(text: string) {
   setTimeout(() => {
     switch (cmd) {
       case "get_config": {
-        const cfg: DeviceConfig = {
-          sensorValues,
-          plausibilityFlags: { ...flags },
-          useIttr,
-          pid: { kP: 3.0, kI: 0.4, kD: 0.0 },
-        };
-        emit(JSON.stringify({ t: "r", id, ok: true, data: cfg }));
+        emit(JSON.stringify({ t: "r", id, ok: true, data: getFullConfig() }));
+        break;
+      }
+      case "save": {
+        configChanged = false;
+        emit(JSON.stringify({ t: "r", id, ok: true, data: getFullConfig() }));
+        break;
+      }
+      case "revert": {
+        configChanged = false;
+        emit(JSON.stringify({ t: "r", id, ok: true, data: getFullConfig() }));
         break;
       }
       case "set_plausibility_check_flags": {
@@ -116,55 +133,133 @@ function handleCommand(text: string) {
             flags[key] = (data as Record<string, boolean>)[key];
           }
         }
-        emit(JSON.stringify({ t: "r", id, ok: true }));
+        configChanged = true;
+        emit(JSON.stringify({ t: "r", id, ok: true, data: { ...flags } }));
         break;
       }
       case "set_ittr":
         useIttr = (data?.val as boolean) ?? false;
+        configChanged = true;
         emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
+      case "set_pid": {
+        if (data?.kP != null) pidGains.kP = data.kP as number;
+        if (data?.kI != null) pidGains.kI = data.kI as number;
+        if (data?.kD != null) pidGains.kD = data.kD as number;
+        configChanged = true;
+        emit(JSON.stringify({ t: "r", id, ok: true, data: { ...pidGains } }));
+        break;
+      }
       case "set_manual":
         manualMode = !manualMode;
+        if (manualMode) manualTarget = 30;
+        emit(JSON.stringify({ t: "r", id, ok: manualMode || true }));
+        break;
+      case "manual_adjust": {
+        const amount = (data?.amount as number) ?? 0;
+        manualTarget = Math.max(-10, Math.min(110, manualTarget + amount));
         emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
-      case "save":
-        emit(JSON.stringify({ t: "r", id, ok: true }));
+      }
+      case "set_apps_min": {
+        sensorValues.apps1Min = 200 + Math.round(Math.random() * 50);
+        sensorValues.apps2Min = 200 + Math.round(Math.random() * 50);
+        sensorValues.ittrMin = 100 + Math.round(Math.random() * 50);
+        configChanged = true;
         emit(
           JSON.stringify({
-            t: "d",
-            ts: Date.now() - t0,
-            msg: "Config saved",
+            t: "r",
+            id,
+            ok: true,
+            data: {
+              apps1Min: sensorValues.apps1Min,
+              apps2Min: sensorValues.apps2Min,
+              ittrMin: sensorValues.ittrMin,
+            },
           }),
         );
         break;
-      case "revert":
-        emit(JSON.stringify({ t: "r", id, ok: true }));
+      }
+      case "set_apps_max": {
+        sensorValues.apps1Max = 3700 + Math.round(Math.random() * 200);
+        sensorValues.apps2Max = 3700 + Math.round(Math.random() * 200);
+        sensorValues.ittrMax = 3900 + Math.round(Math.random() * 200);
+        configChanged = true;
         emit(
           JSON.stringify({
-            t: "d",
-            ts: Date.now() - t0,
-            msg: "Config reverted",
+            t: "r",
+            id,
+            ok: true,
+            data: {
+              apps1Max: sensorValues.apps1Max,
+              apps2Max: sensorValues.apps2Max,
+              ittrMax: sensorValues.ittrMax,
+            },
           }),
         );
         break;
-      case "set_config":
-        emit(JSON.stringify({ t: "r", id, ok: true }));
+      }
+      case "set_tps_min": {
+        sensorValues.tps1Min = 300 + Math.round(Math.random() * 50);
+        sensorValues.tps2Min = 300 + Math.round(Math.random() * 50);
+        configChanged = true;
         emit(
           JSON.stringify({
-            t: "d",
-            ts: Date.now() - t0,
-            msg: "Config imported",
+            t: "r",
+            id,
+            ok: true,
+            data: {
+              tps1Min: sensorValues.tps1Min,
+              tps2Min: sensorValues.tps2Min,
+            },
           }),
         );
         break;
+      }
+      case "set_tps_max": {
+        sensorValues.tps1Max = 3500 + Math.round(Math.random() * 200);
+        sensorValues.tps2Max = 3500 + Math.round(Math.random() * 200);
+        configChanged = true;
+        emit(
+          JSON.stringify({
+            t: "r",
+            id,
+            ok: true,
+            data: {
+              tps1Max: sensorValues.tps1Max,
+              tps2Max: sensorValues.tps2Max,
+            },
+          }),
+        );
+        break;
+      }
+      case "set_idling": {
+        sensorValues.idling = +(4 + Math.random() * 3).toFixed(1);
+        configChanged = true;
+        emit(
+          JSON.stringify({
+            t: "r",
+            id,
+            ok: true,
+            data: { idling: sensorValues.idling },
+          }),
+        );
+        break;
+      }
+      case "set_config": {
+        const jsonStr = data?.config as string | undefined;
+        const ok = !!jsonStr;
+        if (ok) configChanged = true;
+        emit(JSON.stringify({ t: "r", id, ok }));
+        break;
+      }
       case "reboot":
         emit(JSON.stringify({ t: "r", id, ok: true }));
-        emit(
-          JSON.stringify({ t: "d", ts: Date.now() - t0, msg: "Mock reboot" }),
-        );
+        break;
+      case "motor_off":
+        emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
       default:
-        // Generic OK for calibration setters etc.
         emit(JSON.stringify({ t: "r", id, ok: true }));
         break;
     }
