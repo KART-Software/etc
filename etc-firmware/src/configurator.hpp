@@ -24,6 +24,7 @@ public:
     void setIdling();
     void setPlausibilityFlags(const PlausibilityCheckFlags &flags);
     void setIttrFlag(bool val);
+    void setPid(double kP, double kI, double kD);
     bool importConfig(const char *jsonStr);
     void save();
     void revert();

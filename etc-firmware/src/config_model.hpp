@@ -18,11 +18,17 @@ struct PlausibilityCheckFlags
     bool apps, tps, apps1, apps2, tps1, tps2, target, bps, bpsTps;
 };
 
+struct PidGains
+{
+    double kP, kI, kD;
+};
+
 struct ConfigModel
 {
     SensorValues sensorValues;
     PlausibilityCheckFlags plausibilityFlags;
     bool useIttr;
+    PidGains pid;
 
     void loadFromConstants();
     bool loadFromJson(const String &jsonStr);

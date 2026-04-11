@@ -31,3 +31,8 @@ bool MotorController::isOn()
 {
     return dcMotor.isOn();
 }
+
+void MotorController::setPidGains(double kP, double kI, double kD)
+{
+    pid.setGains(kP, kI, kD);
+}

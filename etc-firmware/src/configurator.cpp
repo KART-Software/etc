@@ -31,6 +31,7 @@ void Configurator::calibrate()
         config.plausibilityFlags.apps2, config.plausibilityFlags.tps1, config.plausibilityFlags.tps2,
         config.plausibilityFlags.target, config.plausibilityFlags.bps, config.plausibilityFlags.bpsTps);
     target.setIttr(config.useIttr);
+    motorController.setPidGains(config.pid.kP, config.pid.kI, config.pid.kD);
 }
 
 void Configurator::loadConfigFromFlash()
@@ -60,6 +61,15 @@ void Configurator::setIttrFlag(bool val)
 {
     config.useIttr = val;
     target.setIttr(val);
+    configChanged = true;
+}
+
+void Configurator::setPid(double kP, double kI, double kD)
+{
+    config.pid.kP = kP;
+    config.pid.kI = kI;
+    config.pid.kD = kD;
+    motorController.setPidGains(kP, kI, kD);
     configChanged = true;
 }
 

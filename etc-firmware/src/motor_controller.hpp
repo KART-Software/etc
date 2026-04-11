@@ -14,6 +14,7 @@ public:
     void setMotorOn();
     void setMotorOff();
     bool isOn();
+    void setPidGains(double kP, double kI, double kD);
 
 private:
     DcMotor dcMotor = DcMotor();

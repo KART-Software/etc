@@ -111,6 +111,22 @@ void setIttr(void *cntr, JsonDocument &doc, uint32_t id)
     SerialProtocol::sendResponse(id, true);
 }
 
+void setPid(void *cntr, JsonDocument &doc, uint32_t id)
+{
+    auto *c = static_cast<CommandContainer *>(cntr);
+    JsonObject d = doc["d"];
+    double kP = d["kP"] | c->configurator.config.pid.kP;
+    double kI = d["kI"] | c->configurator.config.pid.kI;
+    double kD = d["kD"] | c->configurator.config.pid.kD;
+    c->configurator.setPid(kP, kI, kD);
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["kP"] = kP;
+    data["kI"] = kI;
+    data["kD"] = kD;
+    SerialProtocol::sendResponse(id, true, data);
+}
+
 void setManual(void *cntr, JsonDocument &doc, uint32_t id)
 {
     bool ok = static_cast<CommandContainer *>(cntr)->target.setManual();
@@ -174,6 +190,7 @@ void CommandController::registerCommands(CommandRouter &router)
     router.on("set_idling", setIdling, &container);
     router.on("set_plausibility_check_flags", setPlausibilityCheckFlags, &container);
     router.on("set_ittr", setIttr, &container);
+    router.on("set_pid", setPid, &container);
     router.on("set_manual", setManual, &container);
     router.on("manual_adjust", manualAdjust, &container);
     router.on("get_config", getConfig, &container);

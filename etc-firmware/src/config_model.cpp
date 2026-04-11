@@ -29,6 +29,10 @@ void ConfigModel::loadFromConstants()
 #else
     useIttr = false;
 #endif
+
+    pid.kP = KP;
+    pid.kI = KI;
+    pid.kD = KD;
 }
 
 bool ConfigModel::loadFromJson(const String &jsonStr)
@@ -100,6 +104,21 @@ bool ConfigModel::loadFromJson(const String &jsonStr)
     }
     useIttr = doc["useIttr"];
 
+    // pid
+    if (doc.containsKey("pid"))
+    {
+        JsonObject p = doc["pid"];
+        pid.kP = p["kP"] | (double)KP;
+        pid.kI = p["kI"] | (double)KI;
+        pid.kD = p["kD"] | (double)KD;
+    }
+    else
+    {
+        pid.kP = KP;
+        pid.kI = KI;
+        pid.kD = KD;
+    }
+
     return true;
 }
 
@@ -130,4 +149,9 @@ void ConfigModel::toJson(JsonObject &out) const
     pf["bpsTps"] = plausibilityFlags.bpsTps;
 
     out["useIttr"] = useIttr;
+
+    JsonObject p = out.createNestedObject("pid");
+    p["kP"] = pid.kP;
+    p["kI"] = pid.kI;
+    p["kD"] = pid.kD;
 }

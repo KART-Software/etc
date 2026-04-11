@@ -38,3 +38,10 @@ double PID::compute(double setPoint, double position)
 
     return -direction * (kP * error + kI * errorSum + kD * differential);
 }
+
+void PID::setGains(double kP, double kI, double kD)
+{
+    this->kP = kP;
+    this->kI = kI;
+    this->kD = kD;
+}
