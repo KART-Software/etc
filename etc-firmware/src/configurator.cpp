@@ -147,4 +147,5 @@ void Configurator::revert()
 void Configurator::getConfigJson(JsonObject &out)
 {
     config.toJson(out);
+    out["configChanged"] = configChanged;
 }

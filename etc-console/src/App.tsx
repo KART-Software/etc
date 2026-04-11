@@ -68,6 +68,7 @@ export function App() {
           const resp = await protocol.sendCommand("get_config");
           if (resp.ok && resp.data) {
             setConfig(resp.data as unknown as DeviceConfig);
+            setDirty(!!(resp.data as Record<string, unknown>).configChanged);
             addLog("Config loaded from device");
           }
         } catch {}
@@ -86,8 +87,10 @@ export function App() {
   function handleSave() {
     protocol.sendCommand("save")
       .then((resp) => {
-        setDirty(false);
-        if (resp.ok && resp.data) setConfig(resp.data as unknown as DeviceConfig);
+        if (resp.ok && resp.data) {
+          setConfig(resp.data as unknown as DeviceConfig);
+          setDirty(!!(resp.data as Record<string, unknown>).configChanged);
+        }
         addLog("Config saved");
       })
       .catch((err: Error) => addLog("Save error: " + err.message));
@@ -96,8 +99,10 @@ export function App() {
   function handleRevert() {
     protocol.sendCommand("revert")
       .then((resp) => {
-        setDirty(false);
-        if (resp.ok && resp.data) setConfig(resp.data as unknown as DeviceConfig);
+        if (resp.ok && resp.data) {
+          setConfig(resp.data as unknown as DeviceConfig);
+          setDirty(!!(resp.data as Record<string, unknown>).configChanged);
+        }
         addLog("Config reverted");
       })
       .catch((err: Error) => addLog("Revert error: " + err.message));
