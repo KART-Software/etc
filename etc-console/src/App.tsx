@@ -151,13 +151,14 @@ export function App() {
             <PidTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onPidUpdate={(pid) => {
               setConfig((prev) => prev ? { ...prev, pid } : prev);
             }} />
-            <TargetCurveTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onCurveUpdate={(targetCurve) => {
-              setConfig((prev) => prev ? { ...prev, targetCurve } : prev);
-            }} />
           </div>
         </div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
-        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} curvePreview={<CurvePreview targetCurve={config?.targetCurve} />} /></div>
+        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} curvePreview={<CurvePreview targetCurve={config?.targetCurve} />} footer={
+          <TargetCurveTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onCurveUpdate={(targetCurve) => {
+            setConfig((prev) => prev ? { ...prev, targetCurve } : prev);
+          }} />
+        } /></div>
         <div class="area-config">
           <ConfigPanel config={config} onConfigLoaded={setConfig} addLog={addLog} />
         </div>

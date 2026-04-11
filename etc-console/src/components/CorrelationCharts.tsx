@@ -154,9 +154,10 @@ interface Props {
   timeRange: [number, number] | null;
   onHoverTime?: (ts: number | null) => void;
   curvePreview?: ComponentChildren;
+  footer?: ComponentChildren;
 }
 
-export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview }: Props) {
+export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, footer }: Props) {
   const wrapRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const plotRefs = useRef<(uPlot | null)[]>([null, null]);
   const onHoverTimeRef = useRef(onHoverTime);
@@ -262,6 +263,7 @@ export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview }
           </div>
         ))}
       </div>
+      {footer}
     </section>
   );
 }

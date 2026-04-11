@@ -7,7 +7,6 @@ interface TargetCurve {
   a3: number;
   a2: number;
   a1: number;
-  a0: number;
 }
 
 interface Props {
@@ -22,12 +21,12 @@ function buildData(c: TargetCurve): uPlot.AlignedData {
   for (let i = 0; i < N; i++) {
     const x = i;
     xs[i] = x;
-    ys[i] = ((((c.a4 * x + c.a3) * x + c.a2) * x + c.a1) * x + c.a0);
+    ys[i] = ((((c.a4 * x + c.a3) * x + c.a2) * x + c.a1) * x);
   }
   return [Array.from(xs), Array.from(ys)];
 }
 
-const DEFAULT_CURVE: TargetCurve = { a4: 0, a3: 0, a2: 0.0087, a1: 0.13, a0: 0 };
+const DEFAULT_CURVE: TargetCurve = { a4: 0, a3: 0, a2: 0.0087, a1: 0.13 };
 
 function createOpts(w: number, h: number): uPlot.Options {
   return {
@@ -101,7 +100,7 @@ export function CurvePreview({ targetCurve }: Props) {
     if (!plot) return;
     const curve = targetCurve ?? DEFAULT_CURVE;
     plot.setData(buildData(curve));
-  }, [targetCurve?.a4, targetCurve?.a3, targetCurve?.a2, targetCurve?.a1, targetCurve?.a0]);
+  }, [targetCurve?.a4, targetCurve?.a3, targetCurve?.a2, targetCurve?.a1]);
 
   return (
     <div class="correlation-item">

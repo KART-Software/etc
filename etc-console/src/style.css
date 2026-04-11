@@ -599,7 +599,7 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
 }
 
 .pid-field input {
-  width: 80px;
+  width: 160px;
   padding: 4px 6px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -607,6 +607,13 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
   color: var(--text);
   font-family: monospace;
   font-size: 0.85rem;
+  -moz-appearance: textfield;
+}
+
+.pid-field input::-webkit-outer-spin-button,
+.pid-field input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .pid-apply {

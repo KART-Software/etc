@@ -6,7 +6,6 @@ interface TargetCurve {
   a3: number;
   a2: number;
   a1: number;
-  a0: number;
 }
 
 interface Props {
@@ -21,40 +20,40 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Pro
   const [a3, setA3] = useState("");
   const [a2, setA2] = useState("");
   const [a1, setA1] = useState("");
-  const [a0, setA0] = useState("");
   const [open, setOpen] = useState(false);
+
+  // Display scales: UI value = internal value * scale
+  const S4 = 1e6, S3 = 1e4, S2 = 100;
 
   useEffect(() => {
     if (config?.targetCurve) {
       const c = config.targetCurve;
-      setA4(String(c.a4 ?? 0));
-      setA3(String(c.a3 ?? 0));
-      setA2(String(c.a2 ?? 0));
+      setA4(String((c.a4 ?? 0) * S4));
+      setA3(String((c.a3 ?? 0) * S3));
+      setA2(String((c.a2 ?? 0) * S2));
       setA1(String(c.a1 ?? 0));
-      setA0(String(c.a0 ?? 0));
     }
-  }, [config?.targetCurve?.a4, config?.targetCurve?.a3, config?.targetCurve?.a2, config?.targetCurve?.a1, config?.targetCurve?.a0]);
+  }, [config?.targetCurve?.a4, config?.targetCurve?.a3, config?.targetCurve?.a2, config?.targetCurve?.a1]);
 
   async function send() {
-    const vals = [a4, a3, a2, a1, a0].map(parseFloat);
+    const vals = [a4, a3, a2, a1].map(parseFloat);
     if (vals.some(Number.isNaN)) {
       addLog("Curve: invalid number");
       return;
     }
+    // Convert display values back to internal values
+    const internal = { a4: vals[0] / S4, a3: vals[1] / S3, a2: vals[2] / S2, a1: vals[3] };
     try {
-      const resp = await protocol.sendCommand("set_target_curve", {
-        a4: vals[0], a3: vals[1], a2: vals[2], a1: vals[3], a0: vals[4],
-      });
+      const resp = await protocol.sendCommand("set_target_curve", internal);
       if (resp.ok && resp.data) {
         const updated: TargetCurve = {
-          a4: (resp.data.a4 as number) ?? vals[0],
-          a3: (resp.data.a3 as number) ?? vals[1],
-          a2: (resp.data.a2 as number) ?? vals[2],
-          a1: (resp.data.a1 as number) ?? vals[3],
-          a0: (resp.data.a0 as number) ?? vals[4],
+          a4: (resp.data.a4 as number) ?? internal.a4,
+          a3: (resp.data.a3 as number) ?? internal.a3,
+          a2: (resp.data.a2 as number) ?? internal.a2,
+          a1: (resp.data.a1 as number) ?? internal.a1,
         };
         onCurveUpdate(updated);
-        addLog(`Curve set: a4=${updated.a4} a3=${updated.a3} a2=${updated.a2} a1=${updated.a1} a0=${updated.a0}`);
+        addLog(`Curve set: a4=${updated.a4} a3=${updated.a3} a2=${updated.a2} a1=${updated.a1}`);
         onDirty();
       } else {
         addLog("Curve set failed");
@@ -70,7 +69,7 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Pro
         <h2>Target Curve</h2>
         {config?.targetCurve && (
           <span class="pid-current">
-            {config.targetCurve.a4}x⁴ + {config.targetCurve.a3}x³ + {config.targetCurve.a2}x² + {config.targetCurve.a1}x + {config.targetCurve.a0}
+            {config.targetCurve.a4} x⁴ + {config.targetCurve.a3} x³ + {config.targetCurve.a2} x² + {config.targetCurve.a1} x
           </span>
         )}
         <span class={`pid-chevron ${open ? "open" : ""}`}>▶</span>
@@ -78,24 +77,20 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate }: Pro
       {open && (
         <div class="pid-row">
           <label class="pid-field">
-            <span>a4</span>
-            <input type="number" step="0.0000001" value={a4} onInput={(e) => setA4((e.target as HTMLInputElement).value)} />
+            <span>a4 (×10⁻⁶)</span>
+            <input type="number" step="0.1" value={a4} onInput={(e) => setA4((e.target as HTMLInputElement).value)} />
           </label>
           <label class="pid-field">
-            <span>a3</span>
-            <input type="number" step="0.000001" value={a3} onInput={(e) => setA3((e.target as HTMLInputElement).value)} />
+            <span>a3 (×10⁻⁴)</span>
+            <input type="number" step="0.1" value={a3} onInput={(e) => setA3((e.target as HTMLInputElement).value)} />
           </label>
           <label class="pid-field">
-            <span>a2</span>
-            <input type="number" step="0.0001" value={a2} onInput={(e) => setA2((e.target as HTMLInputElement).value)} />
+            <span>a2 (×10⁻²)</span>
+            <input type="number" step="0.1" value={a2} onInput={(e) => setA2((e.target as HTMLInputElement).value)} />
           </label>
           <label class="pid-field">
             <span>a1</span>
             <input type="number" step="0.01" value={a1} onInput={(e) => setA1((e.target as HTMLInputElement).value)} />
-          </label>
-          <label class="pid-field">
-            <span>a0</span>
-            <input type="number" step="0.1" value={a0} onInput={(e) => setA0((e.target as HTMLInputElement).value)} />
           </label>
           <button class="pid-apply" onClick={send}>Apply</button>
         </div>
