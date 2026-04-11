@@ -22,6 +22,7 @@ public:
     void setTpsMin();
     void setTpsMax();
     void setIdling();
+    void setTargetBound(double idling, double normalMax, double restrictedMax);
     void setPlausibilityFlags(const PlausibilityCheckFlags &flags);
     void setIttrFlag(bool val);
     void setPid(double kP, double kI, double kD);

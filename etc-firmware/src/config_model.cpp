@@ -13,6 +13,8 @@ void ConfigModel::loadFromConstants()
     sensorValues.tps2Min = TPS_2_RAW_MIN;
     sensorValues.tps2Max = TPS_2_RAW_MAX;
     sensorValues.idling = TARGET_IDLING;
+    sensorValues.normalMax = TARGET_NORMAL_MAX;
+    sensorValues.restrictedMax = TARGET_RESTRICTED_MAX;
 
     plausibilityFlags.apps = APPS_CHECK_FLAG;
     plausibilityFlags.tps = TPS_CHECK_FLAG;
@@ -76,6 +78,8 @@ bool ConfigModel::loadFromJson(const String &jsonStr)
     sensorValues.tps2Min = sv["tps2Min"];
     sensorValues.tps2Max = sv["tps2Max"];
     sensorValues.idling = sv["idling"];
+    sensorValues.normalMax = sv["normalMax"] | (double)TARGET_NORMAL_MAX;
+    sensorValues.restrictedMax = sv["restrictedMax"] | (double)TARGET_RESTRICTED_MAX;
 
     // plausibilityFlags
     if (!doc.containsKey("plausibilityFlags"))
@@ -158,6 +162,8 @@ void ConfigModel::toJson(JsonObject &out) const
     sv["tps2Min"] = sensorValues.tps2Min;
     sv["tps2Max"] = sensorValues.tps2Max;
     sv["idling"] = sensorValues.idling;
+    sv["normalMax"] = sensorValues.normalMax;
+    sv["restrictedMax"] = sensorValues.restrictedMax;
 
     JsonObject pf = out.createNestedObject("plausibilityFlags");
     pf["apps"] = plausibilityFlags.apps;

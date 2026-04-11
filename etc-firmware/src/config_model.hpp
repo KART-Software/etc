@@ -5,12 +5,14 @@
 #include "constants.hpp"
 
 #define CONFIG_FILE_NAME "/config.json"
-#define CONFIG_JSON_SIZE 768
+#define CONFIG_JSON_SIZE 1024
 
 struct SensorValues
 {
     uint16_t apps1Min, apps1Max, apps2Min, apps2Max, ittrMin, ittrMax, tps1Min, tps1Max, tps2Min, tps2Max;
     double idling;
+    double normalMax;
+    double restrictedMax;
 };
 
 struct PlausibilityCheckFlags

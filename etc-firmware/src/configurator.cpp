@@ -22,6 +22,8 @@ void Configurator::calibrate()
     ittr.setRawMin(config.sensorValues.ittrMin);
     ittr.setRawMax(config.sensorValues.ittrMax);
     target.setIdlingValue(config.sensorValues.idling);
+    target.setNormalMaxValue(config.sensorValues.normalMax);
+    target.setRestrictedMaxValue(config.sensorValues.restrictedMax);
     tps1.setRawMin(config.sensorValues.tps1Min);
     tps1.setRawMax(config.sensorValues.tps1Max);
     tps2.setRawMin(config.sensorValues.tps2Min);
@@ -132,6 +134,17 @@ void Configurator::setIdling()
     configChanged = true;
 }
 
+void Configurator::setTargetBound(double idling, double normalMax, double restrictedMax)
+{
+    config.sensorValues.idling = idling;
+    config.sensorValues.normalMax = normalMax;
+    config.sensorValues.restrictedMax = restrictedMax;
+    target.setIdlingValue(idling);
+    target.setNormalMaxValue(normalMax);
+    target.setRestrictedMaxValue(restrictedMax);
+    configChanged = true;
+}
+
 void Configurator::save()
 {
     if (configChanged)
@@ -139,6 +152,15 @@ void Configurator::save()
         StaticJsonDocument<CONFIG_JSON_SIZE> doc;
         JsonObject root = doc.to<JsonObject>();
         config.toJson(root);
+        if (doc.overflowed())
+        {
+            SerialProtocol::sendDebugf("WARN: save doc overflowed (used %u/%u)",
+                                       (unsigned)doc.memoryUsage(), (unsigned)CONFIG_JSON_SIZE);
+        }
+        SerialProtocol::sendDebugf("save: normalMax=%g restrictedMax=%g mem=%u/%u",
+                                   config.sensorValues.normalMax,
+                                   config.sensorValues.restrictedMax,
+                                   (unsigned)doc.memoryUsage(), (unsigned)CONFIG_JSON_SIZE);
         String out;
         serializeJson(doc, out);
         flash.write(CONFIG_FILE_NAME, out);

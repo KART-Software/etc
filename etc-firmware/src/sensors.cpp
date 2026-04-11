@@ -195,6 +195,16 @@ void Target::setIdlingValue(double val)
     idlingValue = val;
 }
 
+void Target::setNormalMaxValue(double val)
+{
+    normalMaxValue = val;
+}
+
+void Target::setRestrictedMaxValue(double val)
+{
+    restrictedMaxValue = val;
+}
+
 void Target::read()
 {
     if (_isIttr)

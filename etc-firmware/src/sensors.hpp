@@ -89,9 +89,9 @@ public:
     bool isIttr();
     void setIttr(bool isIttr);
     void setIdlingValue(double val);
+    void setNormalMaxValue(double val);
+    void setRestrictedMaxValue(double val);
     const char *getModeString();
-    // void setNormalMaxValue(double val);
-    // void setRestrictedMaxValue(double val);
 
     void read();
     uint16_t getSensorRawValue();
@@ -118,8 +118,8 @@ private:
     double manualTarget;
     bool _isManual = false;
 
-    const double normalMaxValue = TARGET_NORMAL_MAX;
-    const double restrictedMaxValue = TARGET_RESTRICTED_MAX;
+    double normalMaxValue = TARGET_NORMAL_MAX;
+    double restrictedMaxValue = TARGET_RESTRICTED_MAX;
     double tpsMinValue = TPS_MIN;
     double tpsMaxValue = TPS_MAX;
 

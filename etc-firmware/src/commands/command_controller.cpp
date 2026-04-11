@@ -65,6 +65,22 @@ void setTpsMax(void *cntr, JsonDocument &doc, uint32_t id)
     SerialProtocol::sendResponse(id, true, data);
 }
 
+void setTargetBound(void *cntr, JsonDocument &doc, uint32_t id)
+{
+    auto *c = static_cast<CommandContainer *>(cntr);
+    JsonObject d = doc["d"];
+    double idling = d["idling"] | c->configurator.config.sensorValues.idling;
+    double normalMax = d["normalMax"] | c->configurator.config.sensorValues.normalMax;
+    double restrictedMax = d["restrictedMax"] | c->configurator.config.sensorValues.restrictedMax;
+    c->configurator.setTargetBound(idling, normalMax, restrictedMax);
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["idling"] = c->configurator.config.sensorValues.idling;
+    data["normalMax"] = c->configurator.config.sensorValues.normalMax;
+    data["restrictedMax"] = c->configurator.config.sensorValues.restrictedMax;
+    SerialProtocol::sendResponse(id, true, data);
+}
+
 void setIdling(void *cntr, JsonDocument &doc, uint32_t id)
 {
     auto *c = static_cast<CommandContainer *>(cntr);
@@ -207,6 +223,7 @@ void CommandController::registerCommands(CommandRouter &router)
     router.on("set_tps_min", setTpsMin, &container);
     router.on("set_tps_max", setTpsMax, &container);
     router.on("set_idling", setIdling, &container);
+    router.on("set_target_bound", setTargetBound, &container);
     router.on("set_plausibility_check_flags", setPlausibilityCheckFlags, &container);
     router.on("set_ittr", setIttr, &container);
     router.on("set_pid", setPid, &container);
