@@ -13,7 +13,8 @@ ErrorHandler::
               {ERR_APPS_TPS_TARGET_FAILURE, false},
               {ERR_BPS_CIRCUIT_FAILURE, false},
               {ERR_BPS_TPS_IMPLAUSIBLE, false},
-          }) {};
+          }),
+      _length(9) {};
 
 void ErrorHandler::raise(int8_t errID)
 {
@@ -47,7 +48,7 @@ void ErrorHandler::clearAll()
 
 uint8_t ErrorHandler::errorsLength()
 {
-    return sizeof(errors) / sizeof(Error);
+    return _length;
 }
 
 bool ErrorHandler::raised(int8_t errID)

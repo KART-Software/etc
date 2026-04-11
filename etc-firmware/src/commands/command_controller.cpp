@@ -11,38 +11,68 @@ void motorOff(void *cntr, JsonDocument &doc, uint32_t id)
 
 void save(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.save();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.save();
+    StaticJsonDocument<512> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    c->configurator.getConfigJson(data);
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setAppsMin(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.setAppsMin();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.setAppsMin();
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["apps1Min"] = c->configurator.rawValues.apps1Min;
+    data["apps2Min"] = c->configurator.rawValues.apps2Min;
+    data["ittrMin"] = c->configurator.rawValues.ittrMin;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setAppsMax(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.setAppsMax();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.setAppsMax();
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["apps1Max"] = c->configurator.rawValues.apps1Max;
+    data["apps2Max"] = c->configurator.rawValues.apps2Max;
+    data["ittrMax"] = c->configurator.rawValues.ittrMax;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setTpsMin(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.setTpsMin();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.setTpsMin();
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["tps1Min"] = c->configurator.rawValues.tps1Min;
+    data["tps2Min"] = c->configurator.rawValues.tps2Min;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setTpsMax(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.setTpsMax();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.setTpsMax();
+    StaticJsonDocument<128> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["tps1Max"] = c->configurator.rawValues.tps1Max;
+    data["tps2Max"] = c->configurator.rawValues.tps2Max;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setIdling(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.setIdling();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.setIdling();
+    StaticJsonDocument<64> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["idling"] = c->configurator.rawValues.idling;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setPlausibilityCheckFlags(void *cntr, JsonDocument &doc, uint32_t id)
@@ -60,7 +90,18 @@ void setPlausibilityCheckFlags(void *cntr, JsonDocument &doc, uint32_t id)
     flags.bps = d["bps"] | false;
     flags.bpsTps = d["bpsTps"] | false;
     c->configurator.setPlausibilityFlags(flags);
-    SerialProtocol::sendResponse(id, true);
+    StaticJsonDocument<256> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["apps"] = flags.apps;
+    data["tps"] = flags.tps;
+    data["apps1"] = flags.apps1;
+    data["apps2"] = flags.apps2;
+    data["tps1"] = flags.tps1;
+    data["tps2"] = flags.tps2;
+    data["target"] = flags.target;
+    data["bps"] = flags.bps;
+    data["bpsTps"] = flags.bpsTps;
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 void setIttr(void *cntr, JsonDocument &doc, uint32_t id)
@@ -107,8 +148,12 @@ void reboot(void *cntr, JsonDocument &doc, uint32_t id)
 
 void revert(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    static_cast<CommandContainer *>(cntr)->configurator.revert();
-    SerialProtocol::sendResponse(id, true);
+    auto *c = static_cast<CommandContainer *>(cntr);
+    c->configurator.revert();
+    StaticJsonDocument<512> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    c->configurator.getConfigJson(data);
+    SerialProtocol::sendResponse(id, true, data);
 }
 
 } // namespace

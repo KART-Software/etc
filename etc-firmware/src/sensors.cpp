@@ -236,11 +236,11 @@ const char *Target::getModeString()
     switch (mode)
     {
     case Target::Mode::Calibration:
-        return "Calibration";
+        return "Calib";
     case Target::Mode::Normal:
         return "Normal";
     case Target::Mode::Restricted:
-        return "Restricted";
+        return "Restrict";
     default:
         return "";
     }
@@ -264,5 +264,7 @@ bool Target::isManual()
 double Target::manualAdjust(double amount)
 {
     manualTarget += amount;
+    if (manualTarget < MANUAL_MIN) manualTarget = MANUAL_MIN;
+    if (manualTarget > MANUAL_MAX) manualTarget = MANUAL_MAX;
     return manualTarget;
 }

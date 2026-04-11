@@ -29,6 +29,8 @@ void SerialProtocol::sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &t
     doc["b"] = bps.convertedValue();
     doc["tgt"] = target.getTarget();
     doc["m"] = target.getModeString();
+    doc["manual"] = target.isManual();
+    doc["tgt_ittr"] = target.isIttr();
     doc["v"] = isValid;
 
     JsonArray err = doc.createNestedArray("err");

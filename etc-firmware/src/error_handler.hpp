@@ -32,6 +32,7 @@ public:
     bool raised(int8_t errID);
 
 private:
+    uint8_t _length = 0;
     void initError(int8_t errID);
 };
 

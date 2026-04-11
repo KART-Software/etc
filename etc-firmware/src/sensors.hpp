@@ -7,6 +7,9 @@
 #include "globals.hpp"
 #include "moving_average.hpp"
 
+#define MANUAL_MIN -10
+#define MANUAL_MAX 110
+
 class Sensor
 {
 public:
