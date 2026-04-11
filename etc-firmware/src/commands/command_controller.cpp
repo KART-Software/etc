@@ -13,7 +13,7 @@ void save(void *cntr, JsonDocument &doc, uint32_t id)
 {
     auto *c = static_cast<CommandContainer *>(cntr);
     c->configurator.save();
-    StaticJsonDocument<512> tmp;
+    StaticJsonDocument<CONFIG_JSON_SIZE> tmp;
     JsonObject data = tmp.to<JsonObject>();
     c->configurator.getConfigJson(data);
     SerialProtocol::sendResponse(id, true, data);
@@ -127,6 +127,25 @@ void setPid(void *cntr, JsonDocument &doc, uint32_t id)
     SerialProtocol::sendResponse(id, true, data);
 }
 
+void setTargetCurve(void *cntr, JsonDocument &doc, uint32_t id)
+{
+    auto *c = static_cast<CommandContainer *>(cntr);
+    JsonObject d = doc["d"];
+    TargetCurve curve;
+    curve.a4 = d["a4"] | c->configurator.config.targetCurve.a4;
+    curve.a3 = d["a3"] | c->configurator.config.targetCurve.a3;
+    curve.a2 = d["a2"] | c->configurator.config.targetCurve.a2;
+    curve.a1 = d["a1"] | c->configurator.config.targetCurve.a1;
+    c->configurator.setTargetCurve(curve);
+    StaticJsonDocument<256> tmp;
+    JsonObject data = tmp.to<JsonObject>();
+    data["a4"] = curve.a4;
+    data["a3"] = curve.a3;
+    data["a2"] = curve.a2;
+    data["a1"] = curve.a1;
+    SerialProtocol::sendResponse(id, true, data);
+}
+
 void setManual(void *cntr, JsonDocument &doc, uint32_t id)
 {
     bool ok = static_cast<CommandContainer *>(cntr)->target.setManual();
@@ -142,7 +161,7 @@ void manualAdjust(void *cntr, JsonDocument &doc, uint32_t id)
 
 void getConfig(void *cntr, JsonDocument &doc, uint32_t id)
 {
-    StaticJsonDocument<512> resp;
+    StaticJsonDocument<CONFIG_JSON_SIZE> resp;
     JsonObject data = resp.to<JsonObject>();
     static_cast<CommandContainer *>(cntr)->configurator.getConfigJson(data);
     SerialProtocol::sendResponse(id, true, data);
@@ -166,7 +185,7 @@ void revert(void *cntr, JsonDocument &doc, uint32_t id)
 {
     auto *c = static_cast<CommandContainer *>(cntr);
     c->configurator.revert();
-    StaticJsonDocument<512> tmp;
+    StaticJsonDocument<CONFIG_JSON_SIZE> tmp;
     JsonObject data = tmp.to<JsonObject>();
     c->configurator.getConfigJson(data);
     SerialProtocol::sendResponse(id, true, data);
@@ -191,6 +210,7 @@ void CommandController::registerCommands(CommandRouter &router)
     router.on("set_plausibility_check_flags", setPlausibilityCheckFlags, &container);
     router.on("set_ittr", setIttr, &container);
     router.on("set_pid", setPid, &container);
+    router.on("set_target_curve", setTargetCurve, &container);
     router.on("set_manual", setManual, &container);
     router.on("manual_adjust", manualAdjust, &container);
     router.on("get_config", getConfig, &container);

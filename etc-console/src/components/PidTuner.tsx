@@ -22,9 +22,9 @@ export function PidTuner({ config, addLog, onDirty, onPidUpdate }: Props) {
 
   useEffect(() => {
     if (config?.pid) {
-      setKP(String(config.pid.kP));
-      setKI(String(config.pid.kI));
-      setKD(String(config.pid.kD));
+      setKP(String(config.pid.kP ?? 0));
+      setKI(String(config.pid.kI ?? 0));
+      setKD(String(config.pid.kD ?? 0));
     }
   }, [config?.pid?.kP, config?.pid?.kI, config?.pid?.kD]);
 

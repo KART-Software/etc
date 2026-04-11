@@ -13,6 +13,8 @@ import { DebugLog, type LogEntry } from "./components/DebugLog";
 import { BarGauges } from "./components/BarGauges";
 import { RawBarGauges } from "./components/RawBarGauges";
 import { PidTuner } from "./components/PidTuner";
+import { TargetCurveTuner } from "./components/TargetCurveTuner";
+import { CurvePreview } from "./components/CurvePreview";
 import { ModeKnob } from "./components/ModeKnob";
 
 const MAX_LOG_ENTRIES = 100;
@@ -149,10 +151,13 @@ export function App() {
             <PidTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onPidUpdate={(pid) => {
               setConfig((prev) => prev ? { ...prev, pid } : prev);
             }} />
+            <TargetCurveTuner config={config} addLog={addLog} onDirty={() => setDirty(true)} onCurveUpdate={(targetCurve) => {
+              setConfig((prev) => prev ? { ...prev, targetCurve } : prev);
+            }} />
           </div>
         </div>
         <div class="area-chart"><SensorChart data={sensorData} onTimeRange={(min, max) => setTimeRange([min, max])} hoverTime={hoverTime} /></div>
-        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} /></div>
+        <div class="area-corr"><CorrelationCharts data={sensorData} timeRange={timeRange} onHoverTime={setHoverTime} curvePreview={<CurvePreview targetCurve={config?.targetCurve} />} /></div>
         <div class="area-config">
           <ConfigPanel config={config} onConfigLoaded={setConfig} addLog={addLog} />
         </div>

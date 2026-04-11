@@ -33,6 +33,11 @@ void ConfigModel::loadFromConstants()
     pid.kP = KP;
     pid.kI = KI;
     pid.kD = KD;
+
+    targetCurve.a4 = TARGET_CURVE_A4;
+    targetCurve.a3 = TARGET_CURVE_A3;
+    targetCurve.a2 = TARGET_CURVE_A2;
+    targetCurve.a1 = TARGET_CURVE_A1;
 }
 
 bool ConfigModel::loadFromJson(const String &jsonStr)
@@ -119,6 +124,23 @@ bool ConfigModel::loadFromJson(const String &jsonStr)
         pid.kD = KD;
     }
 
+    // targetCurve (optional)
+    if (doc.containsKey("targetCurve"))
+    {
+        JsonObject tc = doc["targetCurve"];
+        targetCurve.a4 = tc["a4"] | (double)TARGET_CURVE_A4;
+        targetCurve.a3 = tc["a3"] | (double)TARGET_CURVE_A3;
+        targetCurve.a2 = tc["a2"] | (double)TARGET_CURVE_A2;
+        targetCurve.a1 = tc["a1"] | (double)TARGET_CURVE_A1;
+    }
+    else
+    {
+        targetCurve.a4 = TARGET_CURVE_A4;
+        targetCurve.a3 = TARGET_CURVE_A3;
+        targetCurve.a2 = TARGET_CURVE_A2;
+        targetCurve.a1 = TARGET_CURVE_A1;
+    }
+
     return true;
 }
 
@@ -154,4 +176,10 @@ void ConfigModel::toJson(JsonObject &out) const
     p["kP"] = pid.kP;
     p["kI"] = pid.kI;
     p["kD"] = pid.kD;
+
+    JsonObject tc = out.createNestedObject("targetCurve");
+    tc["a4"] = targetCurve.a4;
+    tc["a3"] = targetCurve.a3;
+    tc["a2"] = targetCurve.a2;
+    tc["a1"] = targetCurve.a1;
 }

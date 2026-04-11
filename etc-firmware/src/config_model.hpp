@@ -23,12 +23,18 @@ struct PidGains
     double kP, kI, kD;
 };
 
+struct TargetCurve
+{
+    double a4, a3, a2, a1;
+};
+
 struct ConfigModel
 {
     SensorValues sensorValues;
     PlausibilityCheckFlags plausibilityFlags;
     bool useIttr;
     PidGains pid;
+    TargetCurve targetCurve;
 
     void loadFromConstants();
     bool loadFromJson(const String &jsonStr);

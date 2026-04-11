@@ -32,6 +32,7 @@ void Configurator::calibrate()
         config.plausibilityFlags.target, config.plausibilityFlags.bps, config.plausibilityFlags.bpsTps);
     target.setIttr(config.useIttr);
     motorController.setPidGains(config.pid.kP, config.pid.kI, config.pid.kD);
+    target.setTargetCurve(config.targetCurve);
 }
 
 void Configurator::loadConfigFromFlash()
@@ -70,6 +71,13 @@ void Configurator::setPid(double kP, double kI, double kD)
     config.pid.kI = kI;
     config.pid.kD = kD;
     motorController.setPidGains(kP, kI, kD);
+    configChanged = true;
+}
+
+void Configurator::setTargetCurve(const TargetCurve &curve)
+{
+    config.targetCurve = curve;
+    target.setTargetCurve(curve);
     configChanged = true;
 }
 

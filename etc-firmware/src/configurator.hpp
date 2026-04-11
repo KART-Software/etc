@@ -25,6 +25,7 @@ public:
     void setPlausibilityFlags(const PlausibilityCheckFlags &flags);
     void setIttrFlag(bool val);
     void setPid(double kP, double kI, double kD);
+    void setTargetCurve(const TargetCurve &curve);
     bool importConfig(const char *jsonStr);
     void save();
     void revert();

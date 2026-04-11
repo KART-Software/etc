@@ -53,4 +53,5 @@ export interface DeviceConfig {
   plausibilityFlags: Record<string, boolean>;
   useIttr: boolean;
   pid: { kP: number; kI: number; kD: number };
+  targetCurve: { a4: number; a3: number; a2: number; a1: number; a0: number };
 }

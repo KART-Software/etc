@@ -165,7 +165,7 @@ double Target::getTarget()
         x = apps.constrainedValue();
     }
     // double y = -0.0000007403 * x * x * x * x + 0.0001425457 * x * x * x + 0.0025399794 * x * x + 0.0608039592 * x; // TODO change
-    double y = 0.0087 * x * x + 0.13 * x;
+    double y = ((((ca4 * x + ca3) * x + ca2) * x + ca1) * x);
     return minValue + y * (maxValue - minValue) / 100.0; // TODO change
 }
 
@@ -267,4 +267,12 @@ double Target::manualAdjust(double amount)
     if (manualTarget < MANUAL_MIN) manualTarget = MANUAL_MIN;
     if (manualTarget > MANUAL_MAX) manualTarget = MANUAL_MAX;
     return manualTarget;
+}
+
+void Target::setTargetCurve(const TargetCurve &curve)
+{
+    ca4 = curve.a4;
+    ca3 = curve.a3;
+    ca2 = curve.a2;
+    ca1 = curve.a1;
 }

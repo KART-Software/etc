@@ -39,6 +39,7 @@ const sensorValues = {
   idling: 5.0,
 };
 const pidGains = { kP: 3.0, kI: 0.4, kD: 0.0 };
+const targetCurve = { a4: 0, a3: 0, a2: 0.0087, a1: 0.13, a0: 0 };
 
 function getFullConfig() {
   return {
@@ -46,6 +47,7 @@ function getFullConfig() {
     plausibilityFlags: { ...flags },
     useIttr,
     pid: { ...pidGains },
+    targetCurve: { ...targetCurve },
     configChanged,
   };
 }
@@ -148,6 +150,18 @@ function handleCommand(text: string) {
         if (data?.kD != null) pidGains.kD = data.kD as number;
         configChanged = true;
         emit(JSON.stringify({ t: "r", id, ok: true, data: { ...pidGains } }));
+        break;
+      }
+      case "set_target_curve": {
+        if (data?.a4 != null) targetCurve.a4 = data.a4 as number;
+        if (data?.a3 != null) targetCurve.a3 = data.a3 as number;
+        if (data?.a2 != null) targetCurve.a2 = data.a2 as number;
+        if (data?.a1 != null) targetCurve.a1 = data.a1 as number;
+        if (data?.a0 != null) targetCurve.a0 = data.a0 as number;
+        configChanged = true;
+        emit(
+          JSON.stringify({ t: "r", id, ok: true, data: { ...targetCurve } }),
+        );
         break;
       }
       case "set_manual":

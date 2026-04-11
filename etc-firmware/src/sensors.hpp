@@ -6,6 +6,7 @@
 #include "constants.hpp"
 #include "globals.hpp"
 #include "moving_average.hpp"
+#include "config_model.hpp"
 
 #define MANUAL_MIN -10
 #define MANUAL_MAX 110
@@ -99,6 +100,7 @@ public:
     bool setManual();
     bool isManual();
     double manualAdjust(double amount);
+    void setTargetCurve(const TargetCurve &curve);
 
 private:
     enum class Mode
@@ -120,5 +122,10 @@ private:
     const double restrictedMaxValue = TARGET_RESTRICTED_MAX;
     double tpsMinValue = TPS_MIN;
     double tpsMaxValue = TPS_MAX;
+
+    double ca4 = TARGET_CURVE_A4;
+    double ca3 = TARGET_CURVE_A3;
+    double ca2 = TARGET_CURVE_A2;
+    double ca1 = TARGET_CURVE_A1;
 };
 #endif

@@ -118,6 +118,11 @@
 #define TARGET_NORMAL_MAX 100
 #define TARGET_RESTRICTED_MAX 60
 
+#define TARGET_CURVE_A4 0.0
+#define TARGET_CURVE_A3 0.0
+#define TARGET_CURVE_A2 0.0087
+#define TARGET_CURVE_A1 0.13
+
 #define BPS_RAW_MAX 4.5 * 65535 / 5.12 // 4.5V
 #define BPS_RAW_MIN 5000               // 0.5V
 

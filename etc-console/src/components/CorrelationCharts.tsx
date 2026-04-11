@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "preact/hooks";
+import type { ComponentChildren } from "preact";
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
 import type { SensorData } from "../types";
@@ -152,9 +153,10 @@ interface Props {
   data: SensorData | null;
   timeRange: [number, number] | null;
   onHoverTime?: (ts: number | null) => void;
+  curvePreview?: ComponentChildren;
 }
 
-export function CorrelationCharts({ data, timeRange, onHoverTime }: Props) {
+export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview }: Props) {
   const wrapRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const plotRefs = useRef<(uPlot | null)[]>([null, null]);
   const onHoverTimeRef = useRef(onHoverTime);
@@ -252,6 +254,7 @@ export function CorrelationCharts({ data, timeRange, onHoverTime }: Props) {
     <section>
       <h2>Correlation</h2>
       <div class="correlation-grid">
+        {curvePreview}
         {CHARTS.map((cfg, i) => (
           <div class="correlation-item" key={cfg.title}>
             <h3>{cfg.title}</h3>
