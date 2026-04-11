@@ -47,12 +47,18 @@ void SerialProtocol::sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &t
     Serial.println();
 }
 
-void SerialProtocol::sendDebug(const char *msg)
+void SerialProtocol::sendDebugf(const char *fmt, ...)
 {
+    char buf[192];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+
     StaticJsonDocument<DEBUG_MSG_JSON_SIZE> doc;
     doc["t"] = "d";
     doc["ts"] = millis();
-    doc["msg"] = msg;
+    doc["msg"] = buf;
     serializeJson(doc, Serial);
     Serial.println();
 }

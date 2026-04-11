@@ -23,7 +23,7 @@ public:
                                bool isValid, ErrorHandler &errorHandler);
 
     // Send debug log message
-    static void sendDebug(const char *msg);
+    static void sendDebugf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 
     // Send command response
     static void sendResponse(uint32_t id, bool ok);
