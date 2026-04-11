@@ -25,9 +25,9 @@ void setAppsMin(void *cntr, JsonDocument &doc, uint32_t id)
     c->configurator.setAppsMin();
     StaticJsonDocument<128> tmp;
     JsonObject data = tmp.to<JsonObject>();
-    data["apps1Min"] = c->configurator.rawValues.apps1Min;
-    data["apps2Min"] = c->configurator.rawValues.apps2Min;
-    data["ittrMin"] = c->configurator.rawValues.ittrMin;
+    data["apps1Min"] = c->configurator.config.sensorValues.apps1Min;
+    data["apps2Min"] = c->configurator.config.sensorValues.apps2Min;
+    data["ittrMin"] = c->configurator.config.sensorValues.ittrMin;
     SerialProtocol::sendResponse(id, true, data);
 }
 
@@ -37,9 +37,9 @@ void setAppsMax(void *cntr, JsonDocument &doc, uint32_t id)
     c->configurator.setAppsMax();
     StaticJsonDocument<128> tmp;
     JsonObject data = tmp.to<JsonObject>();
-    data["apps1Max"] = c->configurator.rawValues.apps1Max;
-    data["apps2Max"] = c->configurator.rawValues.apps2Max;
-    data["ittrMax"] = c->configurator.rawValues.ittrMax;
+    data["apps1Max"] = c->configurator.config.sensorValues.apps1Max;
+    data["apps2Max"] = c->configurator.config.sensorValues.apps2Max;
+    data["ittrMax"] = c->configurator.config.sensorValues.ittrMax;
     SerialProtocol::sendResponse(id, true, data);
 }
 
@@ -49,8 +49,8 @@ void setTpsMin(void *cntr, JsonDocument &doc, uint32_t id)
     c->configurator.setTpsMin();
     StaticJsonDocument<128> tmp;
     JsonObject data = tmp.to<JsonObject>();
-    data["tps1Min"] = c->configurator.rawValues.tps1Min;
-    data["tps2Min"] = c->configurator.rawValues.tps2Min;
+    data["tps1Min"] = c->configurator.config.sensorValues.tps1Min;
+    data["tps2Min"] = c->configurator.config.sensorValues.tps2Min;
     SerialProtocol::sendResponse(id, true, data);
 }
 
@@ -60,8 +60,8 @@ void setTpsMax(void *cntr, JsonDocument &doc, uint32_t id)
     c->configurator.setTpsMax();
     StaticJsonDocument<128> tmp;
     JsonObject data = tmp.to<JsonObject>();
-    data["tps1Max"] = c->configurator.rawValues.tps1Max;
-    data["tps2Max"] = c->configurator.rawValues.tps2Max;
+    data["tps1Max"] = c->configurator.config.sensorValues.tps1Max;
+    data["tps2Max"] = c->configurator.config.sensorValues.tps2Max;
     SerialProtocol::sendResponse(id, true, data);
 }
 
@@ -71,7 +71,7 @@ void setIdling(void *cntr, JsonDocument &doc, uint32_t id)
     c->configurator.setIdling();
     StaticJsonDocument<64> tmp;
     JsonObject data = tmp.to<JsonObject>();
-    data["idling"] = c->configurator.rawValues.idling;
+    data["idling"] = c->configurator.config.sensorValues.idling;
     SerialProtocol::sendResponse(id, true, data);
 }
 

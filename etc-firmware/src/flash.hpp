@@ -11,6 +11,7 @@ public:
     bool initialize();
     void write(const char *fileName, const String &jsonStr);
     String read(const char *fileName);
+    void remove(const char *fileName);
 
 private:
     LittleFS_Program fs;
