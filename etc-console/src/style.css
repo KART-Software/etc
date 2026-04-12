@@ -637,7 +637,7 @@ button.danger:hover:not(:disabled) { background: var(--err); color: white; }
   font-family: monospace;
   font-size: 0.8rem;
   color: var(--text);
-  font-weight: 600;
+  font-weight: normal;
 }
 
 .pid-chevron {

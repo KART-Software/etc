@@ -61,7 +61,7 @@ export function TargetBoundTuner({ config, addLog, onDirty, onBoundUpdate }: Pro
         <h2>Target Bounds</h2>
         {config?.sensorValues && (
           <span class="pid-current">
-            Idling: {config.sensorValues.idling}　Normal: {config.sensorValues.normalMax}　Restricted: {config.sensorValues.restrictedMax}
+            Idling: <b>{config.sensorValues.idling}</b>　Normal Max: <b>{config.sensorValues.normalMax}</b>　Restricted Max: <b>{config.sensorValues.restrictedMax}</b>
           </span>
         )}
         <span class={`pid-chevron ${open ? "open" : ""}`}>▶</span>

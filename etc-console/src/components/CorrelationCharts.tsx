@@ -94,7 +94,7 @@ const drawPoints: uPlot.Series.PathBuilder = (u, seriesIdx, _idx0, _idx1) => {
     }
     u.ctx.save();
     u.ctx.strokeStyle = strokeColor;
-    u.ctx.globalAlpha = 0.5;
+    u.ctx.globalAlpha = 0.9;
     u.ctx.lineWidth = 1.5 * uPlot.pxRatio;
     u.ctx.stroke(linePath);
     u.ctx.restore();
@@ -139,17 +139,13 @@ function createOpts(cfg: XYConfig, size: number, overlayRef?: { current: CurveOv
   };
 
   if (overlayRef) {
-    hooks.drawSeries = [
-      (u: uPlot, seriesIdx: number) => {
-        if (seriesIdx !== 1) return;
+    hooks.drawAxes = [
+      (u: uPlot) => {
         const p = overlayRef.current;
         if (!p) return;
         const { curve } = p;
         const [minV, maxV] = curveMinMax(p);
         const ctx = u.ctx;
-        const xScale = u.scales.x;
-        const yScale = u.scales.y;
-        if (!xScale || !yScale) return;
 
         ctx.save();
         ctx.beginPath();
@@ -165,7 +161,7 @@ function createOpts(cfg: XYConfig, size: number, overlayRef?: { current: CurveOv
         }
         ctx.strokeStyle = "#a78bfa";
         ctx.lineWidth = 2 * devicePixelRatio;
-        ctx.globalAlpha = 0.8;
+        ctx.globalAlpha = 0.6;
         ctx.stroke();
         ctx.restore();
       },

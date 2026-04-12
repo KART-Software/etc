@@ -76,7 +76,7 @@ export function TargetCurveTuner({ config, addLog, onDirty, onCurveUpdate, onPre
         <h2>Target Curve</h2>
         {config?.targetCurve && (
           <span class="pid-current">
-            {config.targetCurve.a4} x⁴ + {config.targetCurve.a3} x³ + {config.targetCurve.a2} x² + {config.targetCurve.a1} x
+            <b>{config.targetCurve.a4}</b> x⁴ + <b>{config.targetCurve.a3}</b> x³ + <b>{config.targetCurve.a2}</b> x² + <b>{config.targetCurve.a1}</b> x
           </span>
         )}
         <span class={`pid-chevron ${open ? "open" : ""}`}>▶</span>
