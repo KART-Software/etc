@@ -1,0 +1,114 @@
+name: Deploy Console to GitHub Pages
+
+on:
+    push:
+        branches:
+            # - main
+            - develop
+        paths:
+            - "etc-console/**"
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: pages
+    cancel-in-progress: true
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+                  cache-dependency-path: etc-console/pnpm-lock.yaml
+
+            - name: Install dependencies
+              working-directory: etc-console
+              run: pnpm install --frozen-lockfile
+
+            - name: Determine base path
+              id: base
+              run: |
+                  if [ "${{ github.ref_name }}" = "main" ]; then
+                    echo "path=/etc/" >> "$GITHUB_OUTPUT"
+                    echo "dest=." >> "$GITHUB_OUTPUT"
+                  else
+                    echo "path=/etc/dev/" >> "$GITHUB_OUTPUT"
+                    echo "dest=dev" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - name: Build
+              working-directory: etc-console
+              run: pnpm build
+              env:
+                  VITE_BASE: ${{ steps.base.outputs.path }}
+
+            # When both main and dev are deployed, we need to merge them
+            # into a single _site directory. Uncomment the step below when
+            # enabling main branch deployment.
+            #
+            # - name: Download current pages artifact
+            #   id: download
+            #   uses: actions/github-script@v7
+            #   continue-on-error: true
+            #   with:
+            #     script: |
+            #       const artifacts = await github.rest.actions.listArtifactsForRepo({
+            #         owner: context.repo.owner,
+            #         repo: context.repo.repo,
+            #         name: 'github-pages',
+            #         per_page: 1,
+            #       });
+            #       if (artifacts.data.artifacts.length > 0) {
+            #         const dl = await github.rest.actions.downloadArtifact({
+            #           owner: context.repo.owner,
+            #           repo: context.repo.repo,
+            #           artifact_id: artifacts.data.artifacts[0].id,
+            #           archive_format: 'zip',
+            #         });
+            #         const fs = require('fs');
+            #         fs.writeFileSync('_prev_pages.zip', Buffer.from(dl.data));
+            #         return true;
+            #       }
+            #       return false;
+
+            - name: Prepare deployment directory
+              run: |
+                  mkdir -p _site
+                  # Uncomment below when enabling main branch deployment:
+                  # if [ -f _prev_pages.zip ]; then
+                  #   cd _site
+                  #   unzip -o ../_prev_pages.zip 2>/dev/null || true
+                  #   [ -f artifact.tar ] && tar xf artifact.tar && rm artifact.tar
+                  #   cd ..
+                  # fi
+                  DEST="${{ steps.base.outputs.dest }}"
+                  if [ "$DEST" = "." ]; then
+                    rsync -a --exclude='dev' etc-console/dist/ _site/
+                  else
+                    rm -rf "_site/$DEST"
+                    mkdir -p "_site/$DEST"
+                    cp -r etc-console/dist/* "_site/$DEST/"
+                  fi
+
+            - uses: actions/upload-pages-artifact@v3
+              with:
+                  path: _site
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
