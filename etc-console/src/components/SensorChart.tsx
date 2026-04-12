@@ -1,18 +1,24 @@
 import { useRef, useEffect, useState } from "preact/hooks";
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
-import type { SensorData } from "../types";
+import { sensorStore, CHART_COL } from "../sensor-store";
 
 const SERIES_KEYS = ["a1", "a2", "i", "t1", "t2", "tgt"] as const;
 const SERIES_COLORS = ["#0ea5e9", "#38bdf8", "#f59e0b", "#22c55e", "#4ade80", "#a78bfa"];
 const SERIES_LABELS = ["APPS1", "APPS2", "ITTR", "TPS1", "TPS2", "Target"];
 
-// Unlimited buffer — no dropping
-const buf: number[][] = [[], [], [], [], [], [], []];
+/** Column indices in sensorStore.mem that correspond to SERIES_KEYS */
+const SERIES_COL_IDX = [CHART_COL.a1, CHART_COL.a2, CHART_COL.i, CHART_COL.t1, CHART_COL.t2, CHART_COL.tgt];
 
-function pushData(data: SensorData) {
-  buf[0].push(data.ts / 1000);
-  SERIES_KEYS.forEach((k, i) => buf[i + 1].push(data[k]));
+/** Build uPlot AlignedData from sensorStore.mem */
+function memBuf(): uPlot.AlignedData {
+  const m = sensorStore.mem;
+  return [m[CHART_COL.ts], ...SERIES_COL_IDX.map((ci) => m[ci])] as uPlot.AlignedData;
+}
+
+/** Build uPlot AlignedData from arbitrary column-major arrays (for loadRange) */
+function colsToBuf(cols: number[][]): uPlot.AlignedData {
+  return [cols[CHART_COL.ts], ...SERIES_COL_IDX.map((ci) => cols[ci])] as uPlot.AlignedData;
 }
 
 type TimeWindow = "all" | 10 | 5 | 2 | "custom" | "frozen";
@@ -25,12 +31,11 @@ const PRESETS: { label: string; value: TimeWindow }[] = [
 ];
 
 interface Props {
-  data: SensorData | null;
   onTimeRange?: (min: number, max: number) => void;
   hoverTime?: number | null;
 }
 
-export function SensorChart({ data, onTimeRange, hoverTime }: Props) {
+export function SensorChart({ onTimeRange, hoverTime }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
   const onTimeRangeRef = useRef(onTimeRange);
@@ -38,6 +43,8 @@ export function SensorChart({ data, onTimeRange, hoverTime }: Props) {
   const [window_, setWindow] = useState<TimeWindow>(10);
   const [customSec, setCustomSec] = useState(30);
   const frozenRange = useRef<{ min: number; max: number } | null>(null);
+  /** Cached full-session data for "all" mode (loaded from IndexedDB once) */
+  const fullBufRef = useRef<uPlot.AlignedData | null>(null);
 
   const windowSec = window_ === "all" || window_ === "frozen" ? null : window_ === "custom" ? customSec : window_;
 
@@ -54,37 +61,88 @@ export function SensorChart({ data, onTimeRange, hoverTime }: Props) {
     }
   }, [hoverTime]);
 
-  // Push new data and set scale
+  const windowRef = useRef(window_);
+  windowRef.current = window_;
+  const windowSecRef = useRef(windowSec);
+  windowSecRef.current = windowSec;
+
+  // Self-managed polling interval — updates chart from sensorStore without triggering App re-render
   useEffect(() => {
-    if (!data) return;
-    pushData(data);
-    const plot = plotRef.current;
-    if (!plot) return;
+    const iv = setInterval(() => {
+      const plot = plotRef.current;
+      if (!plot || sensorStore.memRows === 0) return;
+      const w = windowRef.current;
+      const ws = windowSecRef.current;
 
-    plot.setData(buf as uPlot.AlignedData);
+      if (w === "all") {
+        const fb = fullBufRef.current;
+        if (fb) {
+          const m = sensorStore.mem;
+          const lastIdx = m[CHART_COL.ts].length - 1;
+          if (lastIdx >= 0) {
+            const lastTs = m[CHART_COL.ts][lastIdx];
+            const fbTs = fb[0] as number[];
+            if (fbTs.length === 0 || lastTs > fbTs[fbTs.length - 1]) {
+              fbTs.push(lastTs);
+              SERIES_COL_IDX.forEach((ci, si) => {
+                (fb[si + 1] as number[]).push(m[ci][lastIdx]);
+              });
+            }
+          }
+          plot.setData(fb);
+          const ts = fb[0] as number[];
+          if (ts.length > 0) {
+            plot.setScale("x", { min: ts[0], max: ts[ts.length - 1] });
+            onTimeRangeRef.current?.(ts[0], ts[ts.length - 1]);
+          }
+        }
+        return;
+      }
 
-    let rangeMin: number;
-    let rangeMax: number;
+      if (w === "frozen" && frozenRange.current) {
+        const buf = memBuf();
+        plot.setData(buf);
+        plot.setScale("x", frozenRange.current);
+        onTimeRangeRef.current?.(frozenRange.current.min, frozenRange.current.max);
+        return;
+      }
 
-    if (window_ === "frozen" && frozenRange.current) {
-      plot.setScale("x", frozenRange.current);
-      rangeMin = frozenRange.current.min;
-      rangeMax = frozenRange.current.max;
-    } else if (windowSec != null && buf[0].length > 0) {
-      const latest = buf[0][buf[0].length - 1];
-      plot.setScale("x", { min: latest - windowSec, max: latest });
-      rangeMin = latest - windowSec;
-      rangeMax = latest;
-    } else if (buf[0].length > 1) {
-      plot.setScale("x", { min: buf[0][0], max: buf[0][buf[0].length - 1] });
-      rangeMin = buf[0][0];
-      rangeMax = buf[0][buf[0].length - 1];
-    } else {
+      const buf = memBuf();
+      plot.setData(buf);
+      const ts = buf[0] as number[];
+
+      if (ws != null && ts.length > 0) {
+        const latest = ts[ts.length - 1];
+        plot.setScale("x", { min: latest - ws, max: latest });
+        onTimeRangeRef.current?.(latest - ws, latest);
+      } else if (ts.length > 1) {
+        plot.setScale("x", { min: ts[0], max: ts[ts.length - 1] });
+        onTimeRangeRef.current?.(ts[0], ts[ts.length - 1]);
+      }
+    }, 100); // 10Hz
+
+    return () => clearInterval(iv);
+  }, []);
+
+  // One-shot: load full history from IndexedDB when "all" mode is selected
+  useEffect(() => {
+    if (window_ !== "all") {
+      fullBufRef.current = null;
       return;
     }
-
-    onTimeRange?.(rangeMin, rangeMax);
-  }, [data, windowSec, window_]);
+    const plot = plotRef.current;
+    if (!plot) return;
+    let cancelled = false;
+    sensorStore.loadAll().then((cols) => {
+      if (cancelled || cols[0].length === 0) return;
+      fullBufRef.current = colsToBuf(cols);
+      plot.setData(fullBufRef.current);
+      const ts = fullBufRef.current[0] as number[];
+      plot.setScale("x", { min: ts[0], max: ts[ts.length - 1] });
+      onTimeRangeRef.current?.(ts[0], ts[ts.length - 1]);
+    });
+    return () => { cancelled = true; };
+  }, [window_]);
 
   // Create uPlot instance
   useEffect(() => {
@@ -140,7 +198,7 @@ export function SensorChart({ data, onTimeRange, hoverTime }: Props) {
       ],
     };
 
-    plotRef.current = new uPlot(opts, buf as uPlot.AlignedData, wrapRef.current);
+    plotRef.current = new uPlot(opts, memBuf(), wrapRef.current);
 
     const onResize = () => {
       if (wrapRef.current && plotRef.current) {

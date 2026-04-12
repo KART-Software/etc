@@ -1,5 +1,7 @@
+import { useState, useEffect } from "preact/hooks";
 import type { SensorData, DeviceConfig } from "../types";
 import { protocol } from "../protocol";
+import { sensorStore } from "../sensor-store";
 
 interface RawBarProps {
   label: string;
@@ -35,7 +37,6 @@ function RawBar({ label, value, scaleMax, markerMin, markerMax, color }: RawBarP
 }
 
 interface Props {
-  data: SensorData | null;
   config: DeviceConfig | null;
   addLog: (msg: string) => void;
   onConfigUpdate: (partial: Partial<DeviceConfig["sensorValues"]>) => void;
@@ -44,7 +45,17 @@ interface Props {
 
 const SCALE_MAX = 65535;
 
-export function RawBarGauges({ data, config, addLog, onConfigUpdate, onDirty }: Props) {
+export function RawBarGauges({ config, addLog, onConfigUpdate, onDirty }: Props) {
+  const [data, setData] = useState<SensorData | null>(null);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const d = sensorStore.latest;
+      if (d) setData(d);
+    }, 100); // 10Hz
+    return () => clearInterval(iv);
+  }, []);
+
   const sv = config?.sensorValues;
 
   async function calibrate(name: string) {

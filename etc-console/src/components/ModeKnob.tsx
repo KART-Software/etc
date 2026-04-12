@@ -1,3 +1,6 @@
+import { useState, useEffect } from "preact/hooks";
+import { sensorStore } from "../sensor-store";
+
 const CX = 200;
 const CY = 120;
 const R = 50;
@@ -13,11 +16,19 @@ function xy(r: number, deg: number): [number, number] {
   return [CX + r * Math.sin(rad), CY - r * Math.cos(rad)];
 }
 
-interface Props {
-  mode?: string;
-}
+interface Props {}
 
-export function ModeKnob({ mode }: Props) {
+export function ModeKnob(_props: Props) {
+  const [mode, setMode] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const d = sensorStore.latest;
+      if (d) setMode(d.m);
+    }, 100); // 10Hz
+    return () => clearInterval(iv);
+  }, []);
+
   const cur = MODES.find((m) => m.key === mode);
 
   return (

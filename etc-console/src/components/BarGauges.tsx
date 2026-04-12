@@ -1,5 +1,7 @@
+import { useState, useEffect, useRef } from "preact/hooks";
 import type { SensorData } from "../types";
 import { protocol } from "../protocol";
+import { sensorStore } from "../sensor-store";
 
 interface BarProps {
   label: string;
@@ -27,12 +29,20 @@ function Bar({ label, value, min, max, color }: BarProps) {
 }
 
 interface Props {
-  data: SensorData | null;
   addLog: (msg: string) => void;
   onDirty: () => void;
 }
 
-export function BarGauges({ data, addLog, onDirty }: Props) {
+export function BarGauges({ addLog, onDirty }: Props) {
+  const [data, setData] = useState<SensorData | null>(null);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const d = sensorStore.latest;
+      if (d) setData(d);
+    }, 100); // 10Hz
+    return () => clearInterval(iv);
+  }, []);
   if (!data) {
     return (
       <section>

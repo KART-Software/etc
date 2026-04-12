@@ -3,8 +3,16 @@ import type { ComponentChildren } from "preact";
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
 import type { SensorData } from "../types";
+import { sensorStore, CHART_COL } from "../sensor-store";
 
 const CHART_H = 300;
+
+/** Column index in sensorStore.mem for each SensorData key used by scatter charts */
+const COL_MAP: Record<string, number> = {
+  a1: CHART_COL.a1,
+  tgt: CHART_COL.tgt,
+  t1: CHART_COL.t1,
+};
 
 interface XYConfig {
   title: string;
@@ -20,48 +28,41 @@ const CHARTS: XYConfig[] = [
   { title: "Target → TPS1", xKey: "tgt", yKey: "t1", xLabel: "Target (%)", yLabel: "TPS1 (%)", color: "#22c55e" },
 ];
 
-// Store timestamps alongside XY data for time-range filtering
-const tsBuf: number[][] = CHARTS.map(() => []);
-
 // mode:2 data format: data[0]=null, data[seriesIdx]=[xArr, yArr]
 type ScatterData = [null, ...([number[], number[]])[]]
 
-const bufs: ScatterData[] = CHARTS.map(() => [null, [[], []]] as ScatterData);
-
-// Unlimited buffer — no dropping (matches SensorChart)
-function pushData(data: SensorData) {
-  const ts = data.ts / 1000;
-  CHARTS.forEach((cfg, i) => {
-    tsBuf[i].push(ts);
-    const xy = bufs[i][1]!;
-    xy[0].push(data[cfg.xKey] as number);
-    xy[1].push(data[cfg.yKey] as number);
-  });
+/** Binary search: find first index where arr[i] >= val */
+function lowerBound(arr: number[], val: number): number {
+  let lo = 0, hi = arr.length;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (arr[mid] < val) lo = mid + 1; else hi = mid; }
+  return lo;
+}
+/** Binary search: find first index where arr[i] > val */
+function upperBound(arr: number[], val: number): number {
+  let lo = 0, hi = arr.length;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (arr[mid] <= val) lo = mid + 1; else hi = mid; }
+  return lo;
 }
 
-/** Build filtered scatter data for the given time range, also return matching timestamps */
+/** Build scatter data from sensorStore.mem, filtered by timeRange */
 let filteredTs: number[][] = CHARTS.map(() => []);
 
 function filteredBuf(chartIdx: number, timeRange: [number, number] | null): ScatterData {
-  const xy = bufs[chartIdx][1]!;
+  const mem = sensorStore.mem;
+  const tsCol = mem[CHART_COL.ts];
+  const cfg = CHARTS[chartIdx];
+  const xCol = mem[COL_MAP[cfg.xKey as string]];
+  const yCol = mem[COL_MAP[cfg.yKey as string]];
+
   if (!timeRange) {
-    filteredTs[chartIdx] = tsBuf[chartIdx];
-    return bufs[chartIdx];
+    filteredTs[chartIdx] = tsCol;
+    return [null, [xCol, yCol]];
   }
-  const [tMin, tMax] = timeRange;
-  const ts = tsBuf[chartIdx];
-  const fx: number[] = [];
-  const fy: number[] = [];
-  const ft: number[] = [];
-  for (let i = 0; i < ts.length; i++) {
-    if (ts[i] >= tMin && ts[i] <= tMax) {
-      fx.push(xy[0][i]);
-      fy.push(xy[1][i]);
-      ft.push(ts[i]);
-    }
-  }
-  filteredTs[chartIdx] = ft;
-  return [null, [fx, fy]];
+  // Binary search on sorted timestamps — O(log n) instead of O(n)
+  const start = lowerBound(tsCol, timeRange[0]);
+  const end = upperBound(tsCol, timeRange[1]);
+  filteredTs[chartIdx] = tsCol.slice(start, end);
+  return [null, [xCol.slice(start, end), yCol.slice(start, end)]];
 }
 
 // Exactly follows uPlot scatter.html demo drawPoints pattern + connecting lines
@@ -204,25 +205,26 @@ function createOpts(cfg: XYConfig, size: number, overlayRef?: { current: CurveOv
 }
 
 interface Props {
-  data: SensorData | null;
   timeRange: [number, number] | null;
   onHoverTime?: (ts: number | null) => void;
   curvePreview?: ComponentChildren;
   footer?: ComponentChildren;
   targetCurve?: TargetCurve;
-  mode?: string;
   idling?: number;
   normalMax?: number;
   restrictedMax?: number;
 }
 
-export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, footer, targetCurve, mode, idling, normalMax, restrictedMax }: Props) {
+export function CorrelationCharts({ timeRange, onHoverTime, curvePreview, footer, targetCurve, idling, normalMax, restrictedMax }: Props) {
   const wrapRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const plotRefs = useRef<(uPlot | null)[]>([null, null]);
   const onHoverTimeRef = useRef(onHoverTime);
   onHoverTimeRef.current = onHoverTime;
+  const timeRangeRef = useRef(timeRange);
+  timeRangeRef.current = timeRange;
 
   const overlayRef = useRef<CurveOverlayParams | null>(null);
+  const mode = sensorStore.latest?.m;
   if (targetCurve && mode) {
     overlayRef.current = {
       curve: targetCurve,
@@ -233,14 +235,18 @@ export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, 
     };
   }
 
+  // Self-managed polling interval — updates scatter plots from sensorStore
   useEffect(() => {
-    if (!data) return;
-    pushData(data);
-    CHARTS.forEach((_cfg, i) => {
-      const plot = plotRefs.current[i];
-      if (plot) plot.setData(filteredBuf(i, timeRange) as unknown as uPlot.AlignedData);
-    });
-  }, [data, timeRange]);
+    const iv = setInterval(() => {
+      CHARTS.forEach((_cfg, i) => {
+        const plot = plotRefs.current[i];
+        if (plot && sensorStore.memRows > 0) {
+          plot.setData(filteredBuf(i, timeRangeRef.current) as unknown as uPlot.AlignedData);
+        }
+      });
+    }, 100); // 10Hz
+    return () => clearInterval(iv);
+  }, []);
 
   useEffect(() => {
     // Defer creation so layout is settled
@@ -250,7 +256,7 @@ export function CorrelationCharts({ data, timeRange, onHoverTime, curvePreview, 
         if (!el) return;
         plotRefs.current[i] = new uPlot(
           createOpts(cfg, el.clientWidth, i === 0 ? overlayRef : undefined),
-          bufs[i] as unknown as uPlot.AlignedData,
+          filteredBuf(i, null) as unknown as uPlot.AlignedData,
           el,
         );
       });
