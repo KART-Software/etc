@@ -19,6 +19,7 @@ export interface SensorData {
   tgt_ittr: boolean;
   v: boolean;
   err: number[];
+  sps?: number;
 }
 
 export interface DebugMessage {

@@ -62,6 +62,14 @@ export function SensorMonitor(_props: Props) {
             <h3>BPS</h3>
             <SensorRow label="BPS" raw={data?.br} val={data?.b} unit="psi" />
           </div>
+          <div class="sensor-group">
+            <h3>ADC</h3>
+            <div class="sensor-row">
+              <span class="label">Sample Rate</span>
+              <span class="val">{data?.sps != null ? data.sps.toLocaleString() : "-"}</span>
+              <span class="unit">sps</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -43,6 +43,7 @@ public:
     void begin();
     void read();
     uint16_t value[8];
+    uint32_t sps() const { return intervalUs_ ? 1000000u / intervalUs_ : 0; }
 
 private:
     SPIClass &spi;
@@ -50,6 +51,8 @@ private:
     SPISettings spiSettings = SPISettings(SPI_FREQUENCY, SPI_BIT_ORDER, SPI_MODE_ADC);
     const uint8_t numCh = ADC_NUM_CH;
     const uint8_t chs[ADC_NUM_CH] = ADC_CHANNELS;
+    uint32_t intervalUs_ = 0;
+    uint32_t lastReadUs_ = 0;
     void setReadChannels();
     void setReadModeAutoSeq();
     void setReadRanges();

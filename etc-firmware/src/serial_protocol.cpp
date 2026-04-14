@@ -10,7 +10,7 @@ void SerialProtocol::initialize()
 }
 
 void SerialProtocol::sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Bps &bps,
-                                    Target &target, bool isValid, ErrorHandler &errorHandler)
+                                    Target &target, bool isValid, ErrorHandler &errorHandler, uint32_t sps)
 {
     StaticJsonDocument<SENSOR_MSG_JSON_SIZE> doc;
     doc["t"] = "s";
@@ -32,6 +32,7 @@ void SerialProtocol::sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &t
     doc["manual"] = target.isManual();
     doc["tgt_ittr"] = target.isIttr();
     doc["v"] = isValid;
+    doc["sps"] = sps;
 
     JsonArray err = doc.createNestedArray("err");
     uint8_t len = errorHandler.errorsLength();

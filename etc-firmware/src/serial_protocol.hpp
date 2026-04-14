@@ -20,7 +20,7 @@ public:
 
     // Send sensor data message
     static void sendSensorData(Apps &apps1, Apps &apps2, Ittr &ittr, Tps &tps1, Tps &tps2, Bps &bps, Target &target,
-                               bool isValid, ErrorHandler &errorHandler);
+                               bool isValid, ErrorHandler &errorHandler, uint32_t sps);
 
     // Send debug log message
     static void sendDebugf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));

@@ -130,7 +130,7 @@ void loop()
     {
         lastLogTime = now;
         SerialProtocol::sendSensorData(apps1, apps2, ittr, tps1, tps2, bps, target, plausibilityValidator.isValid(),
-                                       plausibilityValidator.getErrorHandler());
+                                       plausibilityValidator.getErrorHandler(), gAdc.sps());
     }
 
     // Command polling

@@ -37,6 +37,15 @@ uint32_t Adc::transferCommand32(uint16_t cmd)
 
 void Adc::read()
 {
+    uint32_t now = micros();
+    if (lastReadUs_)
+    {
+        uint32_t delta = now - lastReadUs_;
+        // EMA: interval = (interval * 7 + delta) / 8
+        intervalUs_ = intervalUs_ ? (intervalUs_ * 7 + delta) >> 3 : delta;
+    }
+    lastReadUs_ = now;
+
     uint32_t readVal;
     for (int i = 0; i < ADC_NUM_CH - 1; i++)
     {
