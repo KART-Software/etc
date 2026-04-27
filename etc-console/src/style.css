@@ -1,0 +1,657 @@
+:root {
+  --bg: #0d0d1a;
+  --surface: #121228;
+  --border: #1a2a50;
+  --text: #f0f0f5;
+  --text-dim: #9a9abe;
+  --accent: #38bdf8;
+  --ok: #34d399;
+  --err: #f87171;
+  --warn: #fbbf24;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.35;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 { font-size: 0.95rem; font-weight: 600; opacity: 0.7; }
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 34px;
+  z-index: 9;
+}
+
+.action-bar-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-right: auto;
+}
+
+.connection-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 12px;
+}
+.status-badge.disconnected { background: var(--err); color: #fff; }
+.status-badge.connected { background: var(--ok); color: #000; }
+
+main {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "errors   sensors  mode"
+    "gauges   gauges   gauges"
+    "chart    chart    chart"
+    "corr     corr     corr"
+    "config   config   config"
+    "log      log      log";
+  gap: 10px;
+}
+
+.area-sensors { grid-area: sensors; }
+.area-errors  { grid-area: errors; max-width: 220px; }
+.area-mode    { grid-area: mode; }
+.area-mode h2 { margin-bottom: -16px; position: relative; z-index: 1; }
+.area-gauges  { grid-area: gauges; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gauges-col   { display: flex; flex-direction: column; gap: 10px; }
+.area-chart   { grid-area: chart; }
+.area-corr    { grid-area: corr; }
+.area-config  { grid-area: config; }
+.area-log     { grid-area: log; }
+
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "sensors"
+      "mode"
+      "errors"
+      "gauges"
+      "chart"
+      "corr"
+      "config"
+      "log";
+  }
+}
+
+section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+section h2 {
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Buttons */
+button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s;
+  min-height: 32px;
+}
+button:hover:not(:disabled) { background: #2a3a60; border-color: var(--accent); }
+button:active:not(:disabled) { background: var(--accent); color: #000; transform: scale(0.96); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.danger { border-color: var(--err); color: var(--err); }
+button.danger:hover:not(:disabled) { background: var(--err); color: white; }
+
+/* Sensor Grid */
+.sensor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.sensor-grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.sensor-group {
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.sensor-group h3 {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sensor-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 0;
+}
+.sensor-row .label { font-size: 0.75rem; color: var(--text-dim); min-width: 36px; }
+.sensor-row .raw { font-family: monospace; font-size: 0.75rem; color: var(--text-dim); min-width: 46px; }
+.sensor-row .val { font-family: monospace; font-size: 1rem; font-weight: 700; min-width: 56px; text-align: right; }
+.sensor-row .unit { font-size: 0.7rem; color: var(--text-dim); }
+.sensor-row .mode { font-size: 0.8rem; padding: 1px 6px; background: var(--border); border-radius: 3px; }
+
+.status-indicator {
+  font-weight: 600;
+  padding: 2px 12px;
+  border-radius: 4px;
+}
+.status-indicator.ok { background: var(--ok); color: white; }
+.status-indicator.err { background: var(--err); color: white; }
+
+/* Error Status */
+.error-status-badge {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 2px 0;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  color: var(--text-dim);
+  background: var(--bg);
+}
+.error-status-badge.ok { color: #fff; background: #16a34a; }
+.error-status-badge.err { color: #fff; background: #dc2626; }
+
+.error-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.error-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 0;
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.error-item.disabled {
+  opacity: 0.35;
+}
+
+.error-item input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: #333;
+}
+
+.led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #16a34a;
+  flex-shrink: 0;
+}
+.led.error { background: #dc2626; }
+
+/* Controls */
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Flag Grid */
+.flag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flag-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.flag-item input[type="checkbox"] { accent-color: var(--accent); }
+
+/* Chart */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chart-header h2 { margin-bottom: 0; }
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.chart-btn {
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.chart-btn:hover { background: var(--border); color: var(--text); }
+.chart-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.chart-input {
+  width: 56px;
+  padding: 3px 6px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
+}
+.chart-input::-webkit-inner-spin-button { opacity: 1; }
+.chart-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.chart-wrap { width: 100%; }
+
+/* Debug Log */
+.log-output {
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 6px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 1px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.log-ts { color: var(--text-dim); margin-right: 8px; }
+
+/* ── Correlation Charts ── */
+.correlation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.correlation-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.correlation-item h3 {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .correlation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Bar Gauges ── */
+.raw-sensors-layout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: repeat(7, auto);
+  gap: 8px 12px;
+  align-items: center;
+}
+
+.raw-sensors-layout > .bar-gauge { grid-column: 1; }
+.raw-sensors-layout > .bar-gauge:nth-child(1) { grid-row: 1; }
+.raw-sensors-layout > .bar-gauge:nth-child(2) { grid-row: 2; }
+.raw-sensors-layout > .bar-gauge:nth-child(3) { grid-row: 3; }
+.raw-sensors-layout > .bar-gauge:nth-child(4) { grid-row: 4; }
+.raw-sensors-layout > .bar-gauge:nth-child(5) { grid-row: 5; }
+.raw-sensors-layout > .bar-gauge:nth-child(6) { grid-row: 6; }
+
+.raw-motor-off { grid-column: 1; grid-row: 7; justify-self: start; }
+
+.raw-cal-group {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: start;
+}
+
+.raw-cal-group .raw-cal-row {
+  display: flex;
+  gap: 4px;
+}
+
+.raw-cal-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.raw-cal-apps { grid-row: 1 / 3; }
+.raw-cal-tps  { grid-row: 4 / 7; }
+
+.raw-cal-btn {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.bar-gauges-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bar-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.target-source-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.target-source-toggle.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.bar-label .bar-value {
+  margin-left: auto;
+}
+
+.bar-value {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.bar-track {
+  height: 12px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.1s ease-out;
+}
+
+/* Target info row */
+.target-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 3px 0;
+  margin-bottom: 2px;
+}
+
+.target-info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.target-info-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.target-info-value {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.toggle-label {
+  cursor: pointer;
+}
+
+.toggle-side-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.toggle-switch {
+  width: 36px;
+  height: 18px;
+  background: var(--border);
+  border-radius: 9px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle-switch.on {
+  background: var(--accent);
+}
+
+.toggle-knob {
+  width: 14px;
+  height: 14px;
+  background: var(--text);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s;
+}
+
+.toggle-switch.on .toggle-knob {
+  left: 20px;
+}
+
+.manual-adjust-buttons {
+  gap: 4px;
+}
+
+.adjust-btn {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text-dim);
+  cursor: pointer;
+  min-width: 36px;
+}
+
+.adjust-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.raw-bar-track {
+  position: relative;
+  overflow: visible;
+}
+
+.bar-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  border-radius: 1px;
+}
+
+.bar-marker-min {
+  background: var(--warn);
+}
+
+.bar-marker-max {
+  background: var(--err);
+}
+
+/* ── PID Tuner ──────────────────────────── */
+.pid-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pid-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.pid-field input {
+  width: 160px;
+  padding: 4px 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: monospace;
+  font-size: 0.85rem;
+  -moz-appearance: textfield;
+}
+
+.pid-field input::-webkit-outer-spin-button,
+.pid-field input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pid-apply {
+  padding: 4px 14px;
+  align-self: flex-end;
+}
+
+.pid-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pid-header h2 {
+  margin-bottom: 0;
+}
+
+.pid-current {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text);
+  font-weight: normal;
+}
+
+.pid-chevron {
+  margin-left: auto;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+  transform: rotate(180deg);
+}
+
+.pid-chevron.open {
+  transform: rotate(90deg);
+}
+
+.pid-row {
+  margin-top: 8px;
+}

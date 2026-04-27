@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 52c6e1e6644c7c4115455025ceb1afaccdb5b67f..b1f9fab0d97e551319c57560693f230ca06b141d 100644
+--- a/package.json
++++ b/package.json
+@@ -10,7 +10,8 @@
+   "exports": {
+     ".": {
+       "types": "./types/index.d.ts",
+-      "import": "./src/walk.js"
++      "import": "./src/walk.js",
++      "require": "./src/walk.js"
+     }
+   },
+   "types": "./types/index.d.ts",

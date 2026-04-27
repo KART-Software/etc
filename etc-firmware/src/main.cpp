@@ -1,0 +1,138 @@
+#include <Arduino.h>
+
+#include "error_handler.hpp"
+#include "constants.hpp"
+#include "sensors.hpp"
+#include "plausibility_validator.hpp"
+#include "motor_controller.hpp"
+#include "toggle_switch.hpp"
+#include "configurator.hpp"
+#include "serial_protocol.hpp"
+#include "commands/command_router.hpp"
+#include "commands/command_controller.hpp"
+
+IntervalTimer motorControlTimer;
+
+SelectSwitch3Pin selectSwitch;
+Apps apps1(APPS_1_RAW_MIN, APPS_1_RAW_MAX, APPS_1_CH);
+Apps apps2(APPS_2_RAW_MIN, APPS_2_RAW_MAX, APPS_2_CH);
+Tps tps1(TPS_1_RAW_MIN, TPS_1_RAW_MAX, TPS_1_CH);
+Tps tps2(TPS_2_RAW_MIN, TPS_2_RAW_MAX, TPS_2_CH);
+Ittr ittr = Ittr();
+Bps bps = Bps();
+Target target(apps1, ittr);
+
+PlausibilityValidator plausibilityValidator(apps1, apps2, ittr, tps1, tps2, target, bps);
+MotorController motorController(target, tps1);
+Configurator configurator(apps1, apps2, tps1, tps2, ittr, target, motorController, plausibilityValidator);
+CommandRouter commandRouter;
+CommandController commandController(configurator, motorController, target);
+
+volatile bool motorTimerRunning = false;
+
+void motorControlISR()
+{
+    motorController.cycle();
+}
+
+void setup()
+{
+    SerialProtocol::initialize();
+
+    pinMode(FUEL_PUMP_PIN, OUTPUT);
+    digitalWrite(FUEL_PUMP_PIN, HIGH);
+    gAdc.begin();
+    selectSwitch.initialize();
+    configurator.initialize();
+    configurator.calibrateFromFlash();
+
+    bool motorOnAllowed = true;
+    switch (selectSwitch.getStatus())
+    {
+    case SelectSwitch3Pin::Status::Zero:
+        target.setModeCalibration();
+        break;
+    case SelectSwitch3Pin::Status::First:
+        target.setModeNormal();
+        break;
+    case SelectSwitch3Pin::Status::Second:
+        target.setModeRestricted();
+        break;
+    case SelectSwitch3Pin::Status::Third:
+        target.setModeCalibration();
+        motorOnAllowed = false;
+        break;
+    default:
+        break;
+    }
+    motorController.initialize();
+    if (motorOnAllowed)
+    {
+        motorController.setMotorOn();
+        motorControlTimer.begin(motorControlISR, MOTOR_CONTROLL_CYCLE_TIME * 1000); // ms -> us
+        motorTimerRunning = true;
+    }
+    plausibilityValidator.initialize();
+
+    commandController.registerCommands(commandRouter);
+}
+
+unsigned long lastLogTime = 0;
+
+void loop()
+{
+    gAdc.read();
+    apps1.read();
+    apps2.read();
+    ittr.read();
+    tps1.read();
+    tps2.read();
+    bps.read();
+    selectSwitch.read();
+
+    if (!plausibilityValidator.isCurrentlyValid())
+    {
+        if (motorController.isOn())
+        {
+            motorController.setMotorOff();
+            if (motorTimerRunning)
+            {
+                motorControlTimer.end();
+                motorTimerRunning = false;
+            }
+            digitalWrite(FUEL_PUMP_PIN, LOW);
+        }
+    }
+    if (selectSwitch.changed())
+    {
+        switch (selectSwitch.getStatus())
+        {
+        case SelectSwitch3Pin::Status::Zero:
+            target.setModeCalibration();
+            break;
+        case SelectSwitch3Pin::Status::First:
+            target.setModeNormal();
+            break;
+        case SelectSwitch3Pin::Status::Second:
+            target.setModeRestricted();
+            break;
+        case SelectSwitch3Pin::Status::Third:
+            target.setModeNormal();
+            break;
+        default:
+            break;
+        }
+    }
+
+    // Send sensor data via JSON protocol (50Hz)
+    unsigned long now = millis();
+    if (now - lastLogTime >= SENSOR_SEND_INTERVAL)
+    {
+        lastLogTime = now;
+        SerialProtocol::sendSensorData(apps1, apps2, ittr, tps1, tps2, bps, target, plausibilityValidator.isValid(),
+                                       plausibilityValidator.getErrorHandler(), gAdc.sps());
+    }
+
+    // Command polling
+    commandRouter.poll();
+}
